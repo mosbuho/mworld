@@ -2,11 +2,13 @@ package com.project.backend.service;
 
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.project.backend.entity.Member;
 import com.project.backend.repository.MemberRepository;
 
+@Service
 public class MemberService {
     private final MemberRepository memberRepository;
     private final PasswordEncoder passwordEncoder;
@@ -29,8 +31,6 @@ public class MemberService {
             return memberRepository.save(member);
         } catch (DataIntegrityViolationException e) {
             throw new RuntimeException("이미 존재하는 ID 또는 이메일입니다.", e);
-        } catch (Exception e) {
-            throw new RuntimeException("회원 등록 중 오류가 발생했습니다.", e);
-        }
+        } 
     }
 }
