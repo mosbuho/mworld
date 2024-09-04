@@ -7,10 +7,13 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 
 import com.project.backend.entity.Admin;
@@ -51,7 +54,8 @@ public class AuthService {
     private final AdminRepository adminRepository;
     private final PasswordEncoder passwordEncoder;
 
-    public AuthService(MemberRepository memberRepository, AdminRepository adminRepository, PasswordEncoder passwordEncoder) {
+    public AuthService(MemberRepository memberRepository, AdminRepository adminRepository,
+            PasswordEncoder passwordEncoder) {
         this.memberRepository = memberRepository;
         this.adminRepository = adminRepository;
         this.passwordEncoder = passwordEncoder;
@@ -86,7 +90,19 @@ public class AuthService {
             newMember.setId(provider + "_" + providerId);
             newMember.setName((String) userInfo.get("name"));
             newMember.setPw(passwordEncoder.encode("SOCIAL_LOGIN"));
-            newMember.setPhone((String) userInfo.getOrDefault("phone", "00000000000"));
+
+            String phone = (String) userInfo.get("phone");
+            if (phone != null) {
+                // 모든 비숫자 문자(하이픈, 공백, + 등)를 제거
+                phone = phone.replaceAll("[^0-9]", ""); // 숫자가 아닌 문자를 모두 제거
+                if (phone.startsWith("82")) {
+                    phone = "0" + phone.substring(2); // 국가 코드 82로 시작하면 010 형식으로 변환
+                }
+            } else {
+                phone = "00000000000"; // 기본값 설정
+            }
+            newMember.setPhone(phone);
+
             newMember.setAddr((String) userInfo.getOrDefault("addr", "Unknown"));
             newMember.setProvider(provider);
             newMember.setProviderId(providerId);
@@ -130,20 +146,50 @@ public class AuthService {
         }
 
         RestTemplate restTemplate = new RestTemplate();
-        ResponseEntity<Map> tokenResponse = restTemplate.postForEntity(tokenUrl, params, Map.class);
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
+
+        MultiValueMap<String, String> requestBody = new LinkedMultiValueMap<>();
+        requestBody.setAll(params);
+
+        HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<>(requestBody, headers);
+        ResponseEntity<Map> tokenResponse = restTemplate.postForEntity(tokenUrl, request, Map.class);
         String accessToken = (String) tokenResponse.getBody().get("access_token");
 
-        HttpHeaders headers = new HttpHeaders();
-        headers.add("Authorization", "Bearer " + accessToken);
-        HttpEntity<String> entity = new HttpEntity<>(headers);
+        HttpHeaders userInfoHeaders = new HttpHeaders();
+        userInfoHeaders.add("Authorization", "Bearer " + accessToken);
+        HttpEntity<String> entity = new HttpEntity<>(userInfoHeaders);
+
         ResponseEntity<Map> userInfoResponse = restTemplate.exchange(userInfoUrl, HttpMethod.GET, entity, Map.class);
 
         Map<String, Object> userInfo = new HashMap<>();
         if (provider.equals("kakao")) {
+            Long id = (Long) userInfoResponse.getBody().get("id");
+            String idStr = String.valueOf(id);
+
             Map<String, Object> kakaoAccount = (Map<String, Object>) userInfoResponse.getBody().get("kakao_account");
-            userInfo.put("id", userInfoResponse.getBody().get("id"));
-            userInfo.put("name", kakaoAccount.get("profile_nickname"));
-            userInfo.put("email", kakaoAccount.get("email"));
+            Map<String, Object> properties = (Map<String, Object>) userInfoResponse.getBody().get("properties");
+            String name = null;
+            String phone = null;
+
+            if (kakaoAccount != null && kakaoAccount.get("profile") != null) {
+                Map<String, Object> profile = (Map<String, Object>) kakaoAccount.get("profile");
+                name = (String) profile.get("nickname");
+            }
+            if (name == null && properties != null) {
+                name = (String) properties.get("nickname");
+            }
+            if (name == null) {
+                name = "Unknown";
+            }
+            if (kakaoAccount != null && kakaoAccount.get("phone_number") != null) {
+                phone = (String) kakaoAccount.get("phone_number");
+            }
+
+            userInfo.put("id", idStr);
+            userInfo.put("name", name);
+            userInfo.put("email", kakaoAccount != null ? kakaoAccount.get("email") : null);
+            userInfo.put("phone", phone);
         } else if (provider.equals("google")) {
             userInfo.put("id", userInfoResponse.getBody().get("id"));
             userInfo.put("name", userInfoResponse.getBody().get("name"));
@@ -155,7 +201,9 @@ public class AuthService {
             userInfo.put("email", response.get("email"));
         }
 
+        // 디버깅: 최종 사용자 정보 출력
+        System.out.println("Final user info: " + userInfo);
         return userInfo;
     }
-    
+
 }

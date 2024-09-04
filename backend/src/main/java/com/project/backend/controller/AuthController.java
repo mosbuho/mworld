@@ -47,6 +47,7 @@ public class AuthController {
     @PostMapping("/login")
     public ResponseEntity<?> loginMember(@RequestBody LoginRequest loginRequest) {
         Member member = authService.authenticateMember(loginRequest.getId(), loginRequest.getPw());
+
         if (member != null) {
             String accessToken = jwtUtil.generateAccessToken(member.getId(), "ROLE_MEMBER", member.getNo());
             String refreshToken = jwtUtil.generateRefreshToken(member.getId(), "ROLE_MEMBER", member.getNo());

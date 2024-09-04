@@ -12,18 +12,23 @@ const OAuthCallback = () => {
         const provider = determineProvider(location.pathname);
 
         if (code && provider) {
-            axios.post(`${process.env.REACT_APP_BACKEND_URL}`, {
+            axios.post(`${import.meta.env.VITE_BACKEND_URL}`, {
                 provider: provider,
                 code: code,
             })
             .then(response => {
-                const { accessToken, refreshToken } = response.data;
+                const { accessToken, refreshToken, no } = response.data;
                 localStorage.setItem('accessToken', accessToken);
                 localStorage.setItem('refreshToken', refreshToken);
+                localStorage.setItem('no', no);
                 navigate('/');
             })
             .catch(error => {
-                console.error('소셜 로그인 실패 : ', error);
+                if (error.response) {
+                    console.error('소셜 로그인 실패 : ', error.response.data); // 백엔드 응답 메시지 출력
+                } else {
+                    console.error('소셜 로그인 실패 : ', error.message); // 기타 에러
+                }
             });
         }
     }, [location]);
