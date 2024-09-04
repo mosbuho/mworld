@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/member")
@@ -25,5 +26,15 @@ public class MemberController {
             @RequestParam(defaultValue = "5") int size
     ) {
         return memberService.getMemberList(page, size);
+    }
+
+    @GetMapping("/admin")
+    public Map<String, Object> getAllMember(
+            @RequestParam(defaultValue = "1") int page,
+            @RequestParam(defaultValue = "20") int size,
+            @RequestParam(required = false) String f,
+            @RequestParam(required = false) String q
+    ) {
+        return memberService.getMemberWithPagination(page, size, f, q);
     }
 }
