@@ -12,7 +12,7 @@ public class Product {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "product_seq_generator")
     @SequenceGenerator(name = "product_seq_generator", sequenceName = "product_seq", allocationSize = 1)
-    private Long no;
+    private int no;
 
     @Column(name = "title_img", nullable = false, length = 255)
     private String titleImg;
