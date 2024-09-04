@@ -82,5 +82,19 @@ public class AuthController {
         }
     }
 
-    
+    @PostMapping("/social/login")
+    public ResponseEntity<?> socialLogin(@RequestBody Map<String, String> request) {
+        String provider = request.get("provider");
+        String code = request.get("code");
+
+        try {
+            Map<String, Object> userInfo = authService.getSocialUserInfo(provider, code);
+            Member member = authService.socialLoginOrRegister(provider, userInfo);
+            String accessToken = jwtUtil.generateAccessToken(member.getId(), "ROLE_MEMBER", member.getNo());
+            String refreshToken = jwtUtil.generateRefreshToken(member.getId(), "ROLE_MEMBER", member.getNo());
+            return ResponseEntity.ok(new AuthResponse(accessToken, refreshToken, member.getNo()));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body("소셜 로그인 실패: " + e.getMessage());
+        }
+    }
 }
