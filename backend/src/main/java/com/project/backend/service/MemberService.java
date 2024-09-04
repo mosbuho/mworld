@@ -23,7 +23,7 @@ public class MemberService {
         query.setMaxResults(pageSize);
 
         return query.getResultList();
-
-
     }
+
+
 }
