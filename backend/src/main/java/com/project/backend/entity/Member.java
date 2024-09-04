@@ -10,8 +10,8 @@ import java.time.LocalDateTime;
 @Data
 public class Member {
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "member_seq_generator")
-    @SequenceGenerator(name = "member_seq_generator", sequenceName = "member_seq", allocationSize = 1)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "member_seq")
+    @SequenceGenerator(name = "member_seq", sequenceName = "member_seq", allocationSize = 1)
     private int no;
 
     @Column(nullable = false, unique = true, length = 32)
@@ -31,5 +31,11 @@ public class Member {
 
     @Column(name = "reg_date", nullable = false, updatable = false, insertable = false, columnDefinition = "timestamp default systimestamp")
     private LocalDateTime regDate;
+
+    @Column(name = "provider", nullable = true)
+    private String provider;
+
+    @Column(name = "provider_id", nullable = true)
+    private String providerId;
 
 }
