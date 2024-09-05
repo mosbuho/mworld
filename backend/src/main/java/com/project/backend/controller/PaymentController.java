@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/payment")
+@RequestMapping("/api")
 public class PaymentController {
 
     private final PaymentService paymentService;
@@ -19,7 +19,7 @@ public class PaymentController {
         this.paymentService = paymentService;
     }
 
-    @GetMapping("/admin/main")
+    @GetMapping("/admin/payment-main")
     public List<Payment> getPayment(
             @RequestParam(defaultValue = "1") int page,
             @RequestParam(defaultValue = "10") int size
