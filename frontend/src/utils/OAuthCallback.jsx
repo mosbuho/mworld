@@ -25,9 +25,9 @@ const OAuthCallback = () => {
             })
             .catch(error => {
                 if (error.response) {
-                    console.error('소셜 로그인 실패 : ', error.response.data); // 백엔드 응답 메시지 출력
+                    console.error('소셜 로그인 실패 : ', error.response.data);
                 } else {
-                    console.error('소셜 로그인 실패 : ', error.message); // 기타 에러
+                    console.error('소셜 로그인 실패 : ', error.message);
                 }
             });
         }

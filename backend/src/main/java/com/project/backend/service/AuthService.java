@@ -93,13 +93,12 @@ public class AuthService {
 
             String phone = (String) userInfo.get("phone");
             if (phone != null) {
-                // 모든 비숫자 문자(하이픈, 공백, + 등)를 제거
-                phone = phone.replaceAll("[^0-9]", ""); // 숫자가 아닌 문자를 모두 제거
+                phone = phone.replaceAll("[^0-9]", "");
                 if (phone.startsWith("82")) {
-                    phone = "0" + phone.substring(2); // 국가 코드 82로 시작하면 010 형식으로 변환
+                    phone = "0" + phone.substring(2);
                 }
             } else {
-                phone = "00000000000"; // 기본값 설정
+                phone = "00000000000";
             }
             newMember.setPhone(phone);
 
@@ -196,13 +195,19 @@ public class AuthService {
             userInfo.put("email", userInfoResponse.getBody().get("email"));
         } else if (provider.equals("naver")) {
             Map<String, Object> response = (Map<String, Object>) userInfoResponse.getBody().get("response");
-            userInfo.put("id", response.get("id"));
-            userInfo.put("name", response.get("name"));
-            userInfo.put("email", response.get("email"));
+            String id = (String) response.get("id");
+            String name = (String) response.get("name");
+            String email = (String) response.get("email");
+            String phone = (String) response.get("mobile"); // 네이버에서 전화번호는 mobile 필드에 있음
+
+            userInfo.put("id", id);
+            userInfo.put("name", name);
+            userInfo.put("email", email);
+            userInfo.put("phone", phone != null ? phone.replaceAll("-", "") : null);
+
         }
 
-        // 디버깅: 최종 사용자 정보 출력
-        System.out.println("Final user info: " + userInfo);
+        System.out.println("Final user info: " + userInfo); // 테스트용 log
         return userInfo;
     }
 
