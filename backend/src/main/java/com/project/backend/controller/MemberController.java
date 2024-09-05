@@ -3,10 +3,8 @@ package com.project.backend.controller;
 import com.project.backend.entity.Member;
 import com.project.backend.service.MemberService;
 import org.springframework.format.annotation.DateTimeFormat;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -40,5 +38,28 @@ public class MemberController {
             @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate
     ) {
         return memberService.getMemberWithPagination(page, size, f, q, startDate, endDate);
+    }
+
+    @PutMapping("/admin/{no}")
+    public ResponseEntity<String> updateMember(
+            @PathVariable int no,
+            @RequestBody Member updatedMember
+    ) {
+        try {
+            memberService.updateMember(no, updatedMember);
+            return ResponseEntity.ok(null);
+        } catch (Exception e) {
+            return ResponseEntity.status(500).build();
+        }
+    }
+
+    @DeleteMapping("/admin/{no}")
+    public ResponseEntity<String> deleteMember(@PathVariable int no) {
+        try {
+            memberService.deleteMember(no);
+            return ResponseEntity.ok(null);
+        } catch (Exception e) {
+            return ResponseEntity.status(500).build();
+        }
     }
 }

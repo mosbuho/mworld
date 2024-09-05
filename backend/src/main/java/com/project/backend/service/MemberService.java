@@ -40,6 +40,31 @@ public class MemberService {
         return query.getResultList();
     }
 
+    public Member updateMember(int no, Member updatedMember) {
+        Member member = memberRepository.findByNo(no);
+        if (member == null) {
+            throw new IllegalArgumentException("Invalid member No: " + no);
+        }
+
+        // 필요한 필드 업데이트
+        member.setName(updatedMember.getName());
+        member.setPhone(updatedMember.getPhone());
+        member.setAddr(updatedMember.getAddr());
+
+        return memberRepository.save(member); // 수정 후 저장
+    }
+
+    // 회원 삭제 로직
+    public void deleteMember(int no) {
+        Member member = memberRepository.findByNo(no);
+        if (member == null) {
+            throw new IllegalArgumentException("Invalid member No: " + no);
+        }
+        System.out.println(member);
+        memberRepository.delete(member);
+    }
+
+
     public Map<String, Object> getMemberWithPagination(int page, int size, String f, String q, LocalDate startDate, LocalDate endDate) {
         Pageable pageable = PageRequest.of(page - 1, size, Sort.by(Sort.Direction.DESC, "regDate"));
 

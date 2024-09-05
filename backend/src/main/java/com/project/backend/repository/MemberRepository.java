@@ -13,13 +13,16 @@ import java.time.LocalDateTime;
 public interface MemberRepository extends JpaRepository<Member, Integer> {
     Member findMemberById(String id);
 
+    Member findByNo(int no);
+
     @Query("SELECT m FROM Member m WHERE " +
             "((:f = 'ID' AND m.id LIKE %:q%) OR " +
             "(:f = 'NAME' AND m.name LIKE %:q%) OR " +
             "(:f = 'PHONE' AND m.phone LIKE %:q%) OR " +
             "(:q IS NULL OR :q = '')) AND " + // 검색어가 없을 때는 이 조건 무시
             "((:startDate IS NULL OR m.regDate >= :startDate) AND " +
-            "(:endDate IS NULL OR m.regDate <= :endDate))")  // 기간이 없을 때는 이 조건 무시
+            "(:endDate IS NULL OR m.regDate <= :endDate))")
+        // 기간이 없을 때는 이 조건 무시
     Page<Member> findByField(
             @Param("f") String f,
             @Param("q") String q,
