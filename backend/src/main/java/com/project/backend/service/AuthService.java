@@ -150,7 +150,6 @@ public class AuthService {
 
         MultiValueMap<String, String> requestBody = new LinkedMultiValueMap<>();
         requestBody.setAll(params);
-
         HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<>(requestBody, headers);
         ResponseEntity<Map> tokenResponse = restTemplate.postForEntity(tokenUrl, request, Map.class);
         String accessToken = (String) tokenResponse.getBody().get("access_token");
@@ -160,12 +159,10 @@ public class AuthService {
         HttpEntity<String> entity = new HttpEntity<>(userInfoHeaders);
 
         ResponseEntity<Map> userInfoResponse = restTemplate.exchange(userInfoUrl, HttpMethod.GET, entity, Map.class);
-
         Map<String, Object> userInfo = new HashMap<>();
         if (provider.equals("kakao")) {
             Long id = (Long) userInfoResponse.getBody().get("id");
             String idStr = String.valueOf(id);
-
             Map<String, Object> kakaoAccount = (Map<String, Object>) userInfoResponse.getBody().get("kakao_account");
             Map<String, Object> properties = (Map<String, Object>) userInfoResponse.getBody().get("properties");
             String name = null;
@@ -198,13 +195,11 @@ public class AuthService {
             String id = (String) response.get("id");
             String name = (String) response.get("name");
             String email = (String) response.get("email");
-            String phone = (String) response.get("mobile"); // 네이버에서 전화번호는 mobile 필드에 있음
-
+            String phone = (String) response.get("mobile");
             userInfo.put("id", id);
             userInfo.put("name", name);
             userInfo.put("email", email);
             userInfo.put("phone", phone != null ? phone.replaceAll("-", "") : null);
-
         }
 
         System.out.println("Final user info: " + userInfo); // 테스트용 log
