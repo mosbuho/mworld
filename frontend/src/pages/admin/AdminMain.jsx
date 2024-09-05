@@ -3,10 +3,12 @@ import axios from "axios";
 import AdminSidebar from "../../components/admin/AdminSidebar.jsx";
 import dayjs from "dayjs";
 import "dayjs/locale/ko.js";
+import {useNavigate} from "react-router-dom";
 
 const AdminMain = () => {
     const [payments, setPayments] = useState([]);
     const [members, setMembers] = useState([]);
+    const nav = useNavigate();
 
     dayjs.locale("ko");
 
@@ -67,7 +69,7 @@ const AdminMain = () => {
             </div>
             <div className="member-list">
                 <span>최근회원가입</span>
-                <button>회원전체보기</button>
+                <button onClick={()=> nav("/admin/member")}>회원전체보기</button>
                 <table>
                     <thead>
                     <tr>
