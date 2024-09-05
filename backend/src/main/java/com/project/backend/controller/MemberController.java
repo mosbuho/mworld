@@ -2,11 +2,13 @@ package com.project.backend.controller;
 
 import com.project.backend.entity.Member;
 import com.project.backend.service.MemberService;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
 
@@ -33,8 +35,10 @@ public class MemberController {
             @RequestParam(defaultValue = "1") int page,
             @RequestParam(defaultValue = "20") int size,
             @RequestParam(required = false) String f,
-            @RequestParam(required = false) String q
+            @RequestParam(required = false) String q,
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate
     ) {
-        return memberService.getMemberWithPagination(page, size, f, q);
+        return memberService.getMemberWithPagination(page, size, f, q, startDate, endDate);
     }
 }
