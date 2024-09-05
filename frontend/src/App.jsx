@@ -1,3 +1,6 @@
+import { BrowserRouter, Route, Routes } from 'react-router-dom';
+import PrivateRoute from './components/common/PrivateRoute';
+import PublicRoute from './components/common/PublicRoute';
 import './App.css'
 import { Routes, Route } from 'react-router-dom';
 import Login from './components/Login';
@@ -5,21 +8,26 @@ import AdminLogin from './pages/AdminLogin';
 import SignUp from './pages/SignUp';
 
 
+import MemberLogin from './pages/member/MemberLogin';
+import OAuthCallback from './utils/OAuthCallback';
+
 function App() {
 
   return (
-    <div className='App'>
+    <BrowserRouter>
       <Routes>
-        {/* 메인 및 다른 경로 설정 */}
-        {/* <Route path='/*' element={<Main />} /> */}
-        {/* <Route path='/admin/*' element={<Admin />} /> */}
+        {/* 공개 라우트 */}
+        {/* <Route path="/" element={<MemberMain />} /> */}
 
-        <Route path='/login' element={<Login />} />
-        <Route path='/admin/login' element={<AdminLogin />} />
-        <Route path='/signup' element={<SignUp />} />
+        {/* 비로그인 라우트 */}
+        <Route path="/login" element={<PublicRoute><MemberLogin /></PublicRoute>} />
+        <Route path="/signup" element={<PublicRoute><SignUp /></PublicRoute>} />
+        <Route path="/admin/login" element={<PublicRoute><AdminLogin /></PublicRoute>} />
+
+        {/* OAuth 콜백 처리 경로 */}
+        <Route path="/oauth/callback/:provider" element={<OAuthCallback/>} />
       </Routes>
-
-    </div>
+    </BrowserRouter>
   )
 }
 
