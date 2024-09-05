@@ -14,7 +14,7 @@ public interface MemberRepository extends JpaRepository<Member, Integer> {
     Member findMemberById(String id);
 
     Member findByNo(int no);
-
+  
     @Query("SELECT m FROM Member m WHERE " +
             "((:f = 'ID' AND m.id LIKE %:q%) OR " +
             "(:f = 'NAME' AND m.name LIKE %:q%) OR " +
@@ -31,4 +31,6 @@ public interface MemberRepository extends JpaRepository<Member, Integer> {
             Pageable pageable
     );
 
+}
+    Member findByProviderAndProviderId(String provider, String providerId);
 }
