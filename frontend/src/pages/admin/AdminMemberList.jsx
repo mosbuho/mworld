@@ -16,6 +16,8 @@ const AdminMemberList = () => {
     const [startDate, setStartDate] = useState('');  // 시작일 추가
     const [endDate, setEndDate] = useState('');      // 종료일 추가
 
+    dayjs.locale("ko");
+
     useEffect(() => {
         fetchMembers(1)
     }, []);
