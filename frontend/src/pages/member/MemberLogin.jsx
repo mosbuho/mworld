@@ -37,8 +37,9 @@ const MemberLogin = ({ title, isAdmin }) => {
                 if (!import.meta.env.VITE_NAVER_CLIENT_ID) {
                     console.log('Missing Naver Client ID');
                     return;
-                  }
-                authUrl = `https://nid.naver.com/oauth2.0/authorize?client_id=${import.meta.env.VITE_NAVER_CLIENT_ID}&redirect_uri=${import.meta.env.VITE_REDIRECT_URI}/naver&response_type=code`;
+                }
+                const state = Math.random().toString(36).substr(2, 12);
+                authUrl = `https://nid.naver.com/oauth2.0/authorize?client_id=${import.meta.env.VITE_NAVER_CLIENT_ID}&redirect_uri=${import.meta.env.VITE_REDIRECT_URI}/naver&response_type=code&state=${state}&scope=email`;
                 break;
             case '구글':
                 if (!import.meta.env.VITE_GOOGLE_CLIENT_ID) {
