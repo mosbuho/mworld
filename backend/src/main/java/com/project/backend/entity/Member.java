@@ -14,7 +14,7 @@ public class Member {
     @SequenceGenerator(name = "member_seq", sequenceName = "member_seq", allocationSize = 1)
     private int no;
 
-    @Column(nullable = false, unique = true, length = 32)
+    @Column(nullable = false, unique = true, length = 100)
     private String id;
 
     @Column(nullable = false, length = 100)

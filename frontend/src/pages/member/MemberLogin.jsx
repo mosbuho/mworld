@@ -27,25 +27,13 @@ const MemberLogin = ({ title, isAdmin }) => {
 
         switch (provider) {
             case '카카오':
-                if (!import.meta.env.VITE_KAKAO_CLIENT_ID) {
-                    console.log('Missing Kakao Client ID');
-                    return;
-                  }
                 authUrl = `https://kauth.kakao.com/oauth/authorize?client_id=${import.meta.env.VITE_KAKAO_CLIENT_ID}&redirect_uri=${import.meta.env.VITE_REDIRECT_URI}/kakao&response_type=code&scope=profile_nickname,account_email,phone_number`;
                 break;
             case '네이버':
-                if (!import.meta.env.VITE_NAVER_CLIENT_ID) {
-                    console.log('Missing Naver Client ID');
-                    return;
-                }
                 const state = Math.random().toString(36).substr(2, 12);
                 authUrl = `https://nid.naver.com/oauth2.0/authorize?client_id=${import.meta.env.VITE_NAVER_CLIENT_ID}&redirect_uri=${import.meta.env.VITE_REDIRECT_URI}/naver&response_type=code&state=${state}&scope=email`;
                 break;
             case '구글':
-                if (!import.meta.env.VITE_GOOGLE_CLIENT_ID) {
-                    console.log('Missing Google Client ID');
-                    return;
-                  }
                 authUrl = `https://accounts.google.com/o/oauth2/v2/auth?client_id=${import.meta.env.VITE_GOOGLE_CLIENT_ID}&redirect_uri=${import.meta.env.VITE_REDIRECT_URI}/google&response_type=code&scope=email profile`;
                 break;
             default:
