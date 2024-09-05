@@ -160,6 +160,7 @@ public class AuthService {
 
         ResponseEntity<Map> userInfoResponse = restTemplate.exchange(userInfoUrl, HttpMethod.GET, entity, Map.class);
         Map<String, Object> userInfo = new HashMap<>();
+        
         if (provider.equals("kakao")) {
             Long id = (Long) userInfoResponse.getBody().get("id");
             String idStr = String.valueOf(id);
