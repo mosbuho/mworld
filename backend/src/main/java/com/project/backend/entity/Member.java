@@ -38,4 +38,6 @@ public class Member {
     @Column(name = "provider_id", nullable = true)
     private String providerId;
 
+    @Column(nullable = false, unique = true)
+    private String email;
 }

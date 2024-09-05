@@ -102,6 +102,13 @@ public class AuthService {
             }
             newMember.setPhone(phone);
 
+            String email = (String) userInfo.get("email");
+            if (email != null && !email.isEmpty()) {
+                newMember.setEmail(email);
+            } else {
+                throw new IllegalArgumentException("Email is required but not provided");
+            }
+
             newMember.setAddr((String) userInfo.getOrDefault("addr", "Unknown"));
             newMember.setProvider(provider);
             newMember.setProviderId(providerId);
@@ -160,7 +167,7 @@ public class AuthService {
 
         ResponseEntity<Map> userInfoResponse = restTemplate.exchange(userInfoUrl, HttpMethod.GET, entity, Map.class);
         Map<String, Object> userInfo = new HashMap<>();
-        
+
         if (provider.equals("kakao")) {
             Long id = (Long) userInfoResponse.getBody().get("id");
             String idStr = String.valueOf(id);
@@ -203,7 +210,6 @@ public class AuthService {
             userInfo.put("phone", phone != null ? phone.replaceAll("-", "") : null);
         }
 
-        System.out.println("Final user info: " + userInfo); // 테스트용 log
         return userInfo;
     }
 
