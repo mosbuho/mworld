@@ -43,7 +43,7 @@ const AdminMemberList = () => {
             setPageCount(Math.ceil(totalCount / 20));
 
         } catch (err) {
-            console.error("failed to fetch member", err);
+            console.error("npm", err);
         }
     };
 
