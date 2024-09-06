@@ -10,22 +10,22 @@
     display: flex;
     flex-direction: column;
   }
-  
+
   h2 {
     margin-bottom: 20px;
   }
-  
+
   .input-group {
     margin-bottom: 15px;
   }
-  
+
   .input-group label {
     display: block;
     font-size: 14px;
     color: #333;
     margin-bottom: 5px;
   }
-  
+
   .input-group input {
     width: 100%;
     padding: 10px;
@@ -41,7 +41,7 @@
   .input-group input:focus {
     border-bottom: 2px solid #5c3aff;
   }
-  
+
   .options {
     display: flex;
     margin-bottom: 30px;
@@ -50,7 +50,7 @@
     color: #5c3aff;
     gap: 15px;
   }
-  
+
   .options label {
     display: flex;
     align-items: center;
@@ -60,18 +60,19 @@
   .options input[type="checkbox"] {
     width: 15px;
     height: 15px;
-    border: 2px solid #ccc; 
-    border-radius: 4px; 
+    border: 2px solid #ccc;
+    border-radius: 4px;
     cursor: pointer;
-    accent-color: #5c3aff; 
-    transition: border-color 0.3s; 
-  }
-  
-  .options input[type="checkbox"]:checked {
-    border-color: #5c3aff; 
+    accent-color: #5c3aff;
+    transition: border-color 0.3s;
   }
 
-  .login-button, .signup-button {
+  .options input[type="checkbox"]:checked {
+    border-color: #5c3aff;
+  }
+
+  .login-button,
+  .signup-button {
     width: 100%;
     padding: 15px;
     border: none;
@@ -80,7 +81,7 @@
     cursor: pointer;
     margin-bottom: 10px;
   }
-  
+
   .login-button {
     background-color: #FF385C;
     color: white;
@@ -95,18 +96,18 @@
     text-decoration: none;
     color: white;
   }
-  
+
   .links {
     text-align: center;
     margin-top: 20px;
   }
-  
+
   .links a {
     color: #FF385C;
     text-decoration: none;
     font-size: 14px;
   }
-  
+
   .links a:hover {
     text-decoration: underline;
   }
@@ -114,8 +115,8 @@
   .social-login {
     display: flex;
     justify-content: center;
-    gap: 40px; 
-    margin-top: 20px; 
+    gap: 40px;
+    margin-top: 20px;
   }
 
   .social-button img {
@@ -124,16 +125,16 @@
   }
 
   .social-button {
-  width: 48px; 
-  height: 48px;
-  border: none;
-  border-radius: 8px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  background-color: white;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1); 
-  cursor: pointer;
+    width: 48px;
+    height: 48px;
+    border: none;
+    border-radius: 8px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: white;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    cursor: pointer;
 
   }
 }

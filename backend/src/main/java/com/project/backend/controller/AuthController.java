@@ -68,8 +68,6 @@ public class AuthController {
         }
     }
 
-
-    
     @PostMapping("/admin/login")
     public ResponseEntity<?> loginAdmin(@RequestBody LoginRequest loginRequest) {
         Admin admin = authService.authenticateAdmin(loginRequest.getId(), loginRequest.getPw());
