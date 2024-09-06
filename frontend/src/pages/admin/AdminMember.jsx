@@ -1,12 +1,12 @@
-import {useLocation, useNavigate, useNavigation} from "react-router-dom";
-import AdminSidebar from "../../components/admin/AdminSidebar.jsx";
-import {useState} from "react";
 import axios from "axios";
+import { useState } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
+import AdminSidebar from "../../components/admin/AdminSidebar.jsx";
 
 const AdminMember = () => {
     const location = useLocation();
     const nav = useNavigate();
-    const {member} = location.state;
+    const { member } = location.state;
 
     const [formData, setFormData] = useState({
         no: member.no,
@@ -18,8 +18,8 @@ const AdminMember = () => {
     })
 
     const handleChange = (e) => {
-        const {id, value} = e.target;
-        setFormData((prevData) => ({...prevData, [id]: value}));
+        const { id, value } = e.target;
+        setFormData((prevData) => ({ ...prevData, [id]: value }));
     };
 
     const handleUpdate = async () => {
@@ -56,7 +56,7 @@ const AdminMember = () => {
     return (
         <div className="admin-member">
             <h1>회원정보</h1>
-            <AdminSidebar/>
+            <AdminSidebar />
             <div className="admin-member-detail">
                 <form>
                     <div className="form-group">
@@ -115,7 +115,7 @@ const AdminMember = () => {
                     </div>
                     <button type="button" onClick={handleUpdate}>수정</button>
                     <button type="button" onClick={handleDelete}>삭제</button>
-                    <button type="button" onClick={()=>nav(-1)}>뒤로</button>
+                    <button type="button" onClick={() => nav(-1)}>뒤로</button>
                 </form>
             </div>
         </div>
