@@ -1,34 +1,36 @@
 package com.project.backend.service;
 
-import org.springframework.dao.DataIntegrityViolationException;
-import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
-import com.project.backend.entity.Member;
-import com.project.backend.repository.MemberRepository;
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.PersistenceContext;
-import jakarta.persistence.Query;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
-import org.springframework.stereotype.Service;
-
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import com.project.backend.entity.Member;
+import com.project.backend.repository.MemberRepository;
+
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
+import jakarta.persistence.Query;
+
 @Service
 public class MemberService {
 
     private MemberRepository memberRepository;
+    private PasswordEncoder passwordEncoder;
 
-    public MemberService(MemberRepository memberRepository) {
+    public MemberService(MemberRepository memberRepository, PasswordEncoder passwordEncoder) {
         this.memberRepository = memberRepository;
+        this.passwordEncoder = passwordEncoder;
     }
 
     @PersistenceContext
@@ -69,8 +71,8 @@ public class MemberService {
         memberRepository.delete(member);
     }
 
-
-    public Map<String, Object> getMemberWithPagination(int page, int size, String f, String q, LocalDate startDate, LocalDate endDate) {
+    public Map<String, Object> getMemberWithPagination(int page, int size, String f, String q, LocalDate startDate,
+            LocalDate endDate) {
         Pageable pageable = PageRequest.of(page - 1, size, Sort.by(Sort.Direction.DESC, "regDate"));
 
         LocalDateTime startDateTime = startDate != null ? startDate.atStartOfDay() : null;
@@ -91,16 +93,6 @@ public class MemberService {
         return response;
     }
 
-@Service
-public class MemberService {
-    private final MemberRepository memberRepository;
-    private final PasswordEncoder passwordEncoder;
-
-    public MemberService(MemberRepository memberRepository, PasswordEncoder passwordEncoder) {
-        this.memberRepository = memberRepository;
-        this.passwordEncoder = passwordEncoder;
-    }
-
     @Transactional
     public Member registerMember(String id, String pw, String name, String phone, String addr) {
         try {
@@ -114,6 +106,6 @@ public class MemberService {
             return memberRepository.save(member);
         } catch (DataIntegrityViolationException e) {
             throw new RuntimeException("이미 존재하는 ID 또는 이메일입니다.", e);
-        } 
+        }
     }
 }

@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
-import '/src/styles/pages/member/SignUp.css';
 import DaumPost from '/src/components/DaumPost';
+import '/src/styles/pages/member/SignUp.css';
 
 
 const SignUp = () => {

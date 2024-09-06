@@ -1,6 +1,6 @@
+import axios from 'axios';
 import React, { useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import axios from 'axios';
 
 const OAuthCallback = () => {
     const location = useLocation();
@@ -16,20 +16,20 @@ const OAuthCallback = () => {
                 provider: provider,
                 code: code,
             })
-            .then(response => {
-                const { accessToken, refreshToken, no } = response.data;
-                localStorage.setItem('accessToken', accessToken);
-                localStorage.setItem('refreshToken', refreshToken);
-                localStorage.setItem('no', no);
-                navigate('/');
-            })
-            .catch(error => {
-                if (error.response) {
-                    console.error('소셜 로그인 실패 : ', error.response.data);
-                } else {
-                    console.error('소셜 로그인 실패 : ', error.message);
-                }
-            });
+                .then(response => {
+                    const { accessToken, refreshToken, no } = response.data;
+                    localStorage.setItem('accessToken', accessToken);
+                    localStorage.setItem('refreshToken', refreshToken);
+                    localStorage.setItem('no', no);
+                    navigate('/');
+                })
+                .catch(error => {
+                    if (error.response) {
+                        console.error('소셜 로그인 실패 : ', error.response.data);
+                    } else {
+                        console.error('소셜 로그인 실패 : ', error.message);
+                    }
+                });
         }
     }, [location]);
 
