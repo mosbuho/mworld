@@ -10,6 +10,8 @@ import SignUp from './pages/SignUp';
 
 import MemberLogin from './pages/member/MemberLogin';
 import OAuthCallback from './utils/OAuthCallback';
+import AdminProductList from "./pages/admin/AdminProductList.jsx";
+import AdminProductCreate from "./pages/admin/AdminProductCreate.jsx";
 
 function App() {
 
@@ -28,6 +30,8 @@ function App() {
         <Route path="/admin" element={<AdminMain />} />
         <Route path="/admin/member" element={<AdminMemberList />} />
         <Route path="/admin/member/:no" element={<AdminMember />} />
+        <Route path="/admin/product" element={<AdminProductList />} />
+        <Route path="/admin/product/create" element={<AdminProductCreate />} />
       </Routes>
     </BrowserRouter>
   )
