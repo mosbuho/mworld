@@ -1,4 +1,4 @@
-import axios from "axios";
+import axios from "/src/utils/axiosConfig.js";
 import { useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import AdminSidebar from "../../components/admin/AdminSidebar.jsx";
@@ -25,7 +25,7 @@ const AdminMember = () => {
     const handleUpdate = async () => {
         if (window.confirm("회원정보를 수정하시겠습니까?")) {
             try {
-                await axios.put(`http://localhost:8080/api/member/admin/${formData.no}`, {
+                await axios.put(`/api/admin/member/${formData.no}`, {
                     name: formData.name,
                     phone: formData.phone,
                     addr: formData.addr,
@@ -42,7 +42,7 @@ const AdminMember = () => {
     const handleDelete = async () => {
         if (window.confirm("회원을 삭제하시겠습니까?")) {
             try {
-                await axios.delete(`http://localhost:8080/api/member/admin/${formData.no}`);
+                await axios.delete(`/api/admin/member/${formData.no}`);
                 alert("회원이 삭제되었습니다.");
                 nav('/admin/member');
             } catch (err) {

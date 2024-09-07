@@ -1,6 +1,6 @@
-import axios from "axios";
+import axios from "/src/utils/axiosConfig.js";
 import dayjs from "dayjs";
-import { useEffect, useState } from "react";
+import {useEffect, useState} from "react";
 import AdminPagination from "../../components/admin/AdminPagination.jsx";
 import AdminSearch from "../../components/admin/AdminSearch.jsx";
 import AdminSidebar from "../../components/admin/AdminSidebar.jsx";
@@ -28,12 +28,11 @@ const AdminMemberList = () => {
             return;
         }
         try {
-            const res = await axios.get('http://localhost:8080/api/member/admin', {
-                params: { page, size: 20, f, q, startDate, endDate } // 기간 추가
-            }
-            );
+            const res = await axios.get('/api/admin/member-list', {
+                params: {page, size: 20, f, q, startDate, endDate} // 기간 추가
+            });
 
-            const { members: fetchedMembers, totalCount } = res.data;
+            const {members: fetchedMembers, totalCount} = res.data;
             setPageDataCache(prevCache => ({
                 ...prevCache,
                 [`${f}_${q}_${page}_${startDate}_${endDate}`]: fetchedMembers,
@@ -43,7 +42,7 @@ const AdminMemberList = () => {
             setPageCount(Math.ceil(totalCount / 20));
 
         } catch (err) {
-            console.error("npm", err);
+            console.error("failed to fetch member-list ", err);
         }
     };
 
@@ -57,23 +56,23 @@ const AdminMemberList = () => {
         setCurrentPage(0);
         setPageDataCache({});
         fetchMembers(1);
-    }
+    };
 
     const handleRowClick = (member, nav) => {
-        nav(`/admin/member/${member.no}`, { state: { member } });
-    }
+        nav(`/admin/member/${member.no}`, {state: {member}});
+    };
 
     const columns = [
-        { header: '아이디', accessor: 'id' },
-        { header: '이름', accessor: 'name' },
-        { header: '전화번호', accessor: 'phone' },
-        { header: '가입일시', accessor: 'regDate' },
+        {header: '아이디', accessor: 'id'},
+        {header: '이름', accessor: 'name'},
+        {header: '전화번호', accessor: 'phone'},
+        {header: '가입일시', accessor: 'regDate'},
     ];
 
     const options = [
-        { value: 'ID', label: '아이디' },
-        { value: 'NAME', label: '이름' },
-        { value: 'PHONE', label: '전화번호' },
+        {value: 'ID', label: '아이디'},
+        {value: 'NAME', label: '이름'},
+        {value: 'PHONE', label: '전화번호'},
     ];
 
     const formattedMembers = members.map((member) => ({
@@ -85,7 +84,7 @@ const AdminMemberList = () => {
     return (
         <div className="admin-member-list">
             <h1>회원리스트</h1>
-            <AdminSidebar />
+            <AdminSidebar/>
             <div className="member-list">
                 <AdminSearch
                     f={f}
@@ -99,8 +98,8 @@ const AdminMemberList = () => {
                     endDate={endDate} // 종료일 전달
                     setEndDate={setEndDate}
                 />
-                <AdminTable columns={columns} data={formattedMembers} onRowClick={handleRowClick} />
-                <AdminPagination pageCount={pageCount} handlePageClick={handlePageClick} currentPage={currentPage} />
+                <AdminTable columns={columns} data={formattedMembers} onRowClick={handleRowClick}/>
+                <AdminPagination pageCount={pageCount} handlePageClick={handlePageClick} currentPage={currentPage}/>
             </div>
         </div>
     );
