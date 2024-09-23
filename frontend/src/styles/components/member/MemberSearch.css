@@ -1,0 +1,145 @@
+.search-bar-container {
+  display: flex;
+  justify-content: center;
+  position: relative;
+  width: 100%;
+  top: 30px;
+  padding: 10px;
+  z-index: 10;
+  transition: all 0.3s ease;
+  overflow: visible;
+  height: auto;
+}
+
+.search-bar-container.sticky {
+  position: sticky;
+  top: 0;
+  background-color: #fff;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.search-bar-wrapper {
+  display: flex;
+  align-items: center;
+  width: 50%;
+}
+
+.search-bar {
+  display: flex;
+  align-items: center;
+  flex: 1;
+  height: 50px;
+  border: 2px solid #FF7F8A;
+  border-radius: 25px;
+  padding: 5px 15px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  box-sizing: border-box;
+  flex-wrap: nowrap;
+}
+
+.search-icon {
+  font-size: 18px;
+  margin-right: 10px;
+  color: #FF7F8A;
+}
+
+.input-container {
+  display: flex;
+  align-items: center;
+  flex: 1;
+  position: relative;
+  overflow: hidden;
+}
+
+.search-input {
+  border: none;
+  outline: none;
+  font-size: 16px;
+  flex: 1;
+  z-index: 14;
+  min-width: 0;
+}
+
+.search-input::placeholder {
+  color: #ccc;
+}
+
+.suggestion-text {
+  display: flex;
+  align-items: center;
+  margin-left: 5px;
+  white-space: nowrap;
+}
+
+.suggested-text {
+  color: #FF7F8A;
+  font-size: 12px;
+}
+
+.autocomplete-hint {
+  margin-left: 5px;
+  font-size: 10px;
+  color: #aaa;
+}
+
+/* sticky 상태에서 폰트 크기 및 레이아웃 조정 */
+.search-bar-container.sticky .suggested-text {
+  font-size: 10px;
+}
+
+.search-bar-container.sticky .autocomplete-hint {
+  font-size: 8px;
+}
+
+/* sticky 상태에서 suggestion-text 레이아웃 변경 */
+.search-bar-container.sticky .suggestion-text {
+  flex-direction: column;
+  align-items: flex-start;
+  max-width: 100%;
+}
+
+.search-bar-container.sticky .autocomplete-hint {
+  margin-left: 0;
+  margin-top: 2px;
+}
+
+.search-bar-container.sticky .search-bar {
+  width: 40%;
+}
+
+.search-bar-container.sticky .search-input {
+  font-size: 14px;
+}
+
+.search-buttons {
+  display: flex;
+  gap: 15px;
+  margin-left: 15px;
+}
+
+.search-button {
+  background-color: transparent;
+  color: #FF7F8A;
+  border-radius: 15px;
+  font-size: 30px;
+  cursor: pointer;
+}
+
+@media screen and (max-width: 600px) {
+  .search-bar-wrapper {
+    width: 90%;
+  }
+
+  .search-bar {
+    padding: 5px 10px;
+  }
+
+  .search-input {
+    font-size: 14px;
+  }
+
+  .suggested-text,
+  .autocomplete-hint {
+    display: none;
+  }
+}
