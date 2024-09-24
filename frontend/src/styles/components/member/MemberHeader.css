@@ -1,0 +1,50 @@
+body {
+  margin: 0;
+  padding: 0;
+}
+.member-header {
+  background-color:#FF7F8A;
+  padding: 10px 0;
+  height: 20px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.nav-menu {
+  display: flex;
+  justify-content: center;
+}
+
+.nav-list {
+  list-style: none;
+  display: flex;
+  gap: 20px;
+  padding: 0;
+  margin: 0;
+}
+
+.nav-list li a {
+  color: white;
+  text-decoration: none;
+  font-size: 1rem;
+  font-weight: bold;
+  transition: color 0.3 ease;
+}
+
+.nav-list li a:hover {
+  color: #FFD1D6;
+}
+
+.nav-list li a:focus {
+  outline: 2px solid #FFD1D6;
+  outline-offset: 2px;
+}
+
+@media screen and (max-width: 600px) {
+  .nav-list {
+    gap: 10px;
+  }
+
+  .nav-list li a {
+    font-size: 0.8rem;
+  }
+}
