@@ -32,19 +32,6 @@ const AdminSearch = ({f, setF, q, setQ, onSearch, options, startDate, setStartDa
                 onChange={(e) => setQ(e.target.value)}
                 placeholder="검색어 입력"
             />
-            <div>
-                <input
-                    type="date"
-                    value={startDate}
-                    onChange={(e) => setStartDate(e.target.value)}
-                />
-                ~
-                <input
-                    type="date"
-                    value={endDate}
-                    onChange={(e) => setEndDate(e.target.value)}
-                />
-            </div>
             <button onClick={onSearch}>검색</button>
             <button onClick={handleReset}>초기화</button>
         </div>
