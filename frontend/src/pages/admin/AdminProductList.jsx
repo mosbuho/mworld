@@ -1,9 +1,11 @@
 import AdminSidebar from "../../components/admin/AdminSidebar.jsx";
 import {useEffect, useState} from "react";
 import dayjs from "dayjs";
-import axios from "axios";
+import axios from "/src/utils/axiosConfig.js";
 import AdminTable from "../../components/admin/AdminTable.jsx";
 import {useNavigate} from "react-router-dom";
+import AdminPagination from "../../components/admin/AdminPagination.jsx";
+import AdminSearch from "../../components/admin/AdminSearch.jsx";
 
 const AdminProductList = () => {
     const [products, setProducts] = useState([]);
@@ -12,34 +14,33 @@ const AdminProductList = () => {
     const [pageDataCache, setPageDataCache] = useState({});
     const [f, setF] = useState('title');
     const [q, setQ] = useState('');
-    const [startDate, setStartDate] = useState('');
-    const [endDate, setEndDate] = useState('');
     const nav = useNavigate();
 
     dayjs.locale("ko");
 
     useEffect(() => {
+        fetchProducts(1);
     }, []);
 
     const fetchProducts = async (page) => {
-        if (pageDataCache[`${f}_${page}_${startDate}_${endDate}`]) {
-            setProducts(pageDataCache[`${f}_${page}_${startDate}_${endDate}`]);
+        if (pageDataCache[`${f}_${page}`]) {
+            setProducts(pageDataCache[`${f}_${page}`]);
             return;
         }
         try {
-            const res = await axios.get('/api/admin/products-list', {
-                params: {page, size: 20, f, q, startDate, endDate}
+            const res = await axios.get('/api/admin/product-list', {
+                params: {page, size: 20, f, q}
             });
             const {products: fetchedProducts, totalCount} = res.data;
             setPageDataCache(prevCache => ({
                 ...prevCache,
-                [`${f}_${page}_${startDate}_${endDate}`]: fetchedProducts,
+                [`${f}_${page}`]: fetchedProducts,
             }));
 
             setProducts(fetchedProducts);
             setPageCount(Math.ceil(totalCount / 20));
         } catch (err) {
-            console.error("failed to load products-list", err);
+            console.error("failed to load product-list", err);
         }
     };
 
@@ -56,22 +57,20 @@ const AdminProductList = () => {
     };
 
     const handleRowClick = (product, nav) => {
-        nav(`/admin/products/${product.no}`, {state: {product}});
+        nav(`/admin/product/${product.no}`, {state: {product}});
     };
 
     const columns = [
         {header: '번호', accessor: 'no'},
         {header: '이미지', accessor: 'titleImg'},
         {header: '상품명', accessor: 'title'},
-        // {header : '카테고리', accessor: 'category'},
+        {header : '카테고리', accessor: 'category'},
         {header: '재고', accessor: 'quantity'},
         {header: '가격', accessor: 'price'},
     ]
 
     const options = [
-        {value: 'ID', label: 'ID'},
         {value: 'TITLE', label: '상품명'},
-        {value: 'PHONE', label: 'PHONE'},
     ]
 
     return (
@@ -79,9 +78,16 @@ const AdminProductList = () => {
             <h1>상품리스트</h1>
             <AdminSidebar/>
             <button onClick={() => nav('/admin/product/create')}>상품등록</button>
-            <div className="product-list">
-                <AdminTable columns={columns} data={products} onRowClick={handleRowClick}/>
-            </div>
+            <AdminSearch
+                f={f}
+                setF={setF}
+                q={q}
+                setQ={setQ}
+                onSearch={handleSearch}
+                options={options}
+            />
+            <AdminTable columns={columns} data={products} onRowClick={handleRowClick}/>
+            <AdminPagination pageCount={pageCount} handlePageClick={handlePageClick} currentPage={currentPage}/>
         </div>
     );
 };
