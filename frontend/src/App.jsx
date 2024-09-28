@@ -10,8 +10,14 @@ import MemberMain from './pages/member/MemberMain.jsx';
 
 import MemberLogin from './pages/member/MemberLogin';
 import OAuthCallback from './utils/OAuthCallback';
+
 import ProductDetail from './pages/member/ProductDetail.jsx';
 import MainProduct from './components/member/MainProduct.jsx';
+
+import AdminProductList from "./pages/admin/AdminProductList.jsx";
+import AdminProductCreate from "./pages/admin/AdminProductCreate.jsx";
+import AdminProduct from "./pages/admin/AdminProduct.jsx";
+
 
 function App() {
 
@@ -35,6 +41,9 @@ function App() {
         <Route path="/admin" element={<AdminMain />} />
         <Route path="/admin/member" element={<AdminMemberList />} />
         <Route path="/admin/member/:no" element={<AdminMember />} />
+        <Route path="/admin/product" element={<AdminProductList />} />
+        <Route path="/admin/product/create" element={<AdminProductCreate />} />
+        <Route path="/admin/product/:no" element={<AdminProduct/>} />
       </Routes>
     </BrowserRouter>
   )

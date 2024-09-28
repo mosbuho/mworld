@@ -1,4 +1,4 @@
-import axios from "axios";
+import axios from "/src/utils/axiosConfig.js";
 import dayjs from "dayjs";
 import "dayjs/locale/ko.js";
 import { useEffect, useState } from "react";
@@ -14,7 +14,7 @@ const AdminMain = () => {
 
     const fetchPayments = async () => {
         try {
-            const res = await axios.get('http://localhost:8080/api/payment/admin/main');
+            const res = await axios.get('/api/admin/payment-main');
             setPayments(res.data);
         } catch (err) {
             console.error("failed to fetch payment", err);
@@ -23,7 +23,7 @@ const AdminMain = () => {
 
     const fetchMembers = async () => {
         try {
-            const res = await axios.get('http://localhost:8080/api/member/admin/main');
+            const res = await axios.get('/api/admin/member-main');
             setMembers(res.data);
         } catch (err) {
             console.error("failed to fetch member", err);
