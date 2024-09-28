@@ -25,8 +25,8 @@ import jakarta.persistence.Query;
 @Service
 public class MemberService {
 
-    private MemberRepository memberRepository;
-    private PasswordEncoder passwordEncoder;
+    private final MemberRepository memberRepository;
+    private final PasswordEncoder passwordEncoder;
 
     public MemberService(MemberRepository memberRepository, PasswordEncoder passwordEncoder) {
         this.memberRepository = memberRepository;
@@ -72,7 +72,7 @@ public class MemberService {
     }
 
     public Map<String, Object> getMemberWithPagination(int page, int size, String f, String q, LocalDate startDate,
-            LocalDate endDate) {
+                                                       LocalDate endDate) {
         Pageable pageable = PageRequest.of(page - 1, size, Sort.by(Sort.Direction.DESC, "regDate"));
 
         LocalDateTime startDateTime = startDate != null ? startDate.atStartOfDay() : null;
