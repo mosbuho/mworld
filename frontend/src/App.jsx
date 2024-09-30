@@ -18,6 +18,8 @@ import AdminProductList from "./pages/admin/AdminProductList.jsx";
 import AdminProductCreate from "./pages/admin/AdminProductCreate.jsx";
 import AdminProduct from "./pages/admin/AdminProduct.jsx";
 
+import AdminNoticeCreate from "./pages/admin/AdminNoticeCreate.jsx";
+
 
 function App() {
 
@@ -44,6 +46,8 @@ function App() {
         <Route path="/admin/product" element={<AdminProductList />} />
         <Route path="/admin/product/create" element={<AdminProductCreate />} />
         <Route path="/admin/product/:no" element={<AdminProduct/>} />
+
+        <Route path="/notice/create" element={<AdminNoticeCreate/>} />
       </Routes>
     </BrowserRouter>
   )
