@@ -7,6 +7,7 @@ import AdminMemberList from "./pages/admin/AdminMemberList.jsx";
 import AdminLogin from './pages/AdminLogin';
 import SignUp from './pages/SignUp';
 import MemberMain from './pages/member/MemberMain.jsx';
+import MyPage from './pages/member/MyPage.jsx';
 
 import MemberLogin from './pages/member/MemberLogin';
 import OAuthCallback from './utils/OAuthCallback';
@@ -33,6 +34,7 @@ function App() {
           <Route path='search' element={<MainProduct />} />
           <Route path='product/:id' element={<ProductDetail />} />
         </Route>
+        <Route path='/mypage' element={<PublicRoute><MyPage /></PublicRoute>} />
         <Route path="/login" element={<PublicRoute><MemberLogin /></PublicRoute>} />
         <Route path="/signup" element={<PublicRoute><SignUp /></PublicRoute>} />
         <Route path="/admin/login" element={<PublicRoute><AdminLogin /></PublicRoute>} />
@@ -43,7 +45,7 @@ function App() {
         <Route path="/admin/member/:no" element={<AdminMember />} />
         <Route path="/admin/product" element={<AdminProductList />} />
         <Route path="/admin/product/create" element={<AdminProductCreate />} />
-        <Route path="/admin/product/:no" element={<AdminProduct/>} />
+        <Route path="/admin/product/:no" element={<AdminProduct />} />
       </Routes>
     </BrowserRouter>
   )
