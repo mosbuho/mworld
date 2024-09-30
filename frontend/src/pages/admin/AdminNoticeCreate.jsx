@@ -3,8 +3,7 @@ import {useNavigate} from 'react-router-dom';
 import {EditorState, convertToRaw} from 'draft-js';
 import {Editor} from 'react-draft-wysiwyg';
 import 'react-draft-wysiwyg/dist/react-draft-wysiwyg.css';
-import axios from 'axios';
-
+import axios from "/src/utils/axiosConfig.js";
 
 const AdminNoticeCreate = () => {
     const navigate = useNavigate();
@@ -18,7 +17,7 @@ const AdminNoticeCreate = () => {
             const contentState = editorState.getCurrentContent();
             const contentRaw = JSON.stringify(convertToRaw(contentState));
 
-            await axios.post('http://localhost:8080/api/notice/create', {title, content: contentRaw});
+            await axios.post('/api/notice/create', {title, content: contentRaw});
             navigate('/notice');
         } catch {
             alert('공지 생성에 실패했습니다. 다시 시도해 주세요.');

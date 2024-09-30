@@ -1,16 +1,17 @@
-import axios from "axios";
+import axios from "/src/utils/axiosConfig.js";
 import AdminPagination from "../../components/admin/AdminPagination.jsx";
 import AdminTable from "../../components/admin/AdminTable.jsx";
 import React, {useState, useEffect} from 'react';  // useState와 useEffect 추가
 import {useNavigate} from "react-router-dom";
 import dayjs from "dayjs";
+import AdminSearch from "../../components/admin/AdminSearch.jsx";
 
 const AdminNoticeList = () => {
     const [notice, setNotice] = useState([]);
     const [pageCount, setPageCount] = useState(1);
     const [currentPage, setCurrentPage] = useState(0);
     const [pageDataCache, setPageDataCache] = useState({});
-    const [f, setF] = useState('NO');
+    const [f, setF] = useState('no');
     const [q, setQ] = useState('');
     const [startDate, setStartDate] = useState('');
     const [endDate, setEndDate] = useState('');
@@ -31,7 +32,7 @@ const AdminNoticeList = () => {
             return;
         }
         try {
-            const response = await axios.get('http://localhost:8080/api/notice', {
+            const response = await axios.get('/api/notice', {
                 params: {
                     page, size: 30, f, q
                 }
@@ -92,12 +93,19 @@ const AdminNoticeList = () => {
         <div>
             <div>
                 <div>
-                    {/*<AdminSearch f={f} setF={setF} q={q} setQ={setQ} onSearch={handleSearch} options={options} />*/}
                     <button onClick={() => {
                         navigate('/notice/create')
                     }}>작성
                     </button>
                 </div>
+                <AdminSearch
+                    f={f}
+                    setF={setF}
+                    q={q}
+                    setQ={setQ}
+                    onSearch={handleSearch}
+                    options={options}
+                />
                 <AdminTable columns={columns} data={formattedNotice} onRowClick={handleRowClick}/>
                 <AdminPagination pageCount={pageCount} handlePageClick={handlePageClick} currentPage={currentPage}/>
             </div>
