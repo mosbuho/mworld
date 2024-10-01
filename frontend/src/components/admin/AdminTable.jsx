@@ -1,4 +1,5 @@
 import {useNavigate} from "react-router-dom";
+import "/src/styles/components/admin/AdminTable.css"
 
 const AdminTable = ({columns, data, onRowClick}) => {
     const nav = useNavigate();

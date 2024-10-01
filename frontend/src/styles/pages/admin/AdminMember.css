@@ -1,0 +1,45 @@
+div.admin-main {
+    form {
+        background-color: #ffffff;
+        width: 600px;
+        margin: 0 auto;
+        padding: 20px;
+
+        div.form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+            margin: 10px 0;
+            label {
+                font-weight: 600;
+            }
+            input{
+                padding: 10px 5px;
+                border: 1px solid #d0cfcf;
+            }
+            input:focus{
+                outline: none;
+            }
+            input[readonly]{
+                background-color: #e7e7e7;
+                cursor: not-allowed;
+            }
+        }
+        div.btn-area{
+            margin-top: 20px;
+            display: flex;
+            gap: 10px;
+        }
+        button.update-btn{
+            background-color: dodgerblue;
+            color: white;
+        }
+        button.delete-btn{
+            background-color: tomato;
+            color: white;
+        }
+        button:hover{
+            color: black;
+        }
+    }
+}

@@ -1,12 +1,13 @@
 import axios from "/src/utils/axiosConfig.js";
-import { useState } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
+import {useState} from "react";
+import {useLocation, useNavigate} from "react-router-dom";
 import AdminSidebar from "../../components/admin/AdminSidebar.jsx";
+import "/src/styles/pages/admin/AdminMember.css"
 
 const AdminMember = () => {
     const location = useLocation();
     const nav = useNavigate();
-    const { member } = location.state;
+    const {member} = location.state;
 
     const [formData, setFormData] = useState({
         no: member.no,
@@ -18,8 +19,8 @@ const AdminMember = () => {
     })
 
     const handleChange = (e) => {
-        const { id, value } = e.target;
-        setFormData((prevData) => ({ ...prevData, [id]: value }));
+        const {id, value} = e.target;
+        setFormData((prevData) => ({...prevData, [id]: value}));
     };
 
     const handleUpdate = async () => {
@@ -54,69 +55,73 @@ const AdminMember = () => {
 
 
     return (
-        <div className="admin-member">
+        <div className="admin-main">
             <h1>회원정보</h1>
-            <AdminSidebar />
-            <div className="admin-member-detail">
-                <form>
-                    <div className="form-group">
-                        <label htmlFor="no">번호</label>
-                        <input
-                            type="text"
-                            id="no"
-                            value={formData.no}
-                            readOnly={true}
-                        />
-                    </div>
-                    <div className="form-group">
-                        <label htmlFor="id">아이디</label>
-                        <input
-                            type="text"
-                            id="id"
-                            value={formData.id}
-                            readOnly={true}
-                        />
-                    </div>
-                    <div className="form-group">
-                        <label htmlFor="name">이름</label>
-                        <input
-                            type="text"
-                            id="name"
-                            value={formData.name}
-                            onChange={handleChange}
-                        />
-                    </div>
-                    <div className="form-group">
-                        <label htmlFor="phone">전화번호</label>
-                        <input
-                            type="text"
-                            id="phone"
-                            value={formData.phone}
-                            onChange={handleChange}
-                        />
-                    </div>
-                    <div className="form-group">
-                        <label htmlFor="addr">주소</label>
-                        <input
-                            type="text"
-                            id="addr"
-                            value={formData.addr}
-                            onChange={handleChange}
-                        />
-                    </div>
-                    <div className="form-group">
-                        <label htmlFor="regDate">가입일</label>
-                        <input
-                            type="text"
-                            id="regDate"
-                            value={formData.regDate}
-                            readOnly={true}
-                        />
-                    </div>
-                    <button type="button" onClick={handleUpdate}>수정</button>
-                    <button type="button" onClick={handleDelete}>삭제</button>
-                    <button type="button" onClick={() => nav(-1)}>뒤로</button>
-                </form>
+            <AdminSidebar/>
+            <div className="main">
+                <div className="admin-member-detail">
+                    <form>
+                        <div className="form-group">
+                            <label htmlFor="no">번호</label>
+                            <input
+                                type="text"
+                                id="no"
+                                value={formData.no}
+                                readOnly={true}
+                            />
+                        </div>
+                        <div className="form-group">
+                            <label htmlFor="id">아이디</label>
+                            <input
+                                type="text"
+                                id="id"
+                                value={formData.id}
+                                readOnly={true}
+                            />
+                        </div>
+                        <div className="form-group">
+                            <label htmlFor="name">이름</label>
+                            <input
+                                type="text"
+                                id="name"
+                                value={formData.name}
+                                onChange={handleChange}
+                            />
+                        </div>
+                        <div className="form-group">
+                            <label htmlFor="phone">전화번호</label>
+                            <input
+                                type="text"
+                                id="phone"
+                                value={formData.phone}
+                                onChange={handleChange}
+                            />
+                        </div>
+                        <div className="form-group">
+                            <label htmlFor="addr">주소</label>
+                            <input
+                                type="text"
+                                id="addr"
+                                value={formData.addr}
+                                onChange={handleChange}
+                            />
+                        </div>
+                        <div className="form-group">
+                            <label htmlFor="regDate">가입일</label>
+                            <input
+                                type="text"
+                                id="regDate"
+                                value={formData.regDate}
+                                readOnly={true}
+                            />
+                        </div>
+                        <div className="btn-area">
+                            <button type="button" className="update-btn" onClick={handleUpdate}>수정</button>
+                            <button type="button" className="delete-btn" onClick={handleDelete}>삭제</button>
+                            <button type="button" onClick={() => nav(-1)}>뒤로</button>
+                        </div>
+                    </form>
+                </div>
             </div>
         </div>
     );

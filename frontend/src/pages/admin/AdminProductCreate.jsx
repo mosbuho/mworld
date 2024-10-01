@@ -12,8 +12,8 @@ const AdminProductCreate = () => {
     const [formData, setFormData] = useState({});
 
     const handleChange = (e) => {
-        const { id, value } = e.target;
-        setFormData((prevData) => ({ ...prevData, [id]: value }));
+        const {id, value} = e.target;
+        setFormData((prevData) => ({...prevData, [id]: value}));
     };
 
     const handleEditorChange = (editorState) => setEditorState(editorState);
@@ -88,7 +88,7 @@ const AdminProductCreate = () => {
                 })
                     .then((response) => {
                         const imageUrl = `http://localhost:8080/api/img/${response.data.url}`;
-                        setFormData((prevData) => ({ ...prevData, titleImg: imageUrl }));
+                        setFormData((prevData) => ({...prevData, titleImg: imageUrl}));
                     })
                     .catch((error) => {
                         console.error('Image upload failed:', error);
@@ -119,7 +119,7 @@ const AdminProductCreate = () => {
                     })
                         .then((response) => {
                             const imageUrl = `http://localhost:8080/api/img/${response.data.url}`;
-                            resolve({ data: { link: imageUrl } }); // 에디터에 삽입할 URL 반환
+                            resolve({data: {link: imageUrl}}); // 에디터에 삽입할 URL 반환
                         })
                         .catch((error) => {
                             console.error('Image upload failed:', error);
@@ -162,83 +162,86 @@ const AdminProductCreate = () => {
     };
 
     return (
-        <div className="admin-product-create">
-            <AdminSidebar />
-            <div className="admin-product-detail">
-                <form onSubmit={handleSubmit}>
-                    <div className="form-group">
-                        <label htmlFor="title">상품명</label>
-                        <input
-                            type="text"
-                            id="title"
-                            value={formData.title || ""}
-                            onChange={handleChange}
-                        />
-                    </div>
-                    <div className="form-group">
-                        <label htmlFor="category">카테고리</label>
-                        <input
-                            type="text"
-                            id="category"
-                            value={formData.category || ""}
-                            onChange={handleChange}
-                        />
-                    </div>
-                    <div className="form-group">
-                        <label htmlFor="titleImg">대표이미지</label>
-                        <input
-                            type="file"
-                            id="titleImg"
-                            onChange={handleTitleImageUpload} // 대표 이미지 업로드 처리
-                        />
-                        <div>
-                            <img src={formData.titleImg} alt="" />
-                            <span>미리보기</span>
-                        </div>
-                    </div>
-                    <div className="form-group">
-                        <label htmlFor="price">상품가격</label>
-                        <input
-                            type="number"
-                            id="price"
-                            value={formData.price || ""}
-                            onChange={handleChange}
-                        />
-                    </div>
-                    <div className="form-group">
-                        <label htmlFor="quantity">초기재고</label>
-                        <input
-                            type="number"
-                            id="quantity"
-                            value={formData.quantity || ""}
-                            onChange={handleChange}
-                        />
-                    </div>
-                    <div className="form-group">
-                        <label htmlFor="content">상품설명</label>
-                        <div className="draft-editor">
-                            <Editor
-                                editorState={editorState}
-                                onEditorStateChange={handleEditorChange}
-                                toolbar={{
-                                    image: {
-                                        uploadEnabled: true,
-                                        uploadCallback: uploadImageCallback, // 컨텐츠 이미지 업로드 콜백
-                                        alt: { present: true, mandatory: false },
-                                        previewImage: true,
-                                        defaultSize: {
-                                            height: 'auto',
-                                            width: '400px',
-                                        },
-                                        alignmentEnabled: true,
-                                        resizeEnabled: true,
-                                    },
-                                }}
+        <div className="admin-main">
+            <h1>상품등록</h1>
+            <AdminSidebar/>
+            <div className="main">
+                <div className="admin-product-detail">
+                    <form onSubmit={handleSubmit}>
+                        <div className="form-group">
+                            <label htmlFor="title">상품명</label>
+                            <input
+                                type="text"
+                                id="title"
+                                value={formData.title || ""}
+                                onChange={handleChange}
                             />
                         </div>
-                    </div>
-                    <button type="submit">저장</button>
-                </form>
+                        <div className="form-group">
+                            <label htmlFor="category">카테고리</label>
+                            <input
+                                type="text"
+                                id="category"
+                                value={formData.category || ""}
+                                onChange={handleChange}
+                            />
+                        </div>
+                        <div className="form-group">
+                            <label htmlFor="titleImg">대표이미지</label>
+                            <input
+                                type="file"
+                                id="titleImg"
+                                onChange={handleTitleImageUpload} // 대표 이미지 업로드 처리
+                            />
+                            <div>
+                                <img src={formData.titleImg} alt=""/>
+                                <span>미리보기</span>
+                            </div>
+                        </div>
+                        <div className="form-group">
+                            <label htmlFor="price">상품가격</label>
+                            <input
+                                type="number"
+                                id="price"
+                                value={formData.price || ""}
+                                onChange={handleChange}
+                            />
+                        </div>
+                        <div className="form-group">
+                            <label htmlFor="quantity">초기재고</label>
+                            <input
+                                type="number"
+                                id="quantity"
+                                value={formData.quantity || ""}
+                                onChange={handleChange}
+                            />
+                        </div>
+                        <div className="form-group">
+                            <label htmlFor="content">상품설명</label>
+                            <div className="draft-editor">
+                                <Editor
+                                    editorState={editorState}
+                                    onEditorStateChange={handleEditorChange}
+                                    toolbar={{
+                                        image: {
+                                            uploadEnabled: true,
+                                            uploadCallback: uploadImageCallback, // 컨텐츠 이미지 업로드 콜백
+                                            alt: {present: true, mandatory: false},
+                                            previewImage: true,
+                                            defaultSize: {
+                                                height: 'auto',
+                                                width: '400px',
+                                            },
+                                            alignmentEnabled: true,
+                                            resizeEnabled: true,
+                                        },
+                                    }}
+                                />
+                            </div>
+                        </div>
+                        <button type="submit">저장</button>
+                    </form>
+                </div>
             </div>
         </div>
     );
