@@ -28,18 +28,18 @@ const AdminMemberList = () => {
             return;
         }
         try {
-            const res = await axios.get('/api/admin/member-list', {
+            const res = await axios.get('/api/admin/member', {
                 params: {page, size: 20, f, q, startDate, endDate} // 기간 추가
             });
 
-            const {members: fetchedMembers, totalCount} = res.data;
+            const {members: fetchedMembers, totalCount, totalPages} = res.data;
             setPageDataCache(prevCache => ({
                 ...prevCache,
                 [`${f}_${q}_${page}_${startDate}_${endDate}`]: fetchedMembers,
             }));
 
             setMembers(fetchedMembers);
-            setPageCount(Math.ceil(totalCount / 20));
+            setPageCount(totalPages);
 
         } catch (err) {
             console.error("failed to fetch member-list ", err);
@@ -66,6 +66,7 @@ const AdminMemberList = () => {
         {header: '아이디', accessor: 'id'},
         {header: '이름', accessor: 'name'},
         {header: '전화번호', accessor: 'phone'},
+        {header: '주소', accessor: 'addr'},
         {header: '가입일시', accessor: 'regDate'},
     ];
 
@@ -82,24 +83,26 @@ const AdminMemberList = () => {
 
 
     return (
-        <div className="admin-member-list">
+        <div className="admin-main">
             <h1>회원리스트</h1>
             <AdminSidebar/>
-            <div className="member-list">
-                <AdminSearch
-                    f={f}
-                    setF={setF}
-                    q={q}
-                    setQ={setQ}
-                    onSearch={handleSearch}
-                    options={options}
-                    startDate={startDate} // 시작일 전달
-                    setStartDate={setStartDate}
-                    endDate={endDate} // 종료일 전달
-                    setEndDate={setEndDate}
-                />
-                <AdminTable columns={columns} data={formattedMembers} onRowClick={handleRowClick}/>
-                <AdminPagination pageCount={pageCount} handlePageClick={handlePageClick} currentPage={currentPage}/>
+            <div className="main">
+                <div className="admin-member-list">
+                    <AdminSearch
+                        f={f}
+                        setF={setF}
+                        q={q}
+                        setQ={setQ}
+                        onSearch={handleSearch}
+                        options={options}
+                        startDate={startDate} // 시작일 전달
+                        setStartDate={setStartDate}
+                        endDate={endDate} // 종료일 전달
+                        setEndDate={setEndDate}
+                    />
+                    <AdminTable columns={columns} data={formattedMembers} onRowClick={handleRowClick}/>
+                    <AdminPagination pageCount={pageCount} handlePageClick={handlePageClick} currentPage={currentPage}/>
+                </div>
             </div>
         </div>
     );

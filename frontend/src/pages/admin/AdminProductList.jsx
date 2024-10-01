@@ -6,6 +6,7 @@ import AdminTable from "../../components/admin/AdminTable.jsx";
 import {useNavigate} from "react-router-dom";
 import AdminPagination from "../../components/admin/AdminPagination.jsx";
 import AdminSearch from "../../components/admin/AdminSearch.jsx";
+import "/src/styles/pages/admin/AdminProductList.css"
 
 const AdminProductList = () => {
     const [products, setProducts] = useState([]);
@@ -28,7 +29,7 @@ const AdminProductList = () => {
             return;
         }
         try {
-            const res = await axios.get('/api/admin/product-list', {
+            const res = await axios.get('/api/admin/product', {
                 params: {page, size: 20, f, q}
             });
             const {products: fetchedProducts, totalCount} = res.data;
@@ -64,7 +65,7 @@ const AdminProductList = () => {
         {header: '번호', accessor: 'no'},
         {header: '이미지', accessor: 'titleImg'},
         {header: '상품명', accessor: 'title'},
-        {header : '카테고리', accessor: 'category'},
+        {header: '카테고리', accessor: 'category'},
         {header: '재고', accessor: 'quantity'},
         {header: '가격', accessor: 'price'},
     ]
@@ -74,20 +75,24 @@ const AdminProductList = () => {
     ]
 
     return (
-        <div className="admin-product-list">
+        <div className="admin-main">
             <h1>상품리스트</h1>
             <AdminSidebar/>
-            <button onClick={() => nav('/admin/product/create')}>상품등록</button>
-            <AdminSearch
-                f={f}
-                setF={setF}
-                q={q}
-                setQ={setQ}
-                onSearch={handleSearch}
-                options={options}
-            />
-            <AdminTable columns={columns} data={products} onRowClick={handleRowClick}/>
-            <AdminPagination pageCount={pageCount} handlePageClick={handlePageClick} currentPage={currentPage}/>
+            <div className="main">
+                <AdminSearch
+                    f={f}
+                    setF={setF}
+                    q={q}
+                    setQ={setQ}
+                    onSearch={handleSearch}
+                    options={options}
+                />
+                <div className="admin-product-filter">
+                    <button onClick={() => nav('/admin/product/create')}>상품등록</button>
+                </div>
+                <AdminTable columns={columns} data={products} onRowClick={handleRowClick}/>
+                <AdminPagination pageCount={pageCount} handlePageClick={handlePageClick} currentPage={currentPage}/>
+            </div>
         </div>
     );
 };

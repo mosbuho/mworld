@@ -1,0 +1,11 @@
+div.admin-product-filter{
+    padding: 20px 20px 0 20px;
+    background-color: #ffffff;
+    button{
+        background-color: tomato;
+        color: white;
+    }
+    button:hover{
+        color: black;
+    }
+}

@@ -1,4 +1,5 @@
 import {useEffect, useState} from "react";
+import "/src/styles/components/admin/AdminSearch.css"
 
 const AdminSearch = ({f, setF, q, setQ, onSearch, options, startDate, setStartDate, endDate, setEndDate}) => {
     const [reset, setReset] = useState(false);
@@ -10,6 +11,12 @@ const AdminSearch = ({f, setF, q, setQ, onSearch, options, startDate, setStartDa
         setEndDate('');
         setReset(true);
     };
+
+    const handleKeyDown = (e) => {
+        if (e.keyCode === 13) {
+            onSearch();
+        }
+    }
     useEffect(() => {
         if (reset) {
             onSearch();
@@ -30,6 +37,7 @@ const AdminSearch = ({f, setF, q, setQ, onSearch, options, startDate, setStartDa
                 type="text"
                 value={q}
                 onChange={(e) => setQ(e.target.value)}
+                onKeyDown={handleKeyDown}
                 placeholder="검색어 입력"
             />
             <button onClick={onSearch}>검색</button>

@@ -1,0 +1,21 @@
+div.admin-main {
+    display: grid;
+    grid-template-areas:
+    "header header"
+    "sidebar main";
+    grid-template-columns: 200px 1fr;
+    grid-template-rows: auto 1fr;
+    height: 100vh;
+}
+
+div.admin-main {
+    nav.admin-sidebar {
+        grid-area: sidebar;
+        padding: 20px;
+    }
+
+    div.main {
+        grid-area: main;
+        padding: 20px;
+    }
+}

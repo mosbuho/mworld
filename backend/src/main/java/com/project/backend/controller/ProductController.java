@@ -34,7 +34,7 @@ public class ProductController {
         }
     }
 
-    @GetMapping("/admin/product-list")
+    @GetMapping("/admin/product")
     public Map<String, Object> getAllProducts(
             @RequestParam(defaultValue = "1") int page,
             @RequestParam(defaultValue = "20") int size,
