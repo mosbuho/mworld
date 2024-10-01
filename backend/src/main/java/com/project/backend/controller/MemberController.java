@@ -35,7 +35,7 @@ public class MemberController {
         return memberService.getMemberList(page, size);
     }
 
-    @GetMapping("/admin/member-list")
+    @GetMapping("/admin/member")
     public Map<String, Object> getAllMember(
             @RequestParam(defaultValue = "1") int page,
             @RequestParam(defaultValue = "20") int size,
