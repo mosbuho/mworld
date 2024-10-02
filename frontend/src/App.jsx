@@ -1,20 +1,19 @@
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import './App.css';
 import PublicRoute from './components/common/PublicRoute';
+import OAuthCallback from './utils/OAuthCallback';
+import SignUp from './pages/SignUp';
+
+import MemberMain from './pages/member/MemberMain.jsx';
+import MemberLogin from './pages/member/MemberLogin';
+import MainProduct from './components/member/MainProduct.jsx';
+import ProductDetail from './pages/member/ProductDetail';
+import MyPage from './pages/member/MyPage';
+
 import AdminMain from "./pages/admin/AdminMain.jsx";
 import AdminMember from "./pages/admin/AdminMember.jsx";
 import AdminMemberList from "./pages/admin/AdminMemberList.jsx";
 import AdminLogin from './pages/AdminLogin';
-import SignUp from './pages/SignUp';
-import MemberMain from './pages/member/MemberMain.jsx';
-import MyPage from './pages/member/MyPage.jsx';
-
-import MemberLogin from './pages/member/MemberLogin';
-import OAuthCallback from './utils/OAuthCallback';
-
-import ProductDetail from './pages/member/ProductDetail.jsx';
-import MainProduct from './components/member/MainProduct.jsx';
-
 import AdminProductList from "./pages/admin/AdminProductList.jsx";
 import AdminProductCreate from "./pages/admin/AdminProductCreate.jsx";
 import AdminProduct from "./pages/admin/AdminProduct.jsx";
