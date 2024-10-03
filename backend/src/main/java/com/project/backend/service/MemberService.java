@@ -67,7 +67,6 @@ public class MemberService {
         if (member == null) {
             throw new IllegalArgumentException("Invalid member No: " + no);
         }
-        System.out.println(member);
         memberRepository.delete(member);
     }
 

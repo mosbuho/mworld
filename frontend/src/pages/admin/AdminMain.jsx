@@ -24,7 +24,7 @@ const AdminMain = () => {
     const fetchPayments = async () => {
         try {
             const res = await axios.get('/api/admin/payment-main');
-            setPayments(res.data);
+            setPayments(res.data.payments);
         } catch (err) {
             console.error("failed to fetch payment", err);
         }
@@ -51,8 +51,8 @@ const AdminMain = () => {
 
     const paymentsColumns = [
         {header: '주문번호', accessor: 'transactionId'},
-        {header: '주문자명', accessor: 'name'},
-        {header: '전화번호', accessor: 'phone'},
+        {header: '주문자명', accessor: 'memberName'},
+        {header: '전화번호', accessor: 'memberPhone'},
         {header: '결제방법', accessor: 'method'},
         {header: '총주문액', accessor: 'price'},
         {header: '주문일시', accessor: 'regDate'},
@@ -61,6 +61,7 @@ const AdminMain = () => {
 
     const formattedPayments = payments.map((payment) => ({
         ...payment,
+        price : payment.price.toLocaleString(),
         regDate: dayjs(payment.regDate).format("YYYY-MM-DD HH:mm (ddd)"),
     }))
 

@@ -1,6 +1,7 @@
 package com.project.backend.controller;
 
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -21,7 +22,7 @@ public class PaymentController {
     }
 
     @GetMapping("/admin/payment-main")
-    public List<Payment> getPayment(
+    public Map<String, Object> getPayment(
             @RequestParam(defaultValue = "1") int page,
             @RequestParam(defaultValue = "10") int size) {
         return paymentService.getPaymentList(page, size);
