@@ -7,6 +7,7 @@ import AdminSidebar from "../../components/admin/AdminSidebar.jsx";
 import "/src/styles/pages/admin/AdminLayout.css"
 import "/src/styles/pages/admin/AdminMain.css"
 import AdminTable from "../../components/admin/AdminTable.jsx";
+import AdminHeader from "../../components/admin/AdminHeader.jsx";
 
 const AdminMain = () => {
     const [payments, setPayments] = useState([]);
@@ -70,9 +71,21 @@ const AdminMain = () => {
 
     return (
         <div className="admin-main">
-            <h1>관리자 메인</h1>
+            <AdminHeader/>
             <AdminSidebar/>
             <div className="main">
+                <div className="admin-state-area">
+                    <div className="title-area">
+                        <span>전체 주문통계</span>
+                        <button>주문전체보기</button>
+                    </div>
+                    <div className="order-state">
+                        <span>전체주문 현황</span>
+                    </div>
+                    <div className="claim-state">
+                        <span>클래임 현황</span>
+                    </div>
+                </div>
                 <div className="admin-order-list">
                     <div className="title-area">
                         <span>최근 주문내역</span>

@@ -71,16 +71,13 @@ public class MemberService {
         memberRepository.delete(member);
     }
 
-    public Map<String, Object> getMemberWithPagination(int page, int size, String f, String q, LocalDate startDate,
-                                                       LocalDate endDate) {
+    public Map<String, Object> getMemberWithPagination(int page, int size, String f, String q) {
         Pageable pageable = PageRequest.of(page - 1, size, Sort.by(Sort.Direction.DESC, "regDate"));
 
-        LocalDateTime startDateTime = startDate != null ? startDate.atStartOfDay() : null;
-        LocalDateTime endDateTime = endDate != null ? endDate.atTime(23, 59, 59) : null;
         Page<Member> memberPage;
 
-        if ((f != null && q != null && !q.isEmpty()) || (startDateTime != null && endDateTime != null)) {
-            memberPage = memberRepository.findByField(f, q, startDateTime, endDateTime, pageable);
+        if ((f != null && q != null && !q.isEmpty())) {
+            memberPage = memberRepository.findByField(f, q, pageable);
         } else {
             memberPage = memberRepository.findAll(pageable);
         }

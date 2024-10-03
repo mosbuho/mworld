@@ -7,6 +7,7 @@ import {useNavigate} from "react-router-dom";
 import AdminPagination from "../../components/admin/AdminPagination.jsx";
 import AdminSearch from "../../components/admin/AdminSearch.jsx";
 import "/src/styles/pages/admin/AdminProductList.css"
+import AdminHeader from "../../components/admin/AdminHeader.jsx";
 
 const AdminProductList = () => {
     const [products, setProducts] = useState([]);
@@ -63,7 +64,6 @@ const AdminProductList = () => {
 
     const columns = [
         {header: '번호', accessor: 'no'},
-        {header: '이미지', accessor: 'titleImg'},
         {header: '상품명', accessor: 'title'},
         {header: '카테고리', accessor: 'category'},
         {header: '재고', accessor: 'quantity'},
@@ -76,7 +76,7 @@ const AdminProductList = () => {
 
     return (
         <div className="admin-main">
-            <h1>상품리스트</h1>
+            <AdminHeader/>
             <AdminSidebar/>
             <div className="main">
                 <AdminSearch

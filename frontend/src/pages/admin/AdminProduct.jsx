@@ -5,6 +5,8 @@ import axios from "../../utils/axiosConfig.js";
 import {EditorState, convertFromRaw, convertToRaw} from 'draft-js';
 import {Editor} from 'react-draft-wysiwyg';
 import 'react-draft-wysiwyg/dist/react-draft-wysiwyg.css';
+import "/src/styles/pages/admin/AdminProduct.css"
+import AdminHeader from "../../components/admin/AdminHeader.jsx";
 
 const AdminProduct = () => {
     const location = useLocation();
@@ -188,10 +190,10 @@ const AdminProduct = () => {
     };
     return (
         <div className="admin-main">
-            <h1>상품정보</h1>
+            <AdminHeader/>
             <AdminSidebar/>
             <div className="main">
-                <div className="Admin-Product-detail">
+                <div className="admin-product-detail">
                     <form>
                         <div className="form-group">
                             <label htmlFor="no">번호</label>
@@ -227,9 +229,9 @@ const AdminProduct = () => {
                                 id="titleImg"
                                 onChange={handleTitleImageUpload} // 대표 이미지 업로드 처리
                             />
-                            <div>
+                            <div className="title-img">
+                                <span>미리보기(580px, 580px)</span>
                                 <img src={formData.titleImg} alt=""/>
-                                <span>미리보기</span>
                             </div>
                         </div>
                         <div className="form-group">
@@ -273,8 +275,8 @@ const AdminProduct = () => {
                                 />
                             </div>
                         </div>
-                        <button type="button" onClick={handleUpdate}>수정</button>
-                        <button type="button" onClick={handleDelete}>삭제</button>
+                        <button type="button" className="update-btn" onClick={handleUpdate}>수정</button>
+                        <button type="button" className="delete-btn" onClick={handleDelete}>삭제</button>
                         <button type="button" onClick={() => nav(-1)}>뒤로</button>
                     </form>
                 </div>

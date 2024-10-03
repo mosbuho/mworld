@@ -1,0 +1,14 @@
+div.admin-header{
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    div{
+        padding: 20px 70px;
+    }
+    div.title{
+        font-weight: bold;
+        font-size: 1.4em;
+        cursor: pointer;
+    }
+}
