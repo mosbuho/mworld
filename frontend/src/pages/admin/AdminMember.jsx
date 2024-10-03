@@ -3,6 +3,7 @@ import {useState} from "react";
 import {useLocation, useNavigate} from "react-router-dom";
 import AdminSidebar from "../../components/admin/AdminSidebar.jsx";
 import "/src/styles/pages/admin/AdminMember.css"
+import AdminHeader from "../../components/admin/AdminHeader.jsx";
 
 const AdminMember = () => {
     const location = useLocation();
@@ -56,7 +57,7 @@ const AdminMember = () => {
 
     return (
         <div className="admin-main">
-            <h1>회원정보</h1>
+            <AdminHeader/>
             <AdminSidebar/>
             <div className="main">
                 <div className="admin-member-detail">

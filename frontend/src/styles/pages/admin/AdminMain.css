@@ -36,8 +36,16 @@ div.admin-main {
         }
     }
 
-    div.admin-order-list, div.admin-member-list {
+    div.admin-state-area, div.admin-order-list, div.admin-member-list {
         box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
         margin-bottom: 20px;
+    }
+    div.admin-state-area{
+        background-color: #ffffff;
+        display: flex;
+        flex-wrap: wrap;
+        div.title-area{
+            width: 100%;
+        }
     }
 }

@@ -5,6 +5,7 @@ import {EditorState, convertToRaw} from "draft-js";
 import {Editor} from "react-draft-wysiwyg";
 import 'react-draft-wysiwyg/dist/react-draft-wysiwyg.css';
 import axios from '/src/utils/axiosConfig.js';
+import AdminHeader from "../../components/admin/AdminHeader.jsx";
 
 const AdminProductCreate = () => {
     const nav = useNavigate();
@@ -71,8 +72,8 @@ const AdminProductCreate = () => {
     // 대표 이미지 업로드 함수
     const handleTitleImageUpload = (e) => {
         const file = e.target.files[0];
-        const maxWidth = 800; // 최대 너비
-        const maxHeight = 800; // 최대 높이
+        const maxWidth = 580; // 최대 너비
+        const maxHeight = 580; // 최대 높이
         const entityType = 'product'; // 엔티티 타입
 
         resizeImage(file, maxWidth, maxHeight)
@@ -163,7 +164,7 @@ const AdminProductCreate = () => {
 
     return (
         <div className="admin-main">
-            <h1>상품등록</h1>
+            <AdminHeader/>
             <AdminSidebar/>
             <div className="main">
                 <div className="admin-product-detail">
@@ -239,7 +240,7 @@ const AdminProductCreate = () => {
                                 />
                             </div>
                         </div>
-                        <button type="submit">저장</button>
+                        <button className="save-btn" type="submit">저장</button>
                     </form>
                 </div>
             </div>
