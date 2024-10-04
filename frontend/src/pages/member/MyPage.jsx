@@ -1,4 +1,3 @@
-// src/pages/member/MyPage.jsx
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import '../../styles/pages/member/MyPage.css';
@@ -31,6 +30,10 @@ const MyPage = () => {
   const [confirmNewPassword, setConfirmNewPassword] = useState('');
   const [passwordErrors, setPasswordErrors] = useState({});
 
+  // 이메일 인증 관련 상태
+  const [isVerificationCodeSent, setIsVerificationCodeSent] = useState(false);
+  const [timer, setTimer] = useState(300); // 5분(300초)
+
   useEffect(() => {
     // 임시 사용자 정보
     const mockUserInfo = {
@@ -41,7 +44,7 @@ const MyPage = () => {
       email: 'testuser@example.com',
       reg_date: '2023-01-15',
       provider: 'Local',
-      password: 'password123!', // 실제로는 저장하지 않음 (예시용)
+      password: 'password123!',
     };
 
     // 임시 결제 내역
@@ -79,6 +82,21 @@ const MyPage = () => {
     }
   }, [navigate]);
 
+  // 타이머 관리
+  useEffect(() => {
+    let countdown;
+    if (isVerificationCodeSent && timer > 0) {
+      countdown = setInterval(() => {
+        setTimer((prevTimer) => prevTimer - 1);
+      }, 1000);
+    } else if (timer === 0) {
+      setIsVerificationCodeSent(false);
+      alert('인증 시간이 만료되었습니다. 다시 시도해주세요.');
+    }
+
+    return () => clearInterval(countdown);
+  }, [isVerificationCodeSent, timer]);
+
   if (!userInfo) {
     return <div className='loading-spinner'>사용자 정보를 불러오는 중...</div>;
   }
@@ -103,6 +121,8 @@ const MyPage = () => {
     setErrors({});
     setVerificationCode('');
     setDetailAddress('');
+    setIsVerificationCodeSent(false);
+    setTimer(300);
   };
 
   // 정보 수정 모달 닫기
@@ -113,6 +133,8 @@ const MyPage = () => {
     setErrors({});
     setVerificationCode('');
     setDetailAddress('');
+    setIsVerificationCodeSent(false);
+    setTimer(300);
   };
 
   // 수정 값 변경 핸들러
@@ -128,6 +150,13 @@ const MyPage = () => {
   // 인증번호 입력 변경 핸들러
   const handleVerificationCodeChange = (e) => {
     setVerificationCode(e.target.value);
+  };
+
+  // 인증번호 전송 버튼 클릭 핸들러
+  const handleSendVerificationCode = () => {
+    setIsVerificationCodeSent(true);
+    setVerificationCode('');
+    setTimer(300);
   };
 
   // 수정 값 저장 핸들러
@@ -146,7 +175,10 @@ const MyPage = () => {
         setErrors({ verificationCode: '인증번호를 입력해주세요.' });
         return;
       }
-      // TODO: 이메일 인증번호 확인 로직 추가
+      if (verificationCode !== '123456') {
+        setErrors({ verificationCode: '인증번호가 올바르지 않습니다.' });
+        return;
+      }
     }
 
     if (fieldToEdit === 'addr') {
@@ -220,7 +252,7 @@ const MyPage = () => {
   const handleChangePassword = () => {
     const errors = {};
 
-    // 현재 비밀번호 확인 (예시로 비교, 실제로는 서버에서 확인해야 함)
+    // 현재 비밀번호 확인 
     if (currentPassword !== userInfo.password) {
       errors.currentPassword = '현재 비밀번호가 올바르지 않습니다.';
     }
@@ -291,10 +323,7 @@ const MyPage = () => {
                       {pendingChanges['name'] || userInfo['name']}
                     </span>
                   </div>
-                  <span
-                    className='info-edit'
-                    onClick={() => openEditModal('name')}
-                  >
+                  <span className='info-edit' onClick={() => openEditModal('name')}>
                     수정
                   </span>
                 </div>
@@ -309,10 +338,7 @@ const MyPage = () => {
                       {pendingChanges['email'] || userInfo['email']}
                     </span>
                   </div>
-                  <span
-                    className='info-edit'
-                    onClick={() => openEditModal('email')}
-                  >
+                  <span className='info-edit' onClick={() => openEditModal('email')}>
                     수정
                   </span>
                 </div>
@@ -327,10 +353,7 @@ const MyPage = () => {
                       {pendingChanges['phone'] || userInfo['phone']}
                     </span>
                   </div>
-                  <span
-                    className='info-edit'
-                    onClick={() => openEditModal('phone')}
-                  >
+                  <span className='info-edit' onClick={() => openEditModal('phone')}>
                     수정
                   </span>
                 </div>
@@ -345,10 +368,7 @@ const MyPage = () => {
                       {pendingChanges['addr'] || userInfo['addr']}
                     </span>
                   </div>
-                  <span
-                    className='info-edit'
-                    onClick={() => openEditModal('addr')}
-                  >
+                  <span className='info-edit' onClick={() => openEditModal('addr')}>
                     수정
                   </span>
                 </div>
@@ -484,9 +504,15 @@ const MyPage = () => {
                     value={editValue}
                     onChange={handleEditChange}
                     className='edit-input'
+                    disabled={fieldToEdit === 'email' && isVerificationCodeSent}
                   />
-                  {fieldToEdit === 'email' && (
-                    <button className='send-code-button'>인증번호 전송</button>
+                  {fieldToEdit === 'email' && !isVerificationCodeSent && (
+                    <button
+                      className='send-code-button'
+                      onClick={handleSendVerificationCode}
+                    >
+                      인증번호 전송
+                    </button>
                   )}
                 </div>
                 {fieldToEdit === 'phone' && (
@@ -495,19 +521,24 @@ const MyPage = () => {
                 {errors[fieldToEdit] && (
                   <p className='error-text'>{errors[fieldToEdit]}</p>
                 )}
-                {fieldToEdit === 'email' && (
+                {/* 인증번호 입력 필드 및 타이머 */}
+                {fieldToEdit === 'email' && isVerificationCodeSent && (
                   <>
-                    <input
-                      type='text'
-                      value={verificationCode}
-                      onChange={handleVerificationCodeChange}
-                      className='edit-input'
-                      placeholder='인증번호를 입력하세요'
-                      style={{ marginTop: '16px' }}
-                    />
-                    {errors.verificationCode && (
-                      <p className='error-text'>{errors.verificationCode}</p>
-                    )}
+                    <div className='input-group' style={{ marginTop: '16px' }}>
+                      <input
+                        type='text'
+                        value={verificationCode}
+                        onChange={handleVerificationCodeChange}
+                        className='edit-input'
+                        placeholder='인증번호를 입력하세요'
+                      />
+                      {errors.verificationCode && (
+                        <p className='error-text'>{errors.verificationCode}</p>
+                      )}
+                    </div>
+                    <div className='timer'>
+                      남은 시간: {Math.floor(timer / 60)}분 {timer % 60}초
+                    </div>
                   </>
                 )}
               </>
@@ -549,7 +580,11 @@ const MyPage = () => {
               </>
             )}
             <div className='modal-buttons'>
-              <button className='modal-save-button' onClick={handleSave}>
+              <button
+                className='modal-save-button'
+                onClick={handleSave}
+                disabled={fieldToEdit === 'email'}
+              >
                 저장
               </button>
               <button className='modal-cancel-button' onClick={closeEditModal}>
@@ -605,16 +640,10 @@ const MyPage = () => {
               )}
             </div>
             <div className='modal-buttons'>
-              <button
-                className='modal-save-button'
-                onClick={handleChangePassword}
-              >
+              <button className='modal-save-button' onClick={handleChangePassword}>
                 변경
               </button>
-              <button
-                className='modal-cancel-button'
-                onClick={closePasswordModal}
-              >
+              <button className='modal-cancel-button' onClick={closePasswordModal}>
                 취소
               </button>
             </div>
