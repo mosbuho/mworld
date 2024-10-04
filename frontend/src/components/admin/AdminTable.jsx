@@ -23,15 +23,7 @@ const AdminTable = ({columns, data, onRowClick}) => {
                         <tr key={rowIndex} onClick={() => onRowClick(row, nav)}>
                             {columns.map((col, index) => (
                                 <td key={index}>
-                                    {typeof row[col.accessor] === 'string' && row[col.accessor].includes('img') ? (
-                                        <img
-                                            src={row[col.accessor]}
-                                            alt="이미지"
-                                            style={{ width: "50px", height: "50px" }}
-                                        />
-                                    ) : (
-                                        row[col.accessor]
-                                    )}
+                                    {row[col.accessor]}
                                 </td>
                             ))}
                         </tr>

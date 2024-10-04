@@ -42,10 +42,44 @@ div.admin-main {
     }
     div.admin-state-area{
         background-color: #ffffff;
-        display: flex;
-        flex-wrap: wrap;
-        div.title-area{
-            width: 100%;
+        div.stats{
+            display: flex;
+            padding: 20px;
+        }
+        div.total-state, div.claim-state{
+            padding: 10px;
+            border: 1px solid #eeeeee;
+            span{
+                display: block;
+                text-align: center;
+                margin: 10px 0;
+                font-weight: bold;
+            }
+            table{
+                width: 100%;
+                border-collapse:collapse;
+                text-align: center;
+            }
+            th,td{
+                border: 1px solid #eeeeee;
+                padding: 10px;
+            }
+            th{
+                background-color: #dcdcdc;
+            }
+            tr:nth-child(even){
+                background-color: #eeeeee;
+            }
+            tbody>tr:hover{
+                background-color: #e7e7e7;
+                cursor: pointer;
+            }
+        }
+        div.total-state{
+            flex: 2;
+        }
+        div.claim-state{
+            flex: 4;
         }
     }
 }
