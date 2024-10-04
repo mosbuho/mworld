@@ -12,6 +12,14 @@ import AdminHeader from "../../components/admin/AdminHeader.jsx";
 const AdminMain = () => {
     const [payments, setPayments] = useState([]);
     const [members, setMembers] = useState([]);
+    const [paymentStats, setPaymentStats] = useState({
+        total: 0,
+        totalPrice: 0,
+        canceled: 0,
+        refunded: 0,
+        returned: 0,
+        exchanged: 0,
+    });
     const nav = useNavigate();
 
     dayjs.locale("ko");
@@ -19,6 +27,7 @@ const AdminMain = () => {
     useEffect(() => {
         fetchPayments();
         fetchMembers();
+        fetchPaymentStats();
     }, []);
 
     const fetchPayments = async () => {
@@ -28,8 +37,8 @@ const AdminMain = () => {
         } catch (err) {
             console.error("failed to fetch payment", err);
         }
+    };
 
-    }
     const fetchMembers = async () => {
         try {
             const res = await axios.get('/api/admin/member-main');
@@ -37,8 +46,17 @@ const AdminMain = () => {
         } catch (err) {
             console.error("failed to fetch member", err);
         }
+    };
 
-    }
+    const fetchPaymentStats = async () => {
+        try {
+            const res = await axios.get('/api/admin/payment-stats');
+            console.log(res);
+            setPaymentStats(res.data);
+        } catch (err) {
+            console.error("Failed to fetch payment statistics", err)
+        }
+    };
 
 
     const membersColumns = [
@@ -47,7 +65,7 @@ const AdminMain = () => {
         {header: '전화번호', accessor: 'phone'},
         {header: '주소', accessor: 'addr'},
         {header: '가입일시', accessor: 'regDate'},
-    ]
+    ];
 
     const paymentsColumns = [
         {header: '주문번호', accessor: 'transactionId'},
@@ -57,18 +75,28 @@ const AdminMain = () => {
         {header: '총주문액', accessor: 'price'},
         {header: '주문일시', accessor: 'regDate'},
         {header: '주문상태', accessor: 'status'},
-    ]
+    ];
 
     const formattedPayments = payments.map((payment) => ({
         ...payment,
-        price : payment.price.toLocaleString(),
+        price: payment.price.toLocaleString(),
         regDate: dayjs(payment.regDate).format("YYYY-MM-DD HH:mm (ddd)"),
-    }))
+    }));
 
     const formattedMembers = members.map((member) => ({
         ...member,
         regDate: dayjs(member.regDate).format("YYYY-MM-DD (ddd)"),
-    }))
+    }));
+
+    const formattedPrice = (totalPrice) => {
+        if (totalPrice >= 1e8) {
+            return `${(totalPrice / 1e8).toFixed(1)}억`;
+        } else if (totalPrice >= 1e4) {
+            return `${(totalPrice / 1e4).toFixed(1)}만`;
+        } else {
+            return `${totalPrice}`;
+        }
+    }
 
     return (
         <div className="admin-main">
@@ -80,11 +108,41 @@ const AdminMain = () => {
                         <span>전체 주문통계</span>
                         <button>주문전체보기</button>
                     </div>
-                    <div className="order-state">
-                        <span>전체주문 현황</span>
-                    </div>
-                    <div className="claim-state">
-                        <span>클래임 현황</span>
+                    <div className="stats">
+                        <div className="total-state">
+                            <span>전체주문 현황</span>
+                            <table>
+                                <thead>
+                                <tr>
+                                    <th>총 주문건수</th>
+                                    <th>총 매출</th>
+                                </tr>
+                                <tr>
+                                    <td>{paymentStats.total}</td>
+                                    <td>{formattedPrice(paymentStats.totalPrice)}</td>
+                                </tr>
+                                </thead>
+                            </table>
+                        </div>
+                        <div className="claim-state">
+                            <span>클래임 현황</span>
+                            <table>
+                                <thead>
+                                <tr>
+                                    <th>취소</th>
+                                    <th>환불</th>
+                                    <th>반품</th>
+                                    <th>교환</th>
+                                </tr>
+                                <tr>
+                                    <td>{paymentStats.canceled}</td>
+                                    <td>{paymentStats.refunded}</td>
+                                    <td>{paymentStats.returned}</td>
+                                    <td>{paymentStats.exchanged}</td>
+                                </tr>
+                                </thead>
+                            </table>
+                        </div>
                     </div>
                 </div>
                 <div className="admin-order-list">
@@ -99,8 +157,8 @@ const AdminMain = () => {
                         <span>최근 회원가입</span>
                         <button onClick={() => nav("/admin/member")}>회원전체보기</button>
                     </div>
-                    <AdminTable columns={membersColumns} data={formattedMembers} onRowClick={(member, nav)=>{
-                        nav(`/admin/member/${member.no}`, {state:{member}});
+                    <AdminTable columns={membersColumns} data={formattedMembers} onRowClick={(member, nav) => {
+                        nav(`/admin/member/${member.no}`, {state: {member}});
                     }}/>
                 </div>
             </div>
