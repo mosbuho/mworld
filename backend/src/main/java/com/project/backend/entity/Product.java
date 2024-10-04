@@ -30,9 +30,6 @@ public class Product {
     private int price;
 
     @Column(nullable = false)
-    private int discount;
-
-    @Column(nullable = false)
     private int quantity;
 
     @Column(nullable = false)

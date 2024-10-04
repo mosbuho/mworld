@@ -40,21 +40,44 @@ public class PaymentService {
 
         List<PaymentResponse> paymentList = paymentPage.getContent().stream().map(objects ->
                 new PaymentResponse(
-                        (String) objects[0],      // transactionId
-                        (String) objects[1],      // method
-                        ((Number) objects[2]).intValue(),  // totalPrice
-                        (LocalDateTime) objects[3], // regDate
-                        (String) objects[4],      // status
-                        (String) objects[5],      // memberName
-                        (String) objects[6]       // memberPhone
+                        (String) objects[0],
+                        (String) objects[1],
+                        ((Number) objects[2]).intValue(),
+                        (LocalDateTime) objects[3],
+                        (String) objects[4],
+                        (String) objects[5],
+                        (String) objects[6]
                 )
         ).collect(Collectors.toList());
 
-        Map<String, Object> result = new HashMap<>();
-        result.put("payments", paymentList);  // 실제 그룹화된 데이터
-        result.put("totalPages", paymentPage.getTotalPages());  // 전체 페이지 수
-        result.put("totalElements", paymentPage.getTotalElements());  // 전체 데이터 수
+        Map<String, Object> response = new HashMap<>();
+        response.put("payments", paymentList);  // 실제 그룹화된 데이터
+        response.put("totalPages", paymentPage.getTotalPages());  // 전체 페이지 수
+        response.put("totalElements", paymentPage.getTotalElements());  // 전체 데이터 수
 
-        return result;
+        return response;
+    }
+
+    public Map<String, Object> getPaymentStatistics() {
+        List<Object[]> stats = paymentRepository.findTotalAndStatusStatistics();
+
+        Object[] result = stats.get(0);
+
+        int totalOrders = ((Number) result[0]).intValue();   // int로 처리
+        long totalPrice = ((Number) result[1]).longValue();  // long으로 처리
+        int canceledCount = ((Number) result[2]).intValue();
+        int refundedCount = ((Number) result[3]).intValue();
+        int returnedCount = ((Number) result[4]).intValue();
+        int exchangedCount = ((Number) result[5]).intValue();
+
+        Map<String, Object> response = new HashMap<>();
+        response.put("total", totalOrders);
+        response.put("totalPrice", totalPrice);  // long 타입으로 변경된 totalPrice
+        response.put("canceled", canceledCount);
+        response.put("refunded", refundedCount);
+        response.put("returned", returnedCount);
+        response.put("exchanged", exchangedCount);
+
+        return response;
     }
 }
