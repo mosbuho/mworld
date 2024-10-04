@@ -117,11 +117,14 @@ const AdminMain = () => {
                                     <th>총 주문건수</th>
                                     <th>총 매출</th>
                                 </tr>
+                                </thead>
+                                <tbody>
                                 <tr>
                                     <td>{paymentStats.total}</td>
                                     <td>{formattedPrice(paymentStats.totalPrice)}</td>
                                 </tr>
-                                </thead>
+                                </tbody>
+
                             </table>
                         </div>
                         <div className="claim-state">
@@ -134,13 +137,15 @@ const AdminMain = () => {
                                     <th>반품</th>
                                     <th>교환</th>
                                 </tr>
+                                </thead>
+                                <tbody>
                                 <tr>
                                     <td>{paymentStats.canceled}</td>
                                     <td>{paymentStats.refunded}</td>
                                     <td>{paymentStats.returned}</td>
                                     <td>{paymentStats.exchanged}</td>
                                 </tr>
-                                </thead>
+                                </tbody>
                             </table>
                         </div>
                     </div>

@@ -67,12 +67,11 @@ div.admin-main {
             th{
                 background-color: #dcdcdc;
             }
-            tr:nth-child(even){
+            tr{
                 background-color: #eeeeee;
             }
-            tbody>tr:hover{
+            tbody td:hover{
                 background-color: #e7e7e7;
-                cursor: pointer;
             }
         }
         div.total-state{
