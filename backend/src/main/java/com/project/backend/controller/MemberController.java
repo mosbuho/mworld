@@ -44,7 +44,6 @@ public class MemberController {
             @RequestParam(defaultValue = "20") int size,
             @RequestParam(required = false) String f,
             @RequestParam(required = false) String q) {
-        log.info("f= "+f + ", q= "+q);
         return memberService.getMemberWithPagination(page, size, f, q);
     }
 
