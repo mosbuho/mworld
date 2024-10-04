@@ -2,70 +2,44 @@ package com.project.backend.service;
 
 import com.project.backend.entity.Notice;
 import com.project.backend.repository.NoticeRepository;
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.PersistenceContext;
-import jakarta.persistence.Query;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 
 @Service
 public class NoticeService {
 
     private final NoticeRepository noticeRepository;
 
-    @PersistenceContext
-    private EntityManager entityManager;
-
     public NoticeService(NoticeRepository noticeRepository) {
         this.noticeRepository = noticeRepository;
     }
 
-    // 공지사항 생성 로직
     public void createNotice(Notice notice) {
         notice.setRegDate(LocalDateTime.now());
         noticeRepository.save(notice);
     }
 
-    // 공지사항 리스트 조회 로직 (페이지네이션 및 검색 기능 포함)
-    public List<Notice> getNoticeList(int page, int size, String field, String query) {
-        String jpql = "SELECT n FROM Notice n";
+    public Map<String, Object> getNoticeWithPagination(int page, int size, String f, String q) {
 
-        // 검색 필터 추가
-        if (!query.isEmpty()) {
-            jpql += " WHERE LOWER(n." + field + ") LIKE LOWER(:query)";
+        Pageable pageable = PageRequest.of(page - 1, size, Sort.by(Sort.Direction.DESC, "regDate"));
+            Page<Notice> noticePage;
+            if (f != null && q != null && !q.isEmpty()) {
+                noticePage = noticeRepository.findByField(f, q, pageable);
+            } else {
+                noticePage = noticeRepository.findAll(pageable);
+            }
+
+            Map<String, Object> response = new HashMap<>();
+            response.put("notices", noticePage.getContent());
+            response.put("totalCount", noticePage.getTotalElements());
+            response.put("totalpages", noticePage.getTotalPages());
+            return response;
         }
-
-        jpql += " ORDER BY n.regDate DESC";
-
-        Query noticeQuery = entityManager.createQuery(jpql, Notice.class);
-
-        // 검색어가 있을 경우 쿼리 파라미터 설정
-        if (!query.isEmpty()) {
-            noticeQuery.setParameter("query", "%" + query + "%");
-        }
-
-        noticeQuery.setFirstResult((page - 1) * size);
-        noticeQuery.setMaxResults(size);
-
-        return noticeQuery.getResultList();
     }
-
-    // 전체 공지사항 수 조회 로직
-    public long getTotalNoticeCount(String field, String query) {
-        String jpql = "SELECT COUNT(n) FROM Notice n";
-
-        if (!query.isEmpty()) {
-            jpql += " WHERE LOWER(n." + field + ") LIKE LOWER(:query)";
-        }
-
-        Query countQuery = entityManager.createQuery(jpql);
-
-        if (!query.isEmpty()) {
-            countQuery.setParameter("query", "%" + query + "%");
-        }
-
-        return (long) countQuery.getSingleResult();
-    }
-}
