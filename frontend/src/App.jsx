@@ -1,19 +1,19 @@
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import './App.css';
 import PublicRoute from './components/common/PublicRoute';
+import OAuthCallback from './utils/OAuthCallback';
+import SignUp from './pages/SignUp';
+
+import MemberMain from './pages/member/MemberMain.jsx';
+import MemberLogin from './pages/member/MemberLogin';
+import MainProduct from './components/member/MainProduct.jsx';
+import ProductDetail from './pages/member/ProductDetail';
+import MyPage from './pages/member/MyPage';
+
 import AdminMain from "./pages/admin/AdminMain.jsx";
 import AdminMember from "./pages/admin/AdminMember.jsx";
 import AdminMemberList from "./pages/admin/AdminMemberList.jsx";
 import AdminLogin from './pages/AdminLogin';
-import SignUp from './pages/SignUp';
-import MemberMain from './pages/member/MemberMain.jsx';
-
-import MemberLogin from './pages/member/MemberLogin';
-import OAuthCallback from './utils/OAuthCallback';
-
-import ProductDetail from './pages/member/ProductDetail.jsx';
-import MainProduct from './components/member/MainProduct.jsx';
-
 import AdminProductList from "./pages/admin/AdminProductList.jsx";
 import AdminProductCreate from "./pages/admin/AdminProductCreate.jsx";
 import AdminProduct from "./pages/admin/AdminProduct.jsx";
@@ -35,6 +35,7 @@ function App() {
           <Route path='search' element={<MainProduct />} />
           <Route path='product/:id' element={<ProductDetail />} />
         </Route>
+        <Route path='/mypage' element={<PublicRoute><MyPage /></PublicRoute>} />
         <Route path="/login" element={<PublicRoute><MemberLogin /></PublicRoute>} />
         <Route path="/signup" element={<PublicRoute><SignUp /></PublicRoute>} />
         <Route path="/admin/login" element={<PublicRoute><AdminLogin /></PublicRoute>} />
@@ -46,7 +47,6 @@ function App() {
         <Route path="/admin/product" element={<AdminProductList />} />
         <Route path="/admin/product/create" element={<AdminProductCreate />} />
         <Route path="/admin/product/:no" element={<AdminProduct/>} />
-
         <Route path="/notice/create" element={<AdminNoticeCreate/>} />
       </Routes>
     </BrowserRouter>
