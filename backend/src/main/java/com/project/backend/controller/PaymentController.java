@@ -27,4 +27,10 @@ public class PaymentController {
             @RequestParam(defaultValue = "10") int size) {
         return paymentService.getPaymentList(page, size);
     }
+
+    @GetMapping("/admin/payment-stats")
+    public Map<String, Object> getPaymentStatistics() {
+        return paymentService.getPaymentStatistics();
+    }
+
 }
