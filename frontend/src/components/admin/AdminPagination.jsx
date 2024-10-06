@@ -1,4 +1,5 @@
 import ReactPaginate from "react-paginate";
+import "/src/styles/components/admin/AdminPagination.css"
 
 const AdminPagination = ({pageCount, handlePageClick, currentPage}) => {
     return (

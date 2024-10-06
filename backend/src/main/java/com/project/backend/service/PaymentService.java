@@ -1,7 +1,20 @@
 package com.project.backend.service;
 
-import java.util.List;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.*;
+import java.util.stream.Collectors;
 
+import com.project.backend.dto.PaymentRequest;
+import com.project.backend.dto.PaymentResponse;
+import com.project.backend.entity.Member;
+import com.project.backend.entity.Product;
+import com.project.backend.repository.PaymentRepository;
+import com.project.backend.repository.ProductRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import com.project.backend.entity.Payment;
@@ -13,17 +26,118 @@ import jakarta.persistence.Query;
 @Service
 public class PaymentService {
 
-    @PersistenceContext
-    private EntityManager entityManager;
+    private final PaymentRepository paymentRepository;
+    private final ProductRepository productRepository;
 
-    public List<Payment> getPaymentList(int page, int size) {
-        int pageSize = size - page + 1;
+    @Autowired
+    public PaymentService(PaymentRepository paymentRepository, ProductRepository productRepository) {
+        this.paymentRepository = paymentRepository;
+        this.productRepository = productRepository;
+    }
 
-        Query query = entityManager.createQuery("SELECT p FROM Payment p ORDER BY p.regDate DESC", Payment.class);
 
-        query.setFirstResult(page - 1);
-        query.setMaxResults(pageSize);
+    public Map<String, Object> getPaymentList(int page, int size, String f, String q) {
+        Pageable pageable = PageRequest.of(page - 1, size);
+        Page<Object[]> paymentPage;
 
-        return query.getResultList();
+        if (f == null || q == null || q.isEmpty()) {
+            paymentPage = paymentRepository.findGroupedPayments(pageable);
+        } else {
+            paymentPage = paymentRepository.findGroupedPaymentsByField(f, q, pageable);
+        }
+
+        List<PaymentResponse> paymentList = paymentPage.getContent().stream().map(objects ->
+                new PaymentResponse(
+                        (String) objects[0],
+                        (String) objects[1],
+                        ((Number) objects[2]).intValue(),
+                        (LocalDateTime) objects[3],
+                        (String) objects[4],
+                        (String) objects[5],
+                        (String) objects[6]
+                )
+        ).collect(Collectors.toList());
+
+        Map<String, Object> response = new HashMap<>();
+        response.put("paymentList", paymentList);
+        response.put("totalPages", paymentPage.getTotalPages());
+        response.put("totalElements", paymentPage.getTotalElements());
+
+        return response;
+    }
+
+    public Map<String, Object> getPaymentStatistics() {
+        List<Object[]> stats = paymentRepository.findTotalAndStatusStatistics();
+
+        Object[] result = stats.get(0);
+
+        int totalOrders = ((Number) result[0]).intValue();
+        long totalPrice = ((Number) result[1]).longValue();
+        int canceledCount = ((Number) result[2]).intValue();
+        int refundedCount = ((Number) result[3]).intValue();
+        int returnedCount = ((Number) result[4]).intValue();
+        int exchangedCount = ((Number) result[5]).intValue();
+
+        Map<String, Object> response = new HashMap<>();
+        response.put("total", totalOrders);
+        response.put("totalPrice", totalPrice);
+        response.put("canceled", canceledCount);
+        response.put("refunded", refundedCount);
+        response.put("returned", returnedCount);
+        response.put("exchanged", exchangedCount);
+
+        return response;
+    }
+
+    public String createPaymnet(int memberNo, List<PaymentRequest> requestList) {
+        try {
+            if (requestList == null || requestList.isEmpty()) {
+                throw new IllegalArgumentException("requestList is null or empty");
+            }
+            Member member = new Member();
+            member.setNo(memberNo);
+
+            String orderNo = generateOrderNo();
+
+            List<Payment> payments = requestList.stream().map(request -> {
+                Payment payment = new Payment();
+                payment.setTransactionId(orderNo);
+                Product product = new Product();
+                product.setNo(request.getProductNo());
+                payment.setProduct(product);
+                payment.setQuantity(request.getQuantity());
+                payment.setPrice(request.getPrice());
+                payment.setMethod(request.getMethod());
+                payment.setStatus("PAYMENTED");
+                payment.setAddr(request.getAddr());
+                payment.setRegDate(LocalDateTime.now());
+                return payment;
+            }).collect(Collectors.toList());
+
+            paymentRepository.saveAll(payments);
+            return orderNo;
+        } catch (IllegalArgumentException e) {
+            throw new RuntimeException("Invalid payment data", e);
+        } catch (Exception e) {
+            throw new RuntimeException();
+        }
+
+    }
+
+    private String generateOrderNo() {
+        String characters = "ABCDEFGHJKMNPQRSTUVWXYZ134679";
+        Random random = new Random();
+        StringBuilder randomString = new StringBuilder(6);
+
+        for (int i = 0; i < 6; i++) {
+            int index = random.nextInt(characters.length());
+            randomString.append(characters.charAt(index));
+        }
+
+        LocalDateTime now = LocalDateTime.now();
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyMMddHHmmss");
+        String formattedDateTime = now.format(formatter);
+
+        return formattedDateTime + randomString.toString();
     }
 }

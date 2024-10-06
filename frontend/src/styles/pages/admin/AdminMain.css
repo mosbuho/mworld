@@ -1,0 +1,84 @@
+div.admin-main {
+    div.main {
+        background-color: #f1f1f1;
+
+        button {
+            padding: 10px 20px;
+            border-radius: 5px;
+            border: none;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #dcdcdc;
+        }
+
+        div.title-area {
+            padding: 20px 20px 0 20px;
+            display: flex;
+            justify-content: space-between;
+            background-color: #ffffff;
+
+            span {
+                font-size: 1.2em;
+                font-weight: bold;
+                border-bottom: 1px solid black;
+            }
+
+            button {
+                background-color: #eeeeee;
+            }
+
+            button:hover {
+                background-color: #dcdcdc;
+            }
+        }
+    }
+
+    div.admin-state-area, div.admin-order-list, div.admin-member-list {
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        margin-bottom: 20px;
+    }
+    div.admin-state-area{
+        background-color: #ffffff;
+        div.stats{
+            display: flex;
+            padding: 20px;
+        }
+        div.total-state, div.claim-state{
+            padding: 10px;
+            border: 1px solid #eeeeee;
+            span{
+                display: block;
+                text-align: center;
+                margin: 10px 0;
+                font-weight: bold;
+            }
+            table{
+                width: 100%;
+                border-collapse:collapse;
+                text-align: center;
+            }
+            th,td{
+                border: 1px solid #eeeeee;
+                padding: 10px;
+            }
+            th{
+                background-color: #dcdcdc;
+            }
+            tr{
+                background-color: #eeeeee;
+            }
+            tbody td:hover{
+                background-color: #e7e7e7;
+            }
+        }
+        div.total-state{
+            flex: 2;
+        }
+        div.claim-state{
+            flex: 4;
+        }
+    }
+}

@@ -1,0 +1,23 @@
+div.admin-table{
+    padding: 20px;
+    background-color: #ffffff;
+    table{
+        width: 100%;
+        border-collapse:collapse;
+        text-align: center;
+    }
+    th,td{
+        border: 1px solid #eeeeee;
+        padding: 10px;
+    }
+    th{
+        background-color: #dcdcdc;
+    }
+    tr:nth-child(even){
+        background-color: #eeeeee;
+    }
+    tbody>tr:hover{
+        background-color: #e7e7e7;
+        cursor: pointer;
+    }
+}

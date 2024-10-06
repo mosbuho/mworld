@@ -42,6 +42,12 @@ public class Payment {
     @Column(nullable = false, length = 50)
     private String addr;
 
+    @Column(nullable = false, length = 20)
+    private String method;
+
+    @Column(nullable = false, length = 20)
+    private String status;
+
     @Column(name = "reg_date", columnDefinition = "TIMESTAMP DEFAULT SYSTIMESTAMP")
     private LocalDateTime regDate;
 }

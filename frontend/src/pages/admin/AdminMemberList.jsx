@@ -5,16 +5,15 @@ import AdminPagination from "../../components/admin/AdminPagination.jsx";
 import AdminSearch from "../../components/admin/AdminSearch.jsx";
 import AdminSidebar from "../../components/admin/AdminSidebar.jsx";
 import AdminTable from "../../components/admin/AdminTable.jsx";
+import AdminHeader from "../../components/admin/AdminHeader.jsx";
 
 const AdminMemberList = () => {
     const [members, setMembers] = useState([]);
     const [pageCount, setPageCount] = useState(1);
     const [currentPage, setCurrentPage] = useState(0);
     const [pageDataCache, setPageDataCache] = useState({});
-    const [f, setF] = useState('title');
+    const [f, setF] = useState('ID');
     const [q, setQ] = useState('');
-    const [startDate, setStartDate] = useState('');  // 시작일 추가
-    const [endDate, setEndDate] = useState('');      // 종료일 추가
 
     dayjs.locale("ko");
 
@@ -23,23 +22,23 @@ const AdminMemberList = () => {
     }, []);
 
     const fetchMembers = async (page) => {
-        if (pageDataCache[`${f}_${q}_${page}_${startDate}_${endDate}`]) {
-            setMembers(pageDataCache[`${f}_${q}_${page}_${startDate}_${endDate}`]);
+        if (pageDataCache[`${f}_${q}_${page}`]) {
+            setMembers(pageDataCache[`${f}_${q}_${page}`]);
             return;
         }
         try {
-            const res = await axios.get('/api/admin/member-list', {
-                params: {page, size: 20, f, q, startDate, endDate} // 기간 추가
+            const res = await axios.get('/api/admin/member', {
+                params: {page, size: 20, f, q} // 기간 추가
             });
 
-            const {members: fetchedMembers, totalCount} = res.data;
+            const {members: fetchedMembers, totalCount, totalPages} = res.data;
             setPageDataCache(prevCache => ({
                 ...prevCache,
-                [`${f}_${q}_${page}_${startDate}_${endDate}`]: fetchedMembers,
+                [`${f}_${q}_${page}`]: fetchedMembers,
             }));
 
             setMembers(fetchedMembers);
-            setPageCount(Math.ceil(totalCount / 20));
+            setPageCount(totalPages);
 
         } catch (err) {
             console.error("failed to fetch member-list ", err);
@@ -66,6 +65,7 @@ const AdminMemberList = () => {
         {header: '아이디', accessor: 'id'},
         {header: '이름', accessor: 'name'},
         {header: '전화번호', accessor: 'phone'},
+        {header: '주소', accessor: 'addr'},
         {header: '가입일시', accessor: 'regDate'},
     ];
 
@@ -82,24 +82,22 @@ const AdminMemberList = () => {
 
 
     return (
-        <div className="admin-member-list">
-            <h1>회원리스트</h1>
+        <div className="admin-main">
+            <AdminHeader/>
             <AdminSidebar/>
-            <div className="member-list">
-                <AdminSearch
-                    f={f}
-                    setF={setF}
-                    q={q}
-                    setQ={setQ}
-                    onSearch={handleSearch}
-                    options={options}
-                    startDate={startDate} // 시작일 전달
-                    setStartDate={setStartDate}
-                    endDate={endDate} // 종료일 전달
-                    setEndDate={setEndDate}
-                />
-                <AdminTable columns={columns} data={formattedMembers} onRowClick={handleRowClick}/>
-                <AdminPagination pageCount={pageCount} handlePageClick={handlePageClick} currentPage={currentPage}/>
+            <div className="main">
+                <div className="admin-member-list">
+                    <AdminSearch
+                        f={f}
+                        setF={setF}
+                        q={q}
+                        setQ={setQ}
+                        onSearch={handleSearch}
+                        options={options}
+                    />
+                    <AdminTable columns={columns} data={formattedMembers} onRowClick={handleRowClick}/>
+                    <AdminPagination pageCount={pageCount} handlePageClick={handlePageClick} currentPage={currentPage}/>
+                </div>
             </div>
         </div>
     );
