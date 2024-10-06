@@ -6,6 +6,9 @@ import SignUp from './pages/SignUp';
 
 import MemberMain from './pages/member/MemberMain.jsx';
 import MemberLogin from './pages/member/MemberLogin';
+import MainProduct from './components/member/MainProduct.jsx';
+import ProductDetail from './pages/member/ProductDetail';
+import MyPage from './pages/member/MyPage';
 
 import AdminMain from "./pages/admin/AdminMain.jsx";
 import AdminMember from "./pages/admin/AdminMember.jsx";
@@ -16,6 +19,10 @@ import AdminProductCreate from "./pages/admin/AdminProductCreate.jsx";
 import AdminProduct from "./pages/admin/AdminProduct.jsx";
 import AdminPaymentList from "./pages/admin/AdminPaymentList.jsx";
 
+import AdminNoticeCreate from "./pages/admin/AdminNoticeCreate.jsx";
+import AdminNoticeList from "./pages/admin/AdminNoticeList.jsx";
+
+
 function App() {
 
   return (
@@ -25,7 +32,12 @@ function App() {
         <Route path="/oauth/callback/:provider" element={<OAuthCallback />} />
 
         {/* 비로그인 라우트 */}
-        <Route path='/' element={<PublicRoute><MemberMain /></PublicRoute>} />
+        <Route path='/' element={<PublicRoute><MemberMain /></PublicRoute>} >
+          <Route index element={<MainProduct />} />
+          <Route path='search' element={<MainProduct />} />
+          <Route path='product/:id' element={<ProductDetail />} />
+        </Route>
+        <Route path='/mypage' element={<PublicRoute><MyPage /></PublicRoute>} />
         <Route path="/login" element={<PublicRoute><MemberLogin /></PublicRoute>} />
         <Route path="/signup" element={<PublicRoute><SignUp /></PublicRoute>} />
         <Route path="/admin/login" element={<PublicRoute><AdminLogin /></PublicRoute>} />
@@ -38,6 +50,8 @@ function App() {
         <Route path="/admin/product/create" element={<AdminProductCreate />} />
         <Route path="/admin/product/:no" element={<AdminProduct/>} />
         <Route path="/admin/payment" element={<AdminPaymentList/>} />
+        <Route path="/admin/notice/create" element={<AdminNoticeCreate/>} />
+        <Route path="/admin/notice" element={<AdminNoticeList/>} />
       </Routes>
     </BrowserRouter>
   )

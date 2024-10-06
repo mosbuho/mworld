@@ -44,6 +44,7 @@ public class SecurityConfig {
                         .requestMatchers("/api/img/**").permitAll() // 이미지권한 추가
                         .requestMatchers("/api/auth/**").permitAll()
                         .requestMatchers("/api/admin/**").permitAll()
+                        .requestMatchers("/api/notice/**").permitAll()
                         .requestMatchers("/api/admin/login").hasRole("ADMIN")
                         .anyRequest().hasRole("MEMBER"))
                 .sessionManagement(session -> session
