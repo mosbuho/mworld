@@ -1,5 +1,6 @@
 import '/src/styles/components/member/MainProduct.css'
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom'
 
 // 예시 상품 데이터
 const mockData = [
@@ -233,91 +234,125 @@ const mockData = [
     tags: ['파스타 1위'],
     label: '회원전용특별가',
   },
-
-
-
 ];
 
 const MainProduct = () => {
-  const [products, setProducts] = useState([]);         //상품 목록 상태
-  const [page, setPage] = useState(1);                  //페이지 번호 상태
-  const [isFetching, setIsFetching] = useState(false);  //데이터를 불러오는 중인지 상태
-  const [hasMore, setHasMore] = useState(true);         //다음 페이지가 있는지 상태
-  const pageSize = 10;
+  const location = useLocation();
+  const [products, setProducts] = useState([]);         // 표시할 상품 목록
+  const [page, setPage] = useState(1);                  // 페이지 번호 상태
+  const [isFetching, setIsFetching] = useState(false);  // 데이터 로딩 상태
+  const [hasMore, setHasMore] = useState(true);         // 더 불러올 데이터가 있는지 여부
+  const [searchQuery, setSearchQuery] = useState('');   // 검색어 상태
+  const [filteredData, setFilteredData] = useState([]); // 필터링된 전체 데이터
+  const pageSize = 10;                                  // 한 페이지에 표시할 상품 수
+  const navigate = useNavigate();
+
+  // 최신 상태 값을 유지하기 위한 useRef 훅
+  const hasMoreRef = useRef(hasMore);
+  const isFetchingRef = useRef(isFetching);
 
   useEffect(() => {
-    loadMoreProducts();
-  }, [])
+    hasMoreRef.current = hasMore;
+    isFetchingRef.current = isFetching;
+  }, [hasMore, isFetching]);
 
+  // 검색어 변경 시 필터링된 데이터 업데이트
+  useEffect(() => {
+    const params = new URLSearchParams(location.search);
+    const query = params.get('query') || '';
+    setSearchQuery(query);
+
+    // 검색어에 따라 상품 필터링
+    const filtered = query
+      ? mockData.filter((product) =>
+        product.name.toLowerCase().includes(query.toLowerCase())
+      )
+      : mockData;
+
+    setFilteredData(filtered);
+  }, [location.search]);
+
+  // filteredData 변경 시 상품 목록과 페이지 번호 초기화, 로딩 시작
+  useEffect(() => {
+    setProducts([]);
+    setPage(1);
+    setHasMore(true);
+    setIsFetching(true); // 로딩 시작
+  }, [filteredData]);
+
+  // isFetching이 true일 때 상품 로드
   useEffect(() => {
     if (!isFetching) return;
     loadMoreProducts();
   }, [isFetching]);
 
   const loadMoreProducts = () => {
-    setTimeout(() => {
-      const startIndex = (page - 1) * pageSize;
-      const endIndex = startIndex + pageSize;
+    console.log('loadMoreProducts called with page:', page);
+    const startIndex = (page - 1) * pageSize;
+    const endIndex = startIndex + pageSize;
 
-      const newProducts = mockData.slice(startIndex, endIndex);
+    const newProducts = filteredData.slice(startIndex, endIndex);
 
-      if (newProducts.length === 0) {
-        setHasMore(false);
-      } else {
-        const updatedProducts = newProducts.map((product, index) => ({
-          ...product,
-          id: product.id + (page * pageSize) + index,
-        }))
+    if (newProducts.length === 0) {
+      setHasMore(false);
+    } else {
+      setProducts((prev) => [...prev, ...newProducts]);
+      setPage((prevPage) => prevPage + 1);
+    }
+    setIsFetching(false);
+  };
 
-        setProducts((prev) => [...prev, ...updatedProducts]);
-        setPage((prev) => prev + 1);
-      }
-      setIsFetching(false);
-    }, 1000);
-  }
-
+  // 스크롤 이벤트 핸들러
   const handleScroll = () => {
     if (
-      !hasMore ||
-      isFetching ||
-      window.innerHeight + document.documentElement.scrollTop < document.documentElement.offsetHeight - 500
+      !hasMoreRef.current ||
+      isFetchingRef.current ||
+      window.innerHeight + window.pageYOffset < document.documentElement.scrollHeight - 500
     ) {
       return;
     }
     setIsFetching(true);
-  }
+  };
 
+  // 스크롤 이벤트 리스너 등록 (한 번만 실행)
   useEffect(() => {
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
-  }, [isFetching, hasMore]);
+  }, []);
 
   return (
-    <div className="product-list">
-      {products.map((product) => (
-        <div key={product.id} className="product-card">
-          <img src={product.imgSrc} alt={product.name} className="product-image" />
-          <div className="product-info">
-            <span className="product-label">{product.label}</span>
-            <h3 className="product-name">{product.name}</h3>
-            <p className="product-price">
-              <span className="discount">{product.discount}</span>
-              <span className="price">{product.price}</span>
-              <span className="original-price">{product.originalPrice}</span>
-            </p>
-            <div className="product-tags">
-              {product.tags.map((tag, index) => (
-                <span key={index} className="tag">{tag}</span>
-              ))}
+    <div className="main-product-container">
+      {searchQuery && (
+        <h2 className="search-result">
+          '<strong>{searchQuery}</strong>'에 대한 검색 결과
+        </h2>
+      )}
+      {products.length > 0 ? (
+        <div className="product-list">
+          {products.map((product) => (
+            <div key={product.id} className="product-card" onClick={() => navigate(`/product/${product.id}`)}>
+              <img src={product.imgSrc} alt={product.name} className="product-image" />
+              <div className="product-info">
+                <span className="product-label">{product.label}</span>
+                <h3 className="product-name">{product.name}</h3>
+                <p className="product-price">
+                  <span className="price">{product.price}</span>
+                </p>
+                <div className="product-tags">
+                  {product.tags.map((tag, index) => (
+                    <span key={index} className="tag">{tag}</span>
+                  ))}
+                </div>
+              </div>
+              <button className="cart-button">🛒</button>
             </div>
-          </div>
-          <button className="cart-button">🛒</button>
+          ))}
         </div>
-      ))
-
-      }
+      ) : (
+        <p className="no-results">상품이 존재하지 않습니다.</p>
+      )}
     </div>
-  )
-}
+  );
+};
 
 export default MainProduct;
