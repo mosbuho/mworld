@@ -1,14 +1,16 @@
 package com.project.backend.service;
 
 import java.time.LocalDateTime;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.time.format.DateTimeFormatter;
+import java.util.*;
 import java.util.stream.Collectors;
 
+import com.project.backend.dto.PaymentRequest;
 import com.project.backend.dto.PaymentResponse;
+import com.project.backend.entity.Member;
+import com.project.backend.entity.Product;
 import com.project.backend.repository.PaymentRepository;
+import com.project.backend.repository.ProductRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -25,18 +27,24 @@ import jakarta.persistence.Query;
 public class PaymentService {
 
     private final PaymentRepository paymentRepository;
+    private final ProductRepository productRepository;
 
     @Autowired
-    public PaymentService(PaymentRepository paymentRepository) {
+    public PaymentService(PaymentRepository paymentRepository, ProductRepository productRepository) {
         this.paymentRepository = paymentRepository;
+        this.productRepository = productRepository;
     }
 
 
-    public Map<String, Object> getPaymentList(int page, int size) {
+    public Map<String, Object> getPaymentList(int page, int size, String f, String q) {
         Pageable pageable = PageRequest.of(page - 1, size);
+        Page<Object[]> paymentPage;
 
-        // transactionId로 그룹화된 결제 및 회원 정보 가져오기
-        Page<Object[]> paymentPage = paymentRepository.findGroupedPayments(pageable);
+        if (f == null || q == null || q.isEmpty()) {
+            paymentPage = paymentRepository.findGroupedPayments(pageable);
+        } else {
+            paymentPage = paymentRepository.findGroupedPaymentsByField(f, q, pageable);
+        }
 
         List<PaymentResponse> paymentList = paymentPage.getContent().stream().map(objects ->
                 new PaymentResponse(
@@ -51,9 +59,9 @@ public class PaymentService {
         ).collect(Collectors.toList());
 
         Map<String, Object> response = new HashMap<>();
-        response.put("payments", paymentList);  // 실제 그룹화된 데이터
-        response.put("totalPages", paymentPage.getTotalPages());  // 전체 페이지 수
-        response.put("totalElements", paymentPage.getTotalElements());  // 전체 데이터 수
+        response.put("paymentList", paymentList);
+        response.put("totalPages", paymentPage.getTotalPages());
+        response.put("totalElements", paymentPage.getTotalElements());
 
         return response;
     }
@@ -63,8 +71,8 @@ public class PaymentService {
 
         Object[] result = stats.get(0);
 
-        int totalOrders = ((Number) result[0]).intValue();   // int로 처리
-        long totalPrice = ((Number) result[1]).longValue();  // long으로 처리
+        int totalOrders = ((Number) result[0]).intValue();
+        long totalPrice = ((Number) result[1]).longValue();
         int canceledCount = ((Number) result[2]).intValue();
         int refundedCount = ((Number) result[3]).intValue();
         int returnedCount = ((Number) result[4]).intValue();
@@ -72,12 +80,64 @@ public class PaymentService {
 
         Map<String, Object> response = new HashMap<>();
         response.put("total", totalOrders);
-        response.put("totalPrice", totalPrice);  // long 타입으로 변경된 totalPrice
+        response.put("totalPrice", totalPrice);
         response.put("canceled", canceledCount);
         response.put("refunded", refundedCount);
         response.put("returned", returnedCount);
         response.put("exchanged", exchangedCount);
 
         return response;
+    }
+
+    public String createPaymnet(int memberNo, List<PaymentRequest> requestList) {
+        try {
+            if (requestList == null || requestList.isEmpty()) {
+                throw new IllegalArgumentException("requestList is null or empty");
+            }
+            Member member = new Member();
+            member.setNo(memberNo);
+
+            String orderNo = generateOrderNo();
+
+            List<Payment> payments = requestList.stream().map(request -> {
+                Payment payment = new Payment();
+                payment.setTransactionId(orderNo);
+                Product product = new Product();
+                product.setNo(request.getProductNo());
+                payment.setProduct(product);
+                payment.setQuantity(request.getQuantity());
+                payment.setPrice(request.getPrice());
+                payment.setMethod(request.getMethod());
+                payment.setStatus("PAYMENTED");
+                payment.setAddr(request.getAddr());
+                payment.setRegDate(LocalDateTime.now());
+                return payment;
+            }).collect(Collectors.toList());
+
+            paymentRepository.saveAll(payments);
+            return orderNo;
+        } catch (IllegalArgumentException e) {
+            throw new RuntimeException("Invalid payment data", e);
+        } catch (Exception e) {
+            throw new RuntimeException();
+        }
+
+    }
+
+    private String generateOrderNo() {
+        String characters = "ABCDEFGHJKMNPQRSTUVWXYZ134679";
+        Random random = new Random();
+        StringBuilder randomString = new StringBuilder(6);
+
+        for (int i = 0; i < 6; i++) {
+            int index = random.nextInt(characters.length());
+            randomString.append(characters.charAt(index));
+        }
+
+        LocalDateTime now = LocalDateTime.now();
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyMMddHHmmss");
+        String formattedDateTime = now.format(formatter);
+
+        return formattedDateTime + randomString.toString();
     }
 }
