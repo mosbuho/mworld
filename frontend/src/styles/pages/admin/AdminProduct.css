@@ -5,7 +5,9 @@ div.admin-product-detail{
         margin-bottom: 5px;
     }
     div.form-group>div.title-img>img{
-        max-width: 100%;
+        width: 100%;
+        max-width: 580px;
+        height: auto;
         max-height: 580px;
     }
     div.form-group>div.draft-editor
