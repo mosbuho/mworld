@@ -9,6 +9,7 @@ import MemberLogin from './pages/member/MemberLogin';
 import MainProduct from './components/member/MainProduct.jsx';
 import ProductDetail from './pages/member/ProductDetail';
 import MyPage from './pages/member/MyPage';
+import CartPage from './pages/member/CartPage';
 
 import AdminMain from "./pages/admin/AdminMain.jsx";
 import AdminMember from "./pages/admin/AdminMember.jsx";
@@ -36,6 +37,7 @@ function App() {
           <Route path='product/:id' element={<ProductDetail />} />
         </Route>
         <Route path='/mypage' element={<PublicRoute><MyPage /></PublicRoute>} />
+        <Route path='/cart' element={<PublicRoute><CartPage /></PublicRoute>} />
         <Route path="/login" element={<PublicRoute><MemberLogin /></PublicRoute>} />
         <Route path="/signup" element={<PublicRoute><SignUp /></PublicRoute>} />
         <Route path="/admin/login" element={<PublicRoute><AdminLogin /></PublicRoute>} />
@@ -46,8 +48,8 @@ function App() {
         <Route path="/admin/member/:no" element={<AdminMember />} />
         <Route path="/admin/product" element={<AdminProductList />} />
         <Route path="/admin/product/create" element={<AdminProductCreate />} />
-        <Route path="/admin/product/:no" element={<AdminProduct/>} />
-        <Route path="/notice/create" element={<AdminNoticeCreate/>} />
+        <Route path="/admin/product/:no" element={<AdminProduct />} />
+        <Route path="/notice/create" element={<AdminNoticeCreate />} />
       </Routes>
     </BrowserRouter>
   )
