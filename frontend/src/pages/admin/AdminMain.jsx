@@ -32,8 +32,8 @@ const AdminMain = () => {
 
     const fetchPayments = async () => {
         try {
-            const res = await axios.get('/api/admin/payment-main');
-            setPayments(res.data.payments);
+            const res = await axios.get('/api/admin/payment');
+            setPayments(res.data.paymentList);
         } catch (err) {
             console.error("failed to fetch payment", err);
         }
@@ -73,8 +73,8 @@ const AdminMain = () => {
         {header: '전화번호', accessor: 'memberPhone'},
         {header: '결제방법', accessor: 'method'},
         {header: '총주문액', accessor: 'price'},
-        {header: '주문일시', accessor: 'regDate'},
         {header: '주문상태', accessor: 'status'},
+        {header: '주문일시', accessor: 'regDate'},
     ];
 
     const formattedPayments = payments.map((payment) => ({
