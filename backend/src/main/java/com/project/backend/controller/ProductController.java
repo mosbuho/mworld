@@ -24,9 +24,7 @@ public class ProductController {
     @PostMapping("/admin/product")
     public ResponseEntity<String> createProduct(@RequestBody Product product) {
         try {
-            log.info("createProduct : " + product);
             Product savedProduct = productService.createProduct(product);
-            log.info("savedProduct : " + savedProduct);
             return ResponseEntity.ok(savedProduct.getTitle());
         } catch (Exception e) {
             e.printStackTrace();
@@ -34,7 +32,7 @@ public class ProductController {
         }
     }
 
-    @GetMapping("/admin/product-list")
+    @GetMapping("/admin/product")
     public Map<String, Object> getAllProducts(
             @RequestParam(defaultValue = "1") int page,
             @RequestParam(defaultValue = "20") int size,

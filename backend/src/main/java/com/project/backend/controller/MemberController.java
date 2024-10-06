@@ -4,6 +4,8 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -22,6 +24,7 @@ import com.project.backend.service.MemberService;
 @RequestMapping("/api")
 public class MemberController {
 
+    private static final Logger log = LoggerFactory.getLogger(MemberController.class);
     private final MemberService memberService;
 
     public MemberController(MemberService memberService) {
@@ -35,15 +38,13 @@ public class MemberController {
         return memberService.getMemberList(page, size);
     }
 
-    @GetMapping("/admin/member-list")
+    @GetMapping("/admin/member")
     public Map<String, Object> getAllMember(
             @RequestParam(defaultValue = "1") int page,
             @RequestParam(defaultValue = "20") int size,
             @RequestParam(required = false) String f,
-            @RequestParam(required = false) String q,
-            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
-            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate) {
-        return memberService.getMemberWithPagination(page, size, f, q, startDate, endDate);
+            @RequestParam(required = false) String q) {
+        return memberService.getMemberWithPagination(page, size, f, q);
     }
 
     @PutMapping("/admin/member/{no}")
