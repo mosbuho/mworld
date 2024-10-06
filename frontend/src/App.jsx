@@ -14,6 +14,7 @@ import AdminLogin from './pages/AdminLogin';
 import AdminProductList from "./pages/admin/AdminProductList.jsx";
 import AdminProductCreate from "./pages/admin/AdminProductCreate.jsx";
 import AdminProduct from "./pages/admin/AdminProduct.jsx";
+import AdminPaymentList from "./pages/admin/AdminPaymentList.jsx";
 
 function App() {
 
@@ -36,6 +37,7 @@ function App() {
         <Route path="/admin/product" element={<AdminProductList />} />
         <Route path="/admin/product/create" element={<AdminProductCreate />} />
         <Route path="/admin/product/:no" element={<AdminProduct/>} />
+        <Route path="/admin/payment" element={<AdminPaymentList/>} />
       </Routes>
     </BrowserRouter>
   )
