@@ -1,21 +1,17 @@
 import {useEffect, useState} from "react";
+import "/src/styles/components/admin/AdminSearch.css"
 
-const AdminSearch = ({f, setF, q, setQ, onSearch, options, startDate, setStartDate, endDate, setEndDate}) => {
-    const [reset, setReset] = useState(false);
+const AdminSearch = ({f, setF, q, setQ, onSearch, options}) => {
 
-    const handleReset = () => {
-        setF('');
-        setQ('');
-        setStartDate('');
-        setEndDate('');
-        setReset(true);
-    };
-    useEffect(() => {
-        if (reset) {
+
+    const handleKeyDown = (e) => {
+        if (e.keyCode === 13) {
             onSearch();
-            setReset(false);
         }
-    }, [f, q, startDate, endDate, reset, onSearch]);
+    }
+    useEffect(() => {
+        onSearch();
+    }, []);
 
     return (
         <div className="admin-search">
@@ -30,10 +26,10 @@ const AdminSearch = ({f, setF, q, setQ, onSearch, options, startDate, setStartDa
                 type="text"
                 value={q}
                 onChange={(e) => setQ(e.target.value)}
+                onKeyDown={handleKeyDown}
                 placeholder="검색어 입력"
             />
             <button onClick={onSearch}>검색</button>
-            <button onClick={handleReset}>초기화</button>
         </div>
     );
 };

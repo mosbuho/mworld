@@ -1,0 +1,23 @@
+div.admin-product-detail{
+
+    div.form-group>div.title-img>span{
+        display: block;
+        margin-bottom: 5px;
+    }
+    div.form-group>div.title-img>img{
+        width: 100%;
+        max-width: 580px;
+        height: auto;
+        max-height: 580px;
+    }
+    div.form-group>div.draft-editor
+    {
+        border: 1px solid #d0cfcf;
+        padding: 5px;
+        div.rdw-editor-main{
+            border: 1px solid #d0cfcf;
+            padding: 5px;
+            min-height: 400px;
+        }
+    }
+}

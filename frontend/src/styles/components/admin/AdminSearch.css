@@ -1,0 +1,29 @@
+div.admin-search{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 40px;
+    background-color: #e7e7e7;
+    padding: 5px 20px;
+
+    select,input,button{
+        border: none;
+        height: 100%;
+    }
+    select{
+        background-color: white;
+        padding: 0 5px;
+    }
+    input{
+        padding: 0 20px;
+        width: 30%;
+    }
+    button{
+        padding: 0 15px;
+        font-weight: bold;
+        cursor: pointer;
+    }
+    select:focus,input:focus{
+        outline: none;
+    }
+}

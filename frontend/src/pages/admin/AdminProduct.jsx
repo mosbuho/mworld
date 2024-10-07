@@ -5,6 +5,8 @@ import axios from "../../utils/axiosConfig.js";
 import {EditorState, convertFromRaw, convertToRaw} from 'draft-js';
 import {Editor} from 'react-draft-wysiwyg';
 import 'react-draft-wysiwyg/dist/react-draft-wysiwyg.css';
+import "/src/styles/pages/admin/AdminProduct.css"
+import AdminHeader from "../../components/admin/AdminHeader.jsx";
 
 const AdminProduct = () => {
     const location = useLocation();
@@ -187,93 +189,97 @@ const AdminProduct = () => {
         }
     };
     return (
-        <div className="Admin-Product">
-            <h1>상품정보</h1>
+        <div className="admin-main">
+            <AdminHeader/>
             <AdminSidebar/>
-            <div className="Admin-Product-detail">
-                <div className="form-group">
-                    <label htmlFor="no">번호</label>
-                    <input
-                        type="text"
-                        id="no"
-                        value={formData.no}
-                        readOnly={true}
-                    />
+            <div className="main">
+                <div className="admin-product-detail">
+                    <form>
+                        <div className="form-group">
+                            <label htmlFor="no">번호</label>
+                            <input
+                                type="text"
+                                id="no"
+                                value={formData.no}
+                                readOnly={true}
+                            />
+                        </div>
+                        <div className="form-group">
+                            <label htmlFor="title">상품명</label>
+                            <input
+                                type="text"
+                                id="title"
+                                value={formData.title || ""}
+                                onChange={handleChange}
+                            />
+                        </div>
+                        <div className="form-group">
+                            <label htmlFor="category">카테고리</label>
+                            <input
+                                type="text"
+                                id="category"
+                                value={formData.category || ""}
+                                onChange={handleChange}
+                            />
+                        </div>
+                        <div className="form-group">
+                            <label htmlFor="titleImg">대표이미지</label>
+                            <input
+                                type="file"
+                                id="titleImg"
+                                onChange={handleTitleImageUpload} // 대표 이미지 업로드 처리
+                            />
+                            <div className="title-img">
+                                <span>미리보기(580px, 580px)</span>
+                                <img src={formData.titleImg} alt=""/>
+                            </div>
+                        </div>
+                        <div className="form-group">
+                            <label htmlFor="price">상품가격</label>
+                            <input
+                                type="number"
+                                id="price"
+                                value={formData.price || ""}
+                                onChange={handleChange}
+                            />
+                        </div>
+                        <div className="form-group">
+                            <label htmlFor="quantity">초기재고</label>
+                            <input
+                                type="number"
+                                id="quantity"
+                                value={formData.quantity || ""}
+                                onChange={handleChange}
+                            />
+                        </div>
+                        <div className="form-group">
+                            <label htmlFor="content">상품설명</label>
+                            <div className="draft-editor">
+                                <Editor
+                                    editorState={editorState}
+                                    onEditorStateChange={handleEditorChange}
+                                    toolbar={{
+                                        image: {
+                                            uploadEnabled: true,
+                                            uploadCallback: uploadImageCallback, // 컨텐츠 이미지 업로드 콜백
+                                            alt: {present: true, mandatory: false},
+                                            previewImage: true,
+                                            defaultSize: {
+                                                height: 'auto',
+                                                width: '400px',
+                                            },
+                                            alignmentEnabled: true,
+                                            resizeEnabled: true,
+                                        },
+                                    }}
+                                />
+                            </div>
+                        </div>
+                        <button type="button" className="update-btn" onClick={handleUpdate}>수정</button>
+                        <button type="button" className="delete-btn" onClick={handleDelete}>삭제</button>
+                        <button type="button" onClick={() => nav(-1)}>뒤로</button>
+                    </form>
                 </div>
-                <div className="form-group">
-                    <label htmlFor="title">상품명</label>
-                    <input
-                        type="text"
-                        id="title"
-                        value={formData.title || ""}
-                        onChange={handleChange}
-                    />
-                </div>
-                <div className="form-group">
-                    <label htmlFor="category">카테고리</label>
-                    <input
-                        type="text"
-                        id="category"
-                        value={formData.category || ""}
-                        onChange={handleChange}
-                    />
-                </div>
-                <div className="form-group">
-                    <label htmlFor="titleImg">대표이미지</label>
-                    <input
-                        type="file"
-                        id="titleImg"
-                        onChange={handleTitleImageUpload} // 대표 이미지 업로드 처리
-                    />
-                    <div>
-                        <img src={formData.titleImg} alt=""/>
-                        <span>미리보기</span>
-                    </div>
-                </div>
-                <div className="form-group">
-                    <label htmlFor="price">상품가격</label>
-                    <input
-                        type="number"
-                        id="price"
-                        value={formData.price || ""}
-                        onChange={handleChange}
-                    />
-                </div>
-                <div className="form-group">
-                    <label htmlFor="quantity">초기재고</label>
-                    <input
-                        type="number"
-                        id="quantity"
-                        value={formData.quantity || ""}
-                        onChange={handleChange}
-                    />
-                </div>
-                <div className="form-group">
-                    <label htmlFor="content">상품설명</label>
-                    <div className="draft-editor">
-                        <Editor
-                            editorState={editorState}
-                            onEditorStateChange={handleEditorChange}
-                            toolbar={{
-                                image: {
-                                    uploadEnabled: true,
-                                    uploadCallback: uploadImageCallback, // 컨텐츠 이미지 업로드 콜백
-                                    alt: {present: true, mandatory: false},
-                                    previewImage: true,
-                                    defaultSize: {
-                                        height: 'auto',
-                                        width: '400px',
-                                    },
-                                    alignmentEnabled: true,
-                                    resizeEnabled: true,
-                                },
-                            }}
-                        />
-                    </div>
-                </div>
-                <button type="button" onClick={handleUpdate}>수정</button>
-                <button type="button" onClick={handleDelete}>삭제</button>
-                <button type="button" onClick={() => nav(-1)}>뒤로</button>
             </div>
         </div>
     );

@@ -31,7 +31,6 @@ public class ImageController {
                                          @RequestParam("entityType") String entityType) {
         try {
             String imageUrl = imageService.saveImage(file, entityType);
-            log.info("url : " + imageUrl);
             return ResponseEntity.ok().body(Map.of("url", imageUrl));
         } catch (IOException e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Image upload failed");
