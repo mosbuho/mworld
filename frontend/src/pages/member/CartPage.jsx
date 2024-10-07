@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import MemberHeader from '../../components/member/MemberHeader';
 import MemberFooter from '../../components/member/MemberFooter';
 import MemberSearch from '../../components/member/MemberSearch';
@@ -34,7 +34,7 @@ const CartPage = () => {
     // 추가적인 상품들...
   ]);
 
-  const [isAllChecked, setIsAllChecked] = useState(false);
+  const [isAllChecked, setIsAllChecked] = useState(true);
   const [quantityModalOpen, setQuantityModalOpen] = useState(false);
   const [selectedItem, setSelectedItem] = useState(null);
   const [tempQuantity, setTempQuantity] = useState(1);
@@ -62,6 +62,11 @@ const CartPage = () => {
     setCartItems((prevItems) => prevItems.filter((item) => !item.checked));
     setIsAllChecked(false);
   };
+
+  useEffect(() => {
+    const allChecked = cartItems.length > 0 && cartItems.every((item) => item.checked);
+    setIsAllChecked(allChecked);
+  }, [cartItems]);
 
   // 수량 조절 모달 열기
   const openQuantityModal = (item) => {
