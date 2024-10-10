@@ -53,22 +53,41 @@
   justify-content: space-between;
   gap: 20px;
   flex-wrap: wrap;
+  align-items: stretch;
 }
 
-.payment-left,
-.payment-summary {
-  box-sizing: border-box;
+.payment-left {
   flex: 1;
   min-width: 300px;
+  display: flex;
+  flex-direction: column;
 }
 
-.payment-left > div,
-.payment-summary {
+.payment-right {
+  flex: 1;
+  min-width: 300px;
+  display: flex;
+  flex-direction: column;
+}
+
+.payment-left > div {
   background-color: #ffffff;
   padding: 20px;
   margin-bottom: 20px;
   border: 1px solid #e0e0e0;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  flex: 1;
+}
+
+.payment-info {
+  background-color: #ffffff;
+  padding: 20px;
+  margin-bottom: 20px;
+  border: 1px solid #e0e0e0;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  flex: 1;
+  display: flex;
+  flex-direction: column;
 }
 
 .order-summary h3,
@@ -153,6 +172,34 @@
   box-shadow: 0 0 5px rgba(255, 127, 138, 0.5);
 }
 
+.address-search {
+  display: flex;
+  align-items: center;
+}
+
+.address-search input {
+  flex: 1;
+}
+
+.addr-button {
+  margin-left: 8px;
+  padding: 12px 20px;
+  background-color: #FF7F8A;
+  color: #ffffff;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+input#customerAddressDetail{
+  margin-top: 5px;
+}
+
+.addr-button:hover {
+  background-color: #FF4F5E;
+}
+
 .error-message {
   color: #FF4F5E;
   font-size: 12px;
@@ -183,33 +230,6 @@
 .payment-option input {
   margin-right: 8px;
   accent-color: #FF7F8A;
-}
-
-.business-number {
-  margin-bottom: 20px;
-}
-
-.business-number label {
-  display: block;
-  font-size: 16px;
-  color: #424242;
-  margin-bottom: 8px;
-  font-weight: bold;
-}
-
-.business-number input {
-  width: 100%;
-  padding: 12px 14px;
-  box-sizing: border-box;
-  border: 1px solid #e0e0e0;
-  border-radius: 4px;
-  font-size: 16px;
-}
-
-.business-number input:focus {
-  border-color: #FF7F8A;
-  outline: none;
-  box-shadow: 0 0 5px rgba(255, 127, 138, 0.5);
 }
 
 .summary-details p,
@@ -275,7 +295,6 @@
   .payment-container {
     max-width: 1400px;
   }
-  
 }
 
 @media (max-width: 768px) {
@@ -288,8 +307,13 @@
   }
 
   .payment-left,
-  .payment-summary {
+  .payment-right {
     width: 100%;
+  }
+
+  .payment-left > div,
+  .payment-info {
+    margin-bottom: 20px;
   }
 
   .payment-header h2 {
@@ -316,9 +340,5 @@
   .order-button {
     font-size: 14px;
     padding: 10px 16px;
-  }
-
-  .payment-header {
-    margin-top: 25px;
   }
 }
