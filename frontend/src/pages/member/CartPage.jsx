@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import MemberHeader from '../../components/member/MemberHeader';
 import MemberFooter from '../../components/member/MemberFooter';
 import MemberSearch from '../../components/member/MemberSearch';
@@ -38,6 +39,7 @@ const CartPage = () => {
   const [quantityModalOpen, setQuantityModalOpen] = useState(false);
   const [selectedItem, setSelectedItem] = useState(null);
   const [tempQuantity, setTempQuantity] = useState(1);
+  const navigate = useNavigate();
 
   // 전체 선택 토글 함수
   const toggleSelectAll = () => {
@@ -119,6 +121,11 @@ const CartPage = () => {
   const selectedItemCount = cartItems.filter((item) => item.checked).length;
   // 최소 주문 금액
   const MIN_ORDER_AMOUNT = 100000;
+
+  const handleOrder = () => {
+    const selectedItems = cartItems.filter((item) => item.checked);
+    navigate('/payment', { state: { selectedItems } });
+  }
 
   return (
     <div className="cart-page">
@@ -213,6 +220,7 @@ const CartPage = () => {
               <button
                 className="order-button"
                 disabled={calculateTotalPrice() < MIN_ORDER_AMOUNT || selectedItemCount === 0}
+                onClick={handleOrder}
               >
                 주문하기 ({selectedItemCount}개)
               </button>
