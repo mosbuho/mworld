@@ -1,3 +1,5 @@
+// src/components/DaumPost.jsx
+
 import { useDaumPostcodePopup } from 'react-daum-postcode';
 
 const DaumPost = ({ setAddress }) => {
@@ -5,31 +7,32 @@ const DaumPost = ({ setAddress }) => {
   const open = useDaumPostcodePopup(postcodeScriptUrl);
 
   const handleComplete = (data) => {
-    let fullAddress = data.address;
-    let extraAddress = '';
-    let localAddress = data.sido + ' ' + data.sigungu;
+    let fullAddress = ''; // 전체 주소 변수
 
-    if (data.addressType === 'R') {
-      if (data.bname !== '') {
-        extraAddress += data.bname;
-      }
-      if (data.buildingName !== '') {
-        extraAddress += (extraAddress !== '' ? `, ${data.buildingName}` : data.buildingName);
-      }
-      // 기본 주소에서 지역명 제거 후 빌딩 이름 추가
-      fullAddress = fullAddress.replace(localAddress, '');
-      fullAddress += (extraAddress !== '' ? ` (${extraAddress})` : '');
+    // 기본 주소 설정
+    if (data.userSelectedType === 'R') { // 도로명 주소 선택 시
+      fullAddress = data.roadAddress;
+    } else { // 지번 주소 선택 시
+      fullAddress = data.jibunAddress;
     }
+
+    // 주소에 시도와 시군구가 포함되어 있는지 확인하고 없으면 추가
+    if (!fullAddress.startsWith(data.sido)) {
+      fullAddress = `${data.sido} ${data.sigungu} ${fullAddress}`;
+    }
+
     setAddress(fullAddress);
-  }
+  };
 
   const handleClick = () => {
     open({ onComplete: handleComplete });
-  }
+  };
 
   return (
-    <div type='button' onClick={handleClick} className='addr-button'>주소검색</div>
-  )
-}
+    <button type="button" onClick={handleClick} className="addr-button">
+      주소검색
+    </button>
+  );
+};
 
 export default DaumPost;

@@ -10,6 +10,7 @@ import MainProduct from './components/member/MainProduct.jsx';
 import ProductDetail from './pages/member/ProductDetail';
 import MyPage from './pages/member/MyPage';
 import CartPage from './pages/member/CartPage';
+import PaymentPage from './pages/member/PaymentPage';
 
 import AdminMain from "./pages/admin/AdminMain.jsx";
 import AdminMember from "./pages/admin/AdminMember.jsx";
@@ -21,7 +22,6 @@ import AdminProduct from "./pages/admin/AdminProduct.jsx";
 import AdminPaymentList from "./pages/admin/AdminPaymentList.jsx";
 
 import AdminNoticeCreate from "./pages/admin/AdminNoticeCreate.jsx";
-import AdminNoticeList from "./pages/admin/AdminNoticeList.jsx";
 
 
 function App() {
@@ -40,6 +40,7 @@ function App() {
         </Route>
         <Route path='/mypage' element={<PublicRoute><MyPage /></PublicRoute>} />
         <Route path='/cart' element={<PublicRoute><CartPage /></PublicRoute>} />
+        <Route path='/payment' element={<PublicRoute><PaymentPage /></PublicRoute>} />
         <Route path="/login" element={<PublicRoute><MemberLogin /></PublicRoute>} />
         <Route path="/signup" element={<PublicRoute><SignUp /></PublicRoute>} />
         <Route path="/admin/login" element={<PublicRoute><AdminLogin /></PublicRoute>} />
@@ -52,10 +53,9 @@ function App() {
         <Route path="/admin/product/create" element={<AdminProductCreate />} />
         <Route path="/admin/product/:no" element={<AdminProduct />} />
         <Route path="/notice/create" element={<AdminNoticeCreate />} />
-        <Route path="/admin/product/:no" element={<AdminProduct/>} />
-        <Route path="/admin/payment" element={<AdminPaymentList/>} />
-        <Route path="/admin/notice/create" element={<AdminNoticeCreate/>} />
-        <Route path="/admin/notice" element={<AdminNoticeList/>} />
+        <Route path="/admin/product/:no" element={<AdminProduct />} />
+        <Route path="/admin/payment" element={<AdminPaymentList />} />
+        <Route path="/admin/notice/create" element={<AdminNoticeCreate />} />
       </Routes>
     </BrowserRouter>
   )
