@@ -5,7 +5,7 @@ import OAuthCallback from './utils/OAuthCallback';
 import SignUp from './pages/SignUp';
 
 import MemberMain from './pages/member/MemberMain.jsx';
-import MemberLogin from './pages/member/MemberLogin';
+import Login from '/src/components/Login.jsx';
 import MainProduct from './components/member/MainProduct.jsx';
 import ProductDetail from './pages/member/ProductDetail';
 import MyPage from './pages/member/MyPage';
@@ -41,7 +41,7 @@ function App() {
         <Route path='/mypage' element={<PublicRoute><MyPage /></PublicRoute>} />
         <Route path='/cart' element={<PublicRoute><CartPage /></PublicRoute>} />
         <Route path='/payment' element={<PublicRoute><PaymentPage /></PublicRoute>} />
-        <Route path="/login" element={<PublicRoute><MemberLogin /></PublicRoute>} />
+        <Route path="/login" element={<PublicRoute><Login /></PublicRoute>} />
         <Route path="/signup" element={<PublicRoute><SignUp /></PublicRoute>} />
         <Route path="/admin/login" element={<PublicRoute><AdminLogin /></PublicRoute>} />
 
