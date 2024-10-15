@@ -1,11 +1,13 @@
 package com.project.backend.controller;
 
 import java.util.Map;
+import java.util.Random;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.project.backend.dto.AuthResponse;
@@ -92,6 +94,28 @@ public class AuthController {
             return ResponseEntity.ok(new AuthResponse(accessToken, refreshToken, member.getNo()));
         } catch (Exception e) {
             return ResponseEntity.badRequest().body("소셜 로그인 실패: " + e.getMessage());
+        }
+    }
+
+    @PostMapping("/email-send")
+    public ResponseEntity<?> sendVerificationCode(@RequestBody Map<String, String> request) {
+        try {
+            String verificationCode = String.format("%06d", new Random().nextInt(999999));
+            authService.sendVerificationEmail(request.get("email"), verificationCode);
+            return ResponseEntity.ok(null);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+
+    @PostMapping("/email-verify")
+    public ResponseEntity<?> verifyCode(@RequestBody Map<String, String> request) {
+        String storedCode = authService.getVerificationCode(request.get("email"));
+        if (storedCode != null && storedCode.equals(request.get("code"))) {
+            return ResponseEntity.ok(null);
+        } else {
+            return ResponseEntity.badRequest().body(null);
         }
     }
 }

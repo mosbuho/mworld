@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import DaumPost from '/src/components/DaumPost';
 import '/src/styles/pages/member/SignUp.css';
+import axios from "axios";
 
 const SignUp = () => {
   const [mockData, setMockData] = useState({
@@ -166,6 +167,10 @@ const SignUp = () => {
       return;
     }
 
+    axios.post("http://localhost:8080/api/auth/email-send", {
+      email: mockData.email
+    });
+
     const emailError = validateField('email', mockData.email);
     if (emailError) {
       setError((prevError) => ({
@@ -199,14 +204,21 @@ const SignUp = () => {
   };
 
   // 인증번호 확인 핸들러
-  const handleVerifyCode = () => {
-    if (inputVerificationCode === verificationCode) {
-      alert('이메일 인증이 완료되었습니다.');
-      setIsEmailVerified(true);
-      setIsVerificationModalOpen(false);
-      setIsVerificationCodeSent(false);
-      setTimer(300);
-    } else {
+  const handleVerifyCode = async () => {
+    try {
+      console.log(mockData.email);
+      console.log(inputVerificationCode);
+      const response = await axios.post("http://localhost:8080/api/auth/email-verify", {
+        email: mockData.email,
+        code: inputVerificationCode,
+      });
+
+      if (response.status === 200) {
+        alert('이메일 인증이 완료되었습니다.');
+        setIsEmailVerified(true);
+        closeVerificationModal();
+      }
+    } catch (error) {
       alert('인증번호가 올바르지 않습니다.');
     }
   };
