@@ -2,9 +2,11 @@ package com.project.backend.service;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -26,6 +28,9 @@ import com.project.backend.repository.MemberRepository;
 
 @Service
 public class AuthService {
+
+    @Autowired
+    private StringRedisTemplate redisTemplate;
 
     @Autowired
     private JavaMailSender mailSender;
@@ -221,10 +226,16 @@ public class AuthService {
     }
 
     public void sendVerificationEmail(String to, String verificationCode) {
+        redisTemplate.opsForValue().set(to, verificationCode, 5, TimeUnit.MINUTES);
+
         SimpleMailMessage message = new SimpleMailMessage();
         message.setTo(to);
         message.setSubject("이메일 인증");
-        message.setText("인증번호: " + verificationCode);
+        message.setText("인증번호 : " + verificationCode);
         mailSender.send(message);
+    }
+
+    public String getVerificationCode(String email) {
+        return redisTemplate.opsForValue().get(email);
     }
 }
