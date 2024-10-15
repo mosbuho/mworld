@@ -76,6 +76,6 @@ frontend/public/*
 
 # ============================================================================
 
-application-secrets.properties
+backend/src/main/resources/application.properties
 *.sql
 backend/img

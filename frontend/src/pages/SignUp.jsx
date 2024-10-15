@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import DaumPost from '/src/components/DaumPost';
 import '/src/styles/pages/member/SignUp.css';
+import axios from "axios";
 
 const SignUp = () => {
   const [mockData, setMockData] = useState({
@@ -158,6 +159,9 @@ const SignUp = () => {
 
   // 이메일 인증 모달 열기
   const openVerificationModal = () => {
+    axios.post("http://localhost:8080/api/auth/email-send", null, {
+      params: { email: mockData.email }
+    })
     if (!mockData.email) {
       setError((prevError) => ({
         ...prevError,
