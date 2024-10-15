@@ -1,0 +1,55 @@
+.fixed-buttons {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  z-index: 1000;
+}
+
+.fixed-buttons button {
+  background-color: var(--main-bg-color);
+  border: 1px solid #ccc;
+  border-radius: 50%;
+  width: 50px;
+  height: 50px;
+  margin: 5px 0;
+  cursor: pointer;
+  outline: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: opacity 0.3s ease, transform 0.3s ease; 
+}
+
+.fixed-buttons button:hover {
+  background-color: var(--main-bg-color-hover);
+  transition: all 0.2s ease;
+}
+
+
+
+/* TOP 버튼의 초기 상태 (숨겨진 상태) */
+.scroll-to-top-button {
+  opacity: 0;
+  transform: translateY(20px);
+  pointer-events: none; /* 클릭 불가능하게 설정 */
+}
+
+/* TOP 버튼이 보여질 때 */
+.scroll-to-top-button.show {
+  opacity: 1;
+  transform: translateY(0);
+  pointer-events: auto; /* 클릭 가능하게 설정 */
+}
+
+.contact-button span {
+  font-weight: 900;
+  color: white;
+}
+
+.scroll-to-top-button span {
+  font-weight: 900;
+  color: white;
+}

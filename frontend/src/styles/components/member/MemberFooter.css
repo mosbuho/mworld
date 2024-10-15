@@ -19,7 +19,7 @@
   }
 
   .footer-section h3 {
-    color: #FF7F8A;
+    color: var(--main-bg-color);
     font-size: 18px;
     margin-bottom: 15px;
   }
