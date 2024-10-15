@@ -1,11 +1,13 @@
 package com.project.backend.controller;
 
 import java.util.Map;
+import java.util.Random;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.project.backend.dto.AuthResponse;
@@ -94,4 +96,18 @@ public class AuthController {
             return ResponseEntity.badRequest().body("소셜 로그인 실패: " + e.getMessage());
         }
     }
+
+    @PostMapping("/email-send")
+    public ResponseEntity<?> sendVerificationCode(@RequestParam String email) {
+        try {
+            String verificationCode = String.format("%06d", new Random().nextInt(999999));
+            authService.sendVerificationEmail(email, verificationCode);
+            return ResponseEntity.ok(null);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+
+
 }

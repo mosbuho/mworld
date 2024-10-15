@@ -3,12 +3,15 @@ package com.project.backend.service;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.mail.SimpleMailMessage;
+import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -23,6 +26,10 @@ import com.project.backend.repository.MemberRepository;
 
 @Service
 public class AuthService {
+
+    @Autowired
+    private JavaMailSender mailSender;
+
     @Value("${kakao.client-id}")
     private String kakaoClientId;
 
@@ -213,4 +220,11 @@ public class AuthService {
         return userInfo;
     }
 
+    public void sendVerificationEmail(String to, String verificationCode) {
+        SimpleMailMessage message = new SimpleMailMessage();
+        message.setTo(to);
+        message.setSubject("이메일 인증");
+        message.setText("인증번호: " + verificationCode);
+        mailSender.send(message);
+    }
 }
