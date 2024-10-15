@@ -98,10 +98,10 @@ public class AuthController {
     }
 
     @PostMapping("/email-send")
-    public ResponseEntity<?> sendVerificationCode(@RequestParam String email) {
+    public ResponseEntity<?> sendVerificationCode(@RequestBody Map<String, String> request) {
         try {
             String verificationCode = String.format("%06d", new Random().nextInt(999999));
-            authService.sendVerificationEmail(email, verificationCode);
+            authService.sendVerificationEmail(request.get("email"), verificationCode);
             return ResponseEntity.ok(null);
         } catch (Exception e) {
             e.printStackTrace();
@@ -109,5 +109,13 @@ public class AuthController {
         }
     }
 
-
+    @PostMapping("/email-verify")
+    public ResponseEntity<?> verifyCode(@RequestBody Map<String, String> request) {
+        String storedCode = authService.getVerificationCode(request.get("email"));
+        if (storedCode != null && storedCode.equals(request.get("code"))) {
+            return ResponseEntity.ok(null);
+        } else {
+            return ResponseEntity.badRequest().body(null);
+        }
+    }
 }
