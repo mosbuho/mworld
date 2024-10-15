@@ -5,7 +5,6 @@
   padding: 20px;
   margin: 0 auto;
   max-width: 1200px;
-  margin-top: 50px;
 }
 
 .product-card {
@@ -35,7 +34,7 @@
 
 .product-label {
   display: inline-block;
-  background-color: #FF7F8A;
+  background-color: var(--main-bg-color);
   color: #fff;
   padding: 5px 10px;
   border-radius: 15px;
@@ -78,7 +77,7 @@
   position: absolute;
   bottom: 10px;
   right: 10px;
-  background-color: #FF7F8A;
+  background-color: var(--main-bg-color);
   color: #fff;
   border: none;
   border-radius: 50%;

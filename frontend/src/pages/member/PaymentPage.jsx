@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 import MemberHeader from '../../components/member/MemberHeader';
-import MemberSearch from '../../components/member/MemberSearch';
 import MemberFooter from '../../components/member/MemberFooter';
 import DaumPost from '../../components/DaumPost';
 import '/src/styles/pages/member/PaymentPage.css';
@@ -105,7 +104,6 @@ const PaymentPage = () => {
   return (
     <div className="payment-page">
       <MemberHeader />
-      <MemberSearch />
 
       <div className="payment-container">
         <div className="payment-header">

@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import MemberHeader from '../../components/member/MemberHeader';
 import MemberFooter from '../../components/member/MemberFooter';
-import MemberSearch from '../../components/member/MemberSearch';
 import '/src/styles/pages/member/CartPage.css';
 
 const CartPage = () => {
@@ -130,7 +129,6 @@ const CartPage = () => {
   return (
     <div className="cart-page">
       <MemberHeader />
-      <MemberSearch />
 
       <div className="cart-container">
         <div className="cart-header">

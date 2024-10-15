@@ -3,7 +3,6 @@ import { useNavigate } from 'react-router-dom';
 import '../../styles/pages/member/MyPage.css';
 import MemberFooter from '../../components/member/MemberFooter';
 import MemberHeader from '../../components/member/MemberHeader';
-import MemberSearch from '../../components/member/MemberSearch';
 import DaumPost from '../../components/DaumPost';
 
 const MyPage = () => {
@@ -281,7 +280,6 @@ const MyPage = () => {
   return (
     <div className='my-page-container'>
       <MemberHeader />
-      <MemberSearch />
       <main className='my-page-content'>
         {/* 탭 네비게이션 */}
         <div className='tab-navigation'>
