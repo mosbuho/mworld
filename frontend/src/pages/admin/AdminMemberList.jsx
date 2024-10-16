@@ -75,6 +75,7 @@ const AdminMemberList = () => {
         {value: 'PHONE', label: '전화번호'},
     ];
 
+
     const formattedMembers = members.map((member) => ({
         ...member,
         regDate: dayjs(member.regDate).format("YYYY-MM-DD (ddd)"),

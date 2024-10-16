@@ -6,6 +6,7 @@ import axios from "../../utils/axiosConfig.js";
 import AdminSearch from "../../components/admin/AdminSearch.jsx";
 import AdminTable from "../../components/admin/AdminTable.jsx";
 import AdminPagination from "../../components/admin/AdminPagination.jsx";
+import "/src/styles/pages/admin/AdminPaymentList.css"
 
 const AdminPaymentList = () => {
     const [paymentList, setPaymentList] = useState([]);
@@ -14,6 +15,7 @@ const AdminPaymentList = () => {
     const [pageDataCache, setPageDataCache] = useState({});
     const [f, setF] = useState('TRANSACTIONID');
     const [q, setQ] = useState('');
+    const [selectedStatus, setSelectedStatus] = useState('ALL');
 
     dayjs.locale("ko");
 
@@ -59,6 +61,15 @@ const AdminPaymentList = () => {
         nav(`/admin/payment/${payment.transactionId}`);
     };
 
+    const handleStatusChange = (e) => {
+        setSelectedStatus(e.target.value); // 선택된 상태 업데이트
+        console.log(`Selected Status: ${e.target.value}`); // 선택된 상태 확인
+    };
+
+    const getTotalPrice = () => {
+        return paymentList.reduce((total, payment) => total + payment.price, 0);
+    };
+
     const columns = [
         {header: '주문번호', accessor: 'transactionId'},
         {header: '주문자명', accessor: 'memberName'},
@@ -74,6 +85,16 @@ const AdminPaymentList = () => {
         {value: 'MEMBERNAME', label: '주문자명'},
         {value: 'MEMBERPHONE', label: '전화번호'},
     ]
+
+    const selectColumns = [
+        {header: '전체', accessor: 'ALL'},
+        {header: '결제대기', accessor: 'UNPAYMENT'},
+        {header: '결제완료', accessor: 'PAYMENTED'},
+        {header: '취소', accessor: 'CANCELED'},
+        {header: '환불', accessor: 'REFUNDED'},
+        {header: '반품', accessor: 'RETURNED'},
+        {header: '교환', accessor: 'EXCHANGED'},
+    ];
 
     const formattedPaymentList = paymentList.map((payment) => ({
         ...payment,
@@ -94,8 +115,26 @@ const AdminPaymentList = () => {
                     onSearch={handleSearch}
                     options={options}
                 />
-                <AdminTable columns={columns} data={formattedPaymentList} onRowClick={handleRowClick}/>
-                <AdminPagination pageCount={pageCount} handlePageClick={handlePageClick} currentPage={currentPage}/>
+                <div className="admin-payment-list">
+                    <div className="status-select">
+                        <span>주문상태</span>
+                        {selectColumns.map((column) => (
+                            <label key={column.accessor}>
+                                <input
+                                    type="radio"
+                                    name="paymentStatus"
+                                    value={column.accessor}
+                                    checked={selectedStatus === column.accessor}
+                                    onChange={handleStatusChange}
+                                />
+                                {column.header}
+                            </label>
+                        ))}
+                    </div>
+                    <div className="admin-search-result"><span>주문목록</span>{paymentList.length}건 (총 주문액 {getTotalPrice().toLocaleString()}원)</div>
+                    <AdminTable columns={columns} data={formattedPaymentList} onRowClick={handleRowClick}/>
+                    <AdminPagination pageCount={pageCount} handlePageClick={handlePageClick} currentPage={currentPage}/>
+                </div>
             </div>
         </div>
     );
