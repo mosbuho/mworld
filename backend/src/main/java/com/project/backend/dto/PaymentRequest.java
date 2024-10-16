@@ -9,4 +9,12 @@ public class PaymentRequest {
     private int price;
     private String method;
     private String addr;
+
+    public PaymentRequest(int productNo, int quantity, int price, String method, String addr) {
+        this.ProductNo = productNo;
+        this.quantity = quantity;
+        this.price = price;
+        this.method = method;
+        this.addr = addr;
+    }
 }

@@ -1,14 +1,12 @@
 package com.project.backend.controller;
 
-import java.util.List;
-import java.util.Map;
-
 import com.project.backend.dto.PaymentRequest;
+import com.project.backend.service.PaymentService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import com.project.backend.entity.Payment;
-import com.project.backend.service.PaymentService;
+import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api")
@@ -21,12 +19,13 @@ public class PaymentController {
     }
 
     @GetMapping("/admin/payment")
-    public Map<String, Object> getPayment(
+    public Map<String, Object> getAllPayment(
             @RequestParam(defaultValue = "1") int page,
             @RequestParam(defaultValue = "10") int size,
             @RequestParam(required = false) String f,
-            @RequestParam(required = false) String q) {
-        return paymentService.getPaymentList(page, size, f, q);
+            @RequestParam(required = false) String q,
+            @RequestParam(defaultValue = "ALL") String status) {
+        return paymentService.getPaymentList(page, size, f, q, status);
     }
 
     @GetMapping("/admin/payment-stats")
@@ -47,4 +46,9 @@ public class PaymentController {
         }
     }
 
+    @GetMapping("/admin/payment/{transactionId}")
+    public Map<String, Object> getPayment(@PathVariable String transactionId) {
+        return paymentService.getPaymentDetails(transactionId);
+
+    }
 }

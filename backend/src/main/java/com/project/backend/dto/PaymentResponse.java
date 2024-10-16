@@ -12,6 +12,7 @@ public class PaymentResponse {
     private String transactionId;
     private String method;
     private int price;
+    private int quantity;
     private LocalDateTime regDate;
     private String status;
     private String memberName;
@@ -28,8 +29,9 @@ public class PaymentResponse {
         this.memberPhone = memberPhone;
     }
 
-    public PaymentResponse(String transactionId, String method, int price, LocalDateTime regDate, String status, String memberName, String memberPhone, String productTitle) {
+    public PaymentResponse(String transactionId, String method, int price, int quantity, LocalDateTime regDate, String status, String memberName, String memberPhone, String productTitle) {
         this(transactionId, method, price, regDate, status, memberName, memberPhone);
         this.productTitle = productTitle;
+        this.quantity = quantity;
     }
 }
