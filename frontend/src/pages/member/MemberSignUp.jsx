@@ -1,7 +1,8 @@
-import { useState, useEffect } from "react";
+import axios from "axios";
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import DaumPost from '/src/components/DaumPost';
-import '/src/styles/pages/member/SignUp.css';
+import '/src/styles/pages/member/MemberSignUp.css';
 
 const SignUp = () => {
   const [mockData, setMockData] = useState({
@@ -13,6 +14,7 @@ const SignUp = () => {
     addr: '',
     detailAddr: '',
     email: '',
+    business: ''
   });
 
   const [error, setError] = useState({});
@@ -23,6 +25,7 @@ const SignUp = () => {
   const [inputVerificationCode, setInputVerificationCode] = useState('');
   const [timer, setTimer] = useState(300);
   const [isEmailVerified, setIsEmailVerified] = useState(false);
+  const [isDisabled, setIsDisabled] = useState(false);
 
   // 아이디 중복 검사 관련 상태
   const [isIdChecked, setIsIdChecked] = useState(false);
@@ -58,13 +61,6 @@ const SignUp = () => {
       const passwordPattern = /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,20}$/;
       if (!passwordPattern.test(value)) {
         errorMessage = '비밀번호는 8~20자의 영문, 숫자, 특수문자 조합이어야 합니다.';
-      }
-    }
-
-    // 비밀번호 확인
-    if (name === 'confirmPw') {
-      if (value !== mockData.pw) {
-        errorMessage = '비밀번호가 일치하지 않습니다.';
       }
     }
 
@@ -166,6 +162,10 @@ const SignUp = () => {
       return;
     }
 
+    axios.post("http://localhost:8080/api/auth/email-send", {
+      email: mockData.email
+    });
+
     const emailError = validateField('email', mockData.email);
     if (emailError) {
       setError((prevError) => ({
@@ -199,14 +199,22 @@ const SignUp = () => {
   };
 
   // 인증번호 확인 핸들러
-  const handleVerifyCode = () => {
-    if (inputVerificationCode === verificationCode) {
-      alert('이메일 인증이 완료되었습니다.');
-      setIsEmailVerified(true);
-      setIsVerificationModalOpen(false);
-      setIsVerificationCodeSent(false);
-      setTimer(300);
-    } else {
+  const handleVerifyCode = async () => {
+    try {
+      console.log(mockData.email);
+      console.log(inputVerificationCode);
+      const response = await axios.post("http://localhost:8080/api/auth/email-verify", {
+        email: mockData.email,
+        code: inputVerificationCode,
+      });
+
+      if (response.status === 200) {
+        alert('이메일 인증이 완료되었습니다.');
+        setIsEmailVerified(true);
+        closeVerificationModal();
+        setIsDisabled(true);
+      }
+    } catch (error) {
       alert('인증번호가 올바르지 않습니다.');
     }
   };
@@ -250,10 +258,7 @@ const SignUp = () => {
   return (
     <div className="signup-container">
       <form onSubmit={handleSubmit} className="signup-form">
-        <h2>회원가입</h2>
-
         <div className="input-group id-group">
-          <label htmlFor="id">아이디</label>
           <div className="id-check">
             <input
               type="text"
@@ -273,11 +278,10 @@ const SignUp = () => {
               중복검사
             </button>
           </div>
-          {error.id && <p className="error-message">{error.id}</p>}
+
         </div>
 
         <div className="input-group">
-          <label htmlFor="pw">비밀번호</label>
           <input
             type="password"
             id="pw"
@@ -288,26 +292,9 @@ const SignUp = () => {
             onBlur={handleBlur}
             required
           />
-          {error.pw && <p className="error-message">{error.pw}</p>}
-        </div>
-
-        <div className="input-group">
-          <label htmlFor="confirmPw">비밀번호 확인</label>
-          <input
-            type="password"
-            id="confirmPw"
-            name="confirmPw"
-            placeholder="비밀번호 확인"
-            value={mockData.confirmPw}
-            onChange={handleChange}
-            onBlur={handleBlur}
-            required
-          />
-          {error.confirmPw && <p className="error-message">{error.confirmPw}</p>}
         </div>
 
         <div className="input-group email-group">
-          <label htmlFor="email">이메일</label>
           <div className="email-verification">
             <input
               type="email"
@@ -317,8 +304,8 @@ const SignUp = () => {
               value={mockData.email}
               onChange={handleChange}
               onBlur={handleBlur}
+              disabled={isDisabled}
               required
-
             />
             {!isEmailVerified && (
               <button
@@ -330,14 +317,8 @@ const SignUp = () => {
               </button>
             )}
           </div>
-          {isEmailVerified && (
-            <p className="verification-complete">이메일 인증 완료</p>
-          )}
-          {error.email && <p className="error-message">{error.email}</p>}
         </div>
-
         <div className="input-group">
-          <label htmlFor="name">이름</label>
           <input
             type="text"
             id="name"
@@ -350,7 +331,6 @@ const SignUp = () => {
         </div>
 
         <div className="input-group">
-          <label htmlFor="phone">전화번호</label>
           <input
             type="text"
             id="phone"
@@ -361,11 +341,32 @@ const SignUp = () => {
             onBlur={handleBlur}
             required
           />
-          {error.phone && <p className="error-message">{error.phone}</p>}
         </div>
-
+        <div className="input-group email-group">
+          <div className="email-verification">
+            <input
+              type="email"
+              id="email"
+              name="email"
+              placeholder="사업자등록번호"
+              value={mockData.business}
+              onChange={handleChange}
+              onBlur={handleBlur}
+              disabled={isDisabled}
+              required
+            />
+            {/* {!isEmailVerified && ( */}
+            <button
+              type="button"
+              className="verification-button"
+              onClick={() => { console.log("test") }}
+            >
+              인증하기
+            </button>
+            {/* )} */}
+          </div>
+        </div>
         <div className="input-group address-group">
-          <label htmlFor="addr">주소</label>
           <div className="address-search">
             <input
               type="text"
@@ -379,6 +380,8 @@ const SignUp = () => {
             />
             <DaumPost setAddress={setAddress} />
           </div>
+        </div>
+        <div className="input-group">
           <input
             type="text"
             id="detailAddr"
@@ -389,7 +392,10 @@ const SignUp = () => {
             required
           />
         </div>
-
+        {error.id && <p className="error-message">{error.id}</p>}
+        {error.pw && <p className="error-message">{error.pw}</p>}
+        {error.email && <p className="error-message">{error.email}</p>}
+        {error.phone && <p className="error-message">{error.phone}</p>}
         <button type="submit" className="signup-button">회원가입</button>
 
         <div className="links">
@@ -401,7 +407,6 @@ const SignUp = () => {
       {isVerificationModalOpen && (
         <div className='modal-overlay' onClick={closeVerificationModal}>
           <div className='modal-content' onClick={(e) => e.stopPropagation()}>
-            <h2>이메일 인증</h2>
             <p>{mockData.email}로 전송된 인증번호를 입력해주세요.</p>
             <div className='input-group'>
               <input

@@ -2,25 +2,24 @@ import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import './App.css';
 import PublicRoute from './components/common/PublicRoute';
 import OAuthCallback from './utils/OAuthCallback';
-import SignUp from './pages/SignUp';
 
-import MemberMain from './pages/member/MemberMain.jsx';
+import MemberSignUp from './pages/member/MemberSignUp';
+import MemberMainProduct from './components/member/MemberMainProduct';
+import MemberCartPage from './pages/member/MemberCartPage';
+import MemberMain from './pages/member/MemberMain';
+import MemberMyPage from './pages/member/MemberMyPage';
+import MemberPaymentPage from './pages/member/MemberPaymentPage';
+import MemberProductDetail from './pages/member/MemberProductDetail';
 import Login from '/src/components/Login.jsx';
-import MainProduct from './components/member/MainProduct.jsx';
-import ProductDetail from './pages/member/ProductDetail';
-import MyPage from './pages/member/MyPage';
-import CartPage from './pages/member/CartPage';
-import PaymentPage from './pages/member/PaymentPage';
 
 import AdminMain from "./pages/admin/AdminMain.jsx";
 import AdminMember from "./pages/admin/AdminMember.jsx";
 import AdminMemberList from "./pages/admin/AdminMemberList.jsx";
-import AdminLogin from './pages/AdminLogin';
-import AdminProductList from "./pages/admin/AdminProductList.jsx";
-import AdminProductCreate from "./pages/admin/AdminProductCreate.jsx";
-import AdminProduct from "./pages/admin/AdminProduct.jsx";
 import AdminPaymentList from "./pages/admin/AdminPaymentList.jsx";
-
+import AdminProduct from "./pages/admin/AdminProduct.jsx";
+import AdminProductCreate from "./pages/admin/AdminProductCreate.jsx";
+import AdminProductList from "./pages/admin/AdminProductList.jsx";
+import AdminLogin from './pages/admin/AdminLogin';
 import AdminNoticeCreate from "./pages/admin/AdminNoticeCreate.jsx";
 
 
@@ -34,18 +33,18 @@ function App() {
 
         {/* 비로그인 라우트 */}
         <Route path='/' element={<PublicRoute><MemberMain /></PublicRoute>} >
-          <Route index element={<MainProduct />} />
-          <Route path='search' element={<MainProduct />} />
-          <Route path='product/:id' element={<ProductDetail />} />
+          <Route index element={<MemberMainProduct />} />
+          <Route path='search' element={<MemberMainProduct />} />
+          <Route path='product/:id' element={<MemberProductDetail />} />
         </Route>
-        <Route path='/mypage' element={<PublicRoute><MyPage /></PublicRoute>} />
-        <Route path='/cart' element={<PublicRoute><CartPage /></PublicRoute>} />
-        <Route path='/payment' element={<PublicRoute><PaymentPage /></PublicRoute>} />
+        <Route path='/mypage' element={<PublicRoute><MemberMyPage /></PublicRoute>} />
+        <Route path='/cart' element={<PublicRoute><MemberCartPage /></PublicRoute>} />
+        <Route path='/payment' element={<PublicRoute><MemberPaymentPage /></PublicRoute>} />
         <Route path="/login" element={<PublicRoute><Login /></PublicRoute>} />
-        <Route path="/signup" element={<PublicRoute><SignUp /></PublicRoute>} />
-        <Route path="/admin/login" element={<PublicRoute><AdminLogin /></PublicRoute>} />
+        <Route path="/signUp" element={<PublicRoute><MemberSignUp /></PublicRoute>} />
 
         {/* 어드민 라우트 */}
+        <Route path="/admin/login" element={<PublicRoute><AdminLogin /></PublicRoute>} />
         <Route path="/admin" element={<AdminMain />} />
         <Route path="/admin/member" element={<AdminMemberList />} />
         <Route path="/admin/member/:no" element={<AdminMember />} />
