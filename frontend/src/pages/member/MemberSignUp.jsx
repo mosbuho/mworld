@@ -25,7 +25,8 @@ const SignUp = () => {
   const [inputVerificationCode, setInputVerificationCode] = useState('');
   const [timer, setTimer] = useState(300);
   const [isEmailVerified, setIsEmailVerified] = useState(false);
-  const [isDisabled, setIsDisabled] = useState(false);
+  const [emailDisabled, setEmailDisabled] = useState(false);
+  const [bussinessDisabled, setBussinessDisabled] = useState(false);
 
   // 아이디 중복 검사 관련 상태
   const [isIdChecked, setIsIdChecked] = useState(false);
@@ -212,7 +213,7 @@ const SignUp = () => {
         alert('이메일 인증이 완료되었습니다.');
         setIsEmailVerified(true);
         closeVerificationModal();
-        setIsDisabled(true);
+        setEmailDisabled(true);
       }
     } catch (error) {
       alert('인증번호가 올바르지 않습니다.');
@@ -238,7 +239,6 @@ const SignUp = () => {
       return;
     }
 
-    // 아이디 중복 검사 로직 'testuser'
     if (mockData.id === 'testuser') {
       setError((prevError) => ({
         ...prevError,
@@ -255,9 +255,39 @@ const SignUp = () => {
     }
   };
 
+
+
+  const handleVerifyBusiness = async () => {
+    const data = {
+      b_no: [mockData.business],
+    };
+
+    try {
+      const response = await axios.post(
+        `https://api.odcloud.kr/api/nts-businessman/v1/status?serviceKey=${import.meta.env.VITE_GO_APP_SERVICE_KEY}`,
+        data
+      );
+      if (response.data.data[0].b_stt_cd == "01") {
+        setBussinessDisabled(true);
+        alert("인증되었습니다.");
+      } else {
+        alert("유효하지 않은 번호입니다.");
+      }
+    } catch {
+      alert("예기치 못한 오류가 발생했습니다. 다시 시도해주세요.");
+    }
+  };
+
+
+
   return (
     <div className="signup-container">
       <form onSubmit={handleSubmit} className="signup-form">
+        <div className="signup-header">
+          <Link to="/">
+            명치세상
+          </Link>
+        </div>
         <div className="input-group id-group">
           <div className="id-check">
             <input
@@ -304,7 +334,7 @@ const SignUp = () => {
               value={mockData.email}
               onChange={handleChange}
               onBlur={handleBlur}
-              disabled={isDisabled}
+              disabled={emailDisabled}
               required
             />
             {!isEmailVerified && (
@@ -312,6 +342,7 @@ const SignUp = () => {
                 type="button"
                 className="verification-button"
                 onClick={openVerificationModal}
+                disabled={emailDisabled}
               >
                 인증하기
               </button>
@@ -342,24 +373,25 @@ const SignUp = () => {
             required
           />
         </div>
-        <div className="input-group email-group">
-          <div className="email-verification">
+        <div className="input-group business-group">
+          <div className="business-verification">
             <input
-              type="email"
-              id="email"
-              name="email"
+              type="text"
+              id="business"
+              name="business"
               placeholder="사업자등록번호"
               value={mockData.business}
               onChange={handleChange}
               onBlur={handleBlur}
-              disabled={isDisabled}
+              disabled={bussinessDisabled}
               required
             />
             {/* {!isEmailVerified && ( */}
             <button
               type="button"
               className="verification-button"
-              onClick={() => { console.log("test") }}
+              onClick={handleVerifyBusiness}
+              disabled={bussinessDisabled}
             >
               인증하기
             </button>
