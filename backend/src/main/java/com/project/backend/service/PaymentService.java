@@ -4,6 +4,7 @@ import com.project.backend.dto.PaymentRequest;
 import com.project.backend.dto.PaymentResponse;
 import com.project.backend.entity.Member;
 import com.project.backend.entity.Payment;
+import com.project.backend.entity.PaymentStatus;
 import com.project.backend.entity.Product;
 import com.project.backend.repository.PaymentRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,18 +32,20 @@ public class PaymentService {
     }
 
 
-    public Map<String, Object> getPaymentList(int page, int size, String f, String q, String status) {
+    public Map<String, Object> getPaymentList(int page, int size, String f, String q, int status) {
         Pageable pageable = PageRequest.of(page - 1, size);
         Page<Object[]> paymentPage;
 
+        PaymentStatus paymentStatus = status == -1 ? null : PaymentStatus.fromValue(status);
+
         if (f == null || q == null || q.isEmpty()) {
-            if ("ALL".equals(status)) {
+            if (paymentStatus == null) {
                 paymentPage = paymentRepository.findGroupedPayments(pageable);
             } else {
-                paymentPage = paymentRepository.findGroupedPaymentsByStatus(status, pageable);
+                paymentPage = paymentRepository.findGroupedPaymentsByStatus(paymentStatus, pageable);
             }
         } else {
-            paymentPage = paymentRepository.findGroupedPaymentsByFieldAndStatus(f, q, status, pageable);
+            paymentPage = paymentRepository.findGroupedPaymentsByFieldAndStatus(f, q, paymentStatus, pageable);
         }
 
         List<PaymentResponse> paymentList = paymentPage.getContent().stream().map(objects ->
@@ -51,9 +54,9 @@ public class PaymentService {
                         (String) objects[1], // method
                         ((Number) objects[2]).intValue(), // price
                         (LocalDateTime) objects[3], // regDate
-                        (String) objects[4], // status
+                        ((PaymentStatus) objects[4]).getLabel(), // status
                         (String) objects[5], // memberName
-                        (String) objects[6] // memberPhone
+                        (String) objects[6]  // memberPhone
                 )
         ).collect(Collectors.toList());
 
@@ -66,7 +69,12 @@ public class PaymentService {
     }
 
     public Map<String, Object> getPaymentStatistics() {
-        List<Object[]> stats = paymentRepository.findTotalAndStatusStatistics();
+        List<Object[]> stats = paymentRepository.findTotalAndStatusStatistics(
+                PaymentStatus.CANCELED,
+                PaymentStatus.REFUNDED,
+                PaymentStatus.RETURNED,
+                PaymentStatus.EXCHANGED
+        );
 
         Object[] result = stats.get(0);
 
@@ -107,7 +115,7 @@ public class PaymentService {
                 payment.setQuantity(request.getQuantity());
                 payment.setPrice(request.getPrice());
                 payment.setMethod(request.getMethod());
-                payment.setStatus("PAYMENTED");
+                payment.setStatus(PaymentStatus.PAYMENTED);
                 payment.setAddr(request.getAddr());
                 payment.setRegDate(LocalDateTime.now());
                 return payment;
@@ -144,11 +152,14 @@ public class PaymentService {
         List<Payment> payments = paymentRepository.findByTransactionId(transactionId);
 
         Payment firstPayment = payments.get(0);
+
+        int statusValue = firstPayment.getStatus().getValue();
+
         Map<String, Object> orderInfo = Map.of(
                 "transactionId", firstPayment.getTransactionId(),
                 "addr", firstPayment.getAddr(),
                 "method", firstPayment.getMethod(),
-                "status", firstPayment.getStatus(),
+                "status", statusValue,
                 "regDate", firstPayment.getRegDate(),
                 "memberName", firstPayment.getMember().getName(),
                 "memberPhone", firstPayment.getMember().getPhone()

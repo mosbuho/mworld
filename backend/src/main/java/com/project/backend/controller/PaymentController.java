@@ -24,7 +24,7 @@ public class PaymentController {
             @RequestParam(defaultValue = "10") int size,
             @RequestParam(required = false) String f,
             @RequestParam(required = false) String q,
-            @RequestParam(defaultValue = "ALL") String status) {
+            @RequestParam(defaultValue = "-1") int status) {
         return paymentService.getPaymentList(page, size, f, q, status);
     }
 

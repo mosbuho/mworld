@@ -1,5 +1,6 @@
 package com.project.backend.repository;
 
+import com.project.backend.entity.PaymentStatus;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -25,7 +26,7 @@ public interface PaymentRepository extends JpaRepository<Payment, Integer> {
             "WHERE p.status = :status " +
             "GROUP BY p.transactionId, p.method, p.status, m.name, m.phone " +
             "ORDER BY MAX(p.regDate) DESC")
-    Page<Object[]> findGroupedPaymentsByStatus(@Param("status") String status, Pageable pageable);
+    Page<Object[]> findGroupedPaymentsByStatus(@Param("status") PaymentStatus status, Pageable pageable);
 
     @Query("SELECT p.transactionId, p.method, SUM(p.price), MAX(p.regDate), p.status, m.name, m.phone " +
             "FROM Payment p " +
@@ -37,21 +38,27 @@ public interface PaymentRepository extends JpaRepository<Payment, Integer> {
             "AND p.status = :status " +
             "GROUP BY p.transactionId, p.method, p.status, m.name, m.phone " +
             "ORDER BY MAX(p.regDate) DESC")
-    Page<Object[]> findGroupedPaymentsByFieldAndStatus(@Param("f") String f,
-                                                       @Param("q") String q,
-                                                       @Param("status") String status,
-                                                       Pageable pageable);
+    Page<Object[]> findGroupedPaymentsByFieldAndStatus(
+            @Param("f") String f,
+            @Param("q") String q,
+            @Param("status") PaymentStatus status,
+            Pageable pageable);
 
     @Query("SELECT COUNT(DISTINCT sub.transactionId) AS totalTransactions, " +
-            "SUM(CASE WHEN sub.status NOT IN ('CANCELED', 'REFUNDED') THEN sub.totalPrice ELSE 0 END) AS totalRevenue, " +
-            "SUM(CASE WHEN sub.status = 'CANCELED' THEN 1 ELSE 0 END) AS canceledCount, " +
-            "SUM(CASE WHEN sub.status = 'REFUNDED' THEN 1 ELSE 0 END) AS refundedCount, " +
-            "SUM(CASE WHEN sub.status = 'RETURNED' THEN 1 ELSE 0 END) AS returnedCount, " +
-            "SUM(CASE WHEN sub.status = 'EXCHANGED' THEN 1 ELSE 0 END) AS exchangedCount " +
+            "SUM(CASE WHEN sub.status NOT IN (:canceled, :refunded) THEN sub.totalPrice ELSE 0 END) AS totalRevenue, " +
+            "SUM(CASE WHEN sub.status = :canceled THEN 1 ELSE 0 END) AS canceledCount, " +
+            "SUM(CASE WHEN sub.status = :refunded THEN 1 ELSE 0 END) AS refundedCount, " +
+            "SUM(CASE WHEN sub.status = :returned THEN 1 ELSE 0 END) AS returnedCount, " +
+            "SUM(CASE WHEN sub.status = :exchanged THEN 1 ELSE 0 END) AS exchangedCount " +
             "FROM (SELECT p.transactionId AS transactionId, p.status AS status, SUM(p.price) AS totalPrice " +
             "      FROM Payment p " +
             "      GROUP BY p.transactionId, p.status) sub")
-    List<Object[]> findTotalAndStatusStatistics();
+    List<Object[]> findTotalAndStatusStatistics(
+            @Param("canceled") PaymentStatus canceled,
+            @Param("refunded") PaymentStatus refunded,
+            @Param("returned") PaymentStatus returned,
+            @Param("exchanged") PaymentStatus exchanged
+    );
 
 
     @Query("SELECT p FROM Payment p JOIN p.member m JOIN p.product pr WHERE p.transactionId = :transactionId")
