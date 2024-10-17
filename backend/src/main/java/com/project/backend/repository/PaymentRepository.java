@@ -42,14 +42,17 @@ public interface PaymentRepository extends JpaRepository<Payment, Integer> {
                                                        @Param("status") String status,
                                                        Pageable pageable);
 
-    @Query("SELECT COUNT(DISTINCT p.transactionId), " +
-            "SUM(CASE WHEN p.status NOT IN ('CANCELED', 'REFUNDED') THEN p.price ELSE 0 END), " +
-            "SUM(CASE WHEN p.status = 'CANCELED' THEN 1 ELSE 0 END), " +
-            "SUM(CASE WHEN p.status = 'REFUNDED' THEN 1 ELSE 0 END), " +
-            "SUM(CASE WHEN p.status = 'RETURNED' THEN 1 ELSE 0 END), " +
-            "SUM(CASE WHEN p.status = 'EXCHANGED' THEN 1 ELSE 0 END) " +
-            "FROM Payment p")
+    @Query("SELECT COUNT(DISTINCT sub.transactionId) AS totalTransactions, " +
+            "SUM(CASE WHEN sub.status NOT IN ('CANCELED', 'REFUNDED') THEN sub.totalPrice ELSE 0 END) AS totalRevenue, " +
+            "SUM(CASE WHEN sub.status = 'CANCELED' THEN 1 ELSE 0 END) AS canceledCount, " +
+            "SUM(CASE WHEN sub.status = 'REFUNDED' THEN 1 ELSE 0 END) AS refundedCount, " +
+            "SUM(CASE WHEN sub.status = 'RETURNED' THEN 1 ELSE 0 END) AS returnedCount, " +
+            "SUM(CASE WHEN sub.status = 'EXCHANGED' THEN 1 ELSE 0 END) AS exchangedCount " +
+            "FROM (SELECT p.transactionId AS transactionId, p.status AS status, SUM(p.price) AS totalPrice " +
+            "      FROM Payment p " +
+            "      GROUP BY p.transactionId, p.status) sub")
     List<Object[]> findTotalAndStatusStatistics();
+
 
     @Query("SELECT p FROM Payment p JOIN p.member m JOIN p.product pr WHERE p.transactionId = :transactionId")
     List<Payment> findByTransactionId(String transactionId);
