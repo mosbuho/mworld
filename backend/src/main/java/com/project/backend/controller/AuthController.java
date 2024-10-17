@@ -3,11 +3,11 @@ package com.project.backend.controller;
 import java.util.Map;
 import java.util.Random;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.project.backend.dto.AuthResponse;
@@ -58,15 +58,25 @@ public class AuthController {
         }
     }
 
-    @PostMapping("/register")
+    @PostMapping("/signup")
     public ResponseEntity<?> registerMember(@RequestBody Member member) {
         try {
             memberService.registerMember(member.getId(), member.getPw(),
-                    member.getName(), member.getPhone(), member.getAddr());
-            return ResponseEntity.ok(null);
+                    member.getName(), member.getPhone(), member.getEmail(), member.getBusiness(), member.getAddr(),
+                    member.getDetailAddr());
+            return ResponseEntity.ok().build();
         } catch (Exception e) {
             e.printStackTrace();
-            return ResponseEntity.badRequest().body(e.getMessage());
+            return ResponseEntity.badRequest().body(null);
+        }
+    }
+
+    @PostMapping("/check-id")
+    public ResponseEntity<?> checkId(@RequestBody Map<String, String> request) {
+        if (memberService.checkDuplicateId(request.get("id"))) {
+            return ResponseEntity.status(HttpStatus.CONFLICT).build();
+        } else {
+            return ResponseEntity.ok().build();
         }
     }
 
@@ -79,21 +89,6 @@ public class AuthController {
             return ResponseEntity.ok(new AuthResponse(accessToken, refreshToken, admin.getNo()));
         } else {
             return ResponseEntity.badRequest().body("아이디 또는 비밀번호가 일치하지 않습니다.");
-        }
-    }
-
-    @PostMapping("/social/login")
-    public ResponseEntity<?> socialLogin(@RequestBody Map<String, String> request) {
-        String provider = request.get("provider");
-        String code = request.get("code");
-        try {
-            Map<String, Object> userInfo = authService.getSocialUserInfo(provider, code);
-            Member member = authService.socialLoginOrRegister(provider, userInfo);
-            String accessToken = jwtUtil.generateAccessToken(member.getId(), "ROLE_MEMBER", member.getNo());
-            String refreshToken = jwtUtil.generateRefreshToken(member.getId(), "ROLE_MEMBER", member.getNo());
-            return ResponseEntity.ok(new AuthResponse(accessToken, refreshToken, member.getNo()));
-        } catch (Exception e) {
-            return ResponseEntity.badRequest().body("소셜 로그인 실패: " + e.getMessage());
         }
     }
 

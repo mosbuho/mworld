@@ -2,39 +2,32 @@ package com.project.backend.service;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.*;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Random;
 import java.util.stream.Collectors;
 
-import com.project.backend.dto.PaymentRequest;
-import com.project.backend.dto.PaymentResponse;
-import com.project.backend.entity.Member;
-import com.project.backend.entity.Product;
-import com.project.backend.repository.PaymentRepository;
-import com.project.backend.repository.ProductRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import com.project.backend.dto.PaymentRequest;
+import com.project.backend.dto.PaymentResponse;
+import com.project.backend.entity.Member;
 import com.project.backend.entity.Payment;
-
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.PersistenceContext;
-import jakarta.persistence.Query;
+import com.project.backend.entity.Product;
+import com.project.backend.repository.PaymentRepository;
 
 @Service
 public class PaymentService {
 
     private final PaymentRepository paymentRepository;
-    private final ProductRepository productRepository;
 
-    @Autowired
-    public PaymentService(PaymentRepository paymentRepository, ProductRepository productRepository) {
+    public PaymentService(PaymentRepository paymentRepository) {
         this.paymentRepository = paymentRepository;
-        this.productRepository = productRepository;
     }
-
 
     public Map<String, Object> getPaymentList(int page, int size, String f, String q) {
         Pageable pageable = PageRequest.of(page - 1, size);
@@ -46,17 +39,14 @@ public class PaymentService {
             paymentPage = paymentRepository.findGroupedPaymentsByField(f, q, pageable);
         }
 
-        List<PaymentResponse> paymentList = paymentPage.getContent().stream().map(objects ->
-                new PaymentResponse(
-                        (String) objects[0],
-                        (String) objects[1],
-                        ((Number) objects[2]).intValue(),
-                        (LocalDateTime) objects[3],
-                        (String) objects[4],
-                        (String) objects[5],
-                        (String) objects[6]
-                )
-        ).collect(Collectors.toList());
+        List<PaymentResponse> paymentList = paymentPage.getContent().stream().map(objects -> new PaymentResponse(
+                (String) objects[0],
+                (String) objects[1],
+                ((Number) objects[2]).intValue(),
+                (LocalDateTime) objects[3],
+                (String) objects[4],
+                (String) objects[5],
+                (String) objects[6])).collect(Collectors.toList());
 
         Map<String, Object> response = new HashMap<>();
         response.put("paymentList", paymentList);

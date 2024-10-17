@@ -1,13 +1,7 @@
-import { useState } from "react";
-import '/src/styles/components/Login.css';
-import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
-
-
-const mockData = {
-  id: 'test',
-  pw: 'test',
-}
+import { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import '/src/styles/components/Login.css';
 
 const Login = ({ isAdmin }) => {
   const [id, setId] = useState('');
