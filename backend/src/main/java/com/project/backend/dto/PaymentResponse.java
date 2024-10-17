@@ -1,9 +1,9 @@
 package com.project.backend.dto;
 
+import java.time.LocalDateTime;
+
 import lombok.Getter;
 import lombok.Setter;
-
-import java.time.LocalDateTime;
 
 @Getter
 @Setter
@@ -19,7 +19,8 @@ public class PaymentResponse {
     private String memberPhone;
     private String productTitle;
 
-    public PaymentResponse(String transactionId, String method, int price, LocalDateTime regDate, String status, String memberName, String memberPhone) {
+    public PaymentResponse(String transactionId, String method, int price, LocalDateTime regDate, String status,
+            String memberName, String memberPhone) {
         this.transactionId = transactionId;
         this.method = method;
         this.price = price;
@@ -29,7 +30,8 @@ public class PaymentResponse {
         this.memberPhone = memberPhone;
     }
 
-    public PaymentResponse(String transactionId, String method, int price, int quantity, LocalDateTime regDate, String status, String memberName, String memberPhone, String productTitle) {
+    public PaymentResponse(String transactionId, String method, int price, LocalDateTime regDate, String status,
+            String memberName, String memberPhone, String productTitle) {
         this(transactionId, method, price, regDate, status, memberName, memberPhone);
         this.productTitle = productTitle;
         this.quantity = quantity;

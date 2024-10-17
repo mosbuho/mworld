@@ -1,12 +1,8 @@
 package com.project.backend.controller;
 
-import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -24,7 +20,6 @@ import com.project.backend.service.MemberService;
 @RequestMapping("/api")
 public class MemberController {
 
-    private static final Logger log = LoggerFactory.getLogger(MemberController.class);
     private final MemberService memberService;
 
     public MemberController(MemberService memberService) {

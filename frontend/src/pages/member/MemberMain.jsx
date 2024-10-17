@@ -1,7 +1,6 @@
 import MemberHeader from "../../components/member/MemberHeader";
-import MainProduct from "../../components/member/MainProduct";
 import MemberFooter from "../../components/member/MemberFooter";
-import FixedButton from "../../components/member/FixedButton";
+import FixedButton from "../../components/member/MemberFixedButton";
 import { Outlet } from "react-router-dom";
 
 const MemberMain = () => {
