@@ -31,7 +31,7 @@ public class PaymentResponse {
     }
 
     public PaymentResponse(String transactionId, String method, int price, LocalDateTime regDate, String status,
-            String memberName, String memberPhone, String productTitle) {
+            String memberName, String memberPhone, String productTitle, int quantity) {
         this(transactionId, method, price, regDate, status, memberName, memberPhone);
         this.productTitle = productTitle;
         this.quantity = quantity;

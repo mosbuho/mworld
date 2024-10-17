@@ -8,7 +8,6 @@ import java.util.Map;
 import java.util.Random;
 import java.util.stream.Collectors;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -28,7 +27,6 @@ public class PaymentService {
 
     private final PaymentRepository paymentRepository;
 
-    @Autowired
     public PaymentService(PaymentRepository paymentRepository) {
         this.paymentRepository = paymentRepository;
     }
