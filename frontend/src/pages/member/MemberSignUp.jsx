@@ -5,30 +5,25 @@ import DaumPost from '/src/components/DaumPost';
 import '/src/styles/pages/member/MemberSignUp.css';
 
 const SignUp = () => {
-  const [mockData, setMockData] = useState({
+  const [inputData, setInputData] = useState({
     id: '',
     pw: '',
-    confirmPw: '',
     name: '',
     phone: '',
-    addr: '',
-    detailAddr: '',
     email: '',
-    business: ''
+    business: '',
+    addr: '',
+    detailAddr: ''
   });
 
   const [error, setError] = useState({});
-
   const [isVerificationModalOpen, setIsVerificationModalOpen] = useState(false);
   const [isVerificationCodeSent, setIsVerificationCodeSent] = useState(false);
-  const [verificationCode, setVerificationCode] = useState('');
   const [inputVerificationCode, setInputVerificationCode] = useState('');
   const [timer, setTimer] = useState(300);
   const [isEmailVerified, setIsEmailVerified] = useState(false);
   const [emailDisabled, setEmailDisabled] = useState(false);
   const [bussinessDisabled, setBussinessDisabled] = useState(false);
-
-  // 아이디 중복 검사 관련 상태
   const [isIdChecked, setIsIdChecked] = useState(false);
 
   useEffect(() => {
@@ -49,7 +44,6 @@ const SignUp = () => {
   const validateField = (name, value) => {
     let errorMessage = '';
 
-    // 아이디 4~12자 영문 대소문자, 숫자만 허용
     if (name === 'id') {
       const userIdPattern = /^[a-zA-Z0-9]{4,12}$/;
       if (!userIdPattern.test(value)) {
@@ -57,7 +51,6 @@ const SignUp = () => {
       }
     }
 
-    // 비밀번호 8~20자의 영문, 숫자, 특수문자 조합
     if (name === 'pw') {
       const passwordPattern = /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,20}$/;
       if (!passwordPattern.test(value)) {
@@ -65,7 +58,6 @@ const SignUp = () => {
       }
     }
 
-    // 전화번호 형식 검사
     if (name === 'phone') {
       const phonePattern = /^\d{10,11}$/;
       if (!phonePattern.test(value)) {
@@ -73,7 +65,6 @@ const SignUp = () => {
       }
     }
 
-    // 이메일 형식 검사
     if (name === 'email') {
       const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
       if (!emailPattern.test(value)) {
@@ -96,24 +87,22 @@ const SignUp = () => {
   const handleChange = (e) => {
     const { name, value } = e.target;
 
-    // 이메일이 변경되면 이메일 인증 상태 초기화
     if (name === 'email') {
       setIsEmailVerified(false);
     }
 
-    // 아이디가 변경되면 아이디 중복 검사 상태 초기화
     if (name === 'id') {
       setIsIdChecked(false);
     }
 
-    setMockData({
-      ...mockData,
+    setInputData({
+      ...inputData,
       [name]: value,
     });
   };
 
   const setAddress = (address) => {
-    setMockData((prevData) => ({
+    setInputData((prevData) => ({
       ...prevData,
       addr: address,
     }));
@@ -123,8 +112,8 @@ const SignUp = () => {
     e.preventDefault();
 
     const newError = {};
-    Object.keys(mockData).forEach((field) => {
-      const errorMessage = validateField(field, mockData[field]);
+    Object.keys(inputData).forEach((field) => {
+      const errorMessage = validateField(field, inputData[field]);
       if (errorMessage) {
         newError[field] = errorMessage;
       }
@@ -141,21 +130,18 @@ const SignUp = () => {
     setError(newError);
 
     if (Object.keys(newError).length === 0) {
-      const fullAddress = `${mockData.addr} ${mockData.detailAddr}`;
+      const fullAddress = `${inputData.addr} ${inputData.detailAddr}`;
 
       console.log('회원가입 데이터', {
-        ...mockData,
+        ...inputData,
         fullAddress,
       });
-
-      // 회원가입 성공 메시지 등 처리
       alert('회원가입이 완료되었습니다.');
     }
   };
 
-  // 이메일 인증 모달 열기
   const openVerificationModal = () => {
-    if (!mockData.email) {
+    if (!inputData.email) {
       setError((prevError) => ({
         ...prevError,
         email: '이메일을 입력해주세요.',
@@ -164,10 +150,10 @@ const SignUp = () => {
     }
 
     axios.post("http://localhost:8080/api/auth/email-send", {
-      email: mockData.email
+      email: inputData.email
     });
 
-    const emailError = validateField('email', mockData.email);
+    const emailError = validateField('email', inputData.email);
     if (emailError) {
       setError((prevError) => ({
         ...prevError,
@@ -176,8 +162,6 @@ const SignUp = () => {
       return;
     }
 
-    // 인증번호 전송 로직 '123456'
-    setVerificationCode('123456');
     setIsVerificationModalOpen(true);
     setIsVerificationCodeSent(true);
     setTimer(300);
@@ -185,27 +169,21 @@ const SignUp = () => {
     alert('인증번호가 전송되었습니다.');
   };
 
-  // 이메일 인증 모달 닫기
   const closeVerificationModal = () => {
     setIsVerificationModalOpen(false);
     setIsVerificationCodeSent(false);
     setTimer(300);
-    setVerificationCode('');
     setInputVerificationCode('');
   };
 
-  // 인증번호 입력 변경 핸들러
   const handleVerificationCodeChange = (e) => {
     setInputVerificationCode(e.target.value);
   };
 
-  // 인증번호 확인 핸들러
   const handleVerifyCode = async () => {
     try {
-      console.log(mockData.email);
-      console.log(inputVerificationCode);
       const response = await axios.post("http://localhost:8080/api/auth/email-verify", {
-        email: mockData.email,
+        email: inputData.email,
         code: inputVerificationCode,
       });
 
@@ -220,9 +198,8 @@ const SignUp = () => {
     }
   };
 
-  // 아이디 중복 검사 핸들러
-  const handleIdCheck = () => {
-    if (!mockData.id) {
+  const handleIdCheck = async () => {
+    if (!inputData.id) {
       setError((prevError) => ({
         ...prevError,
         id: '아이디를 입력해주세요.',
@@ -230,7 +207,7 @@ const SignUp = () => {
       return;
     }
 
-    const idError = validateField('id', mockData.id);
+    const idError = validateField('id', inputData.id);
     if (idError) {
       setError((prevError) => ({
         ...prevError,
@@ -239,27 +216,35 @@ const SignUp = () => {
       return;
     }
 
-    if (mockData.id === 'testuser') {
-      setError((prevError) => ({
-        ...prevError,
-        id: '이미 사용 중인 아이디입니다.',
-      }));
-      setIsIdChecked(false);
-    } else {
-      alert('사용 가능한 아이디입니다.');
-      setIsIdChecked(true);
-      setError((prevError) => ({
-        ...prevError,
-        id: '',
-      }));
+    try {
+      const response = await axios.post("http://localhost:8080/api/auth/check-id", {
+        id: inputData.id
+      });
+
+      if (response.status === 200) {
+        alert('사용 가능한 아이디입니다.');
+        setIsIdChecked(true);
+        setError((prevError) => ({
+          ...prevError,
+          id: '',
+        }));
+      }
+    } catch {
+      if (error.response && error.response.status === 409) {
+        setError((prevError) => ({
+          ...prevError,
+          id: '이미 사용 중인 아이디입니다.',
+        }));
+        setIsIdChecked(false);
+      } else {
+        alert('예기치 못한 오류가 발생했습니다. 다시 시도해주세요.');
+      }
     }
   };
 
-
-
   const handleVerifyBusiness = async () => {
     const data = {
-      b_no: [mockData.business],
+      b_no: [inputData.business],
     };
 
     try {
@@ -295,7 +280,7 @@ const SignUp = () => {
               id="id"
               name="id"
               placeholder="아이디"
-              value={mockData.id}
+              value={inputData.id}
               onChange={handleChange}
               onBlur={handleBlur}
               required
@@ -317,7 +302,7 @@ const SignUp = () => {
             id="pw"
             name="pw"
             placeholder="비밀번호"
-            value={mockData.pw}
+            value={inputData.pw}
             onChange={handleChange}
             onBlur={handleBlur}
             required
@@ -331,7 +316,7 @@ const SignUp = () => {
               id="email"
               name="email"
               placeholder="이메일"
-              value={mockData.email}
+              value={inputData.email}
               onChange={handleChange}
               onBlur={handleBlur}
               disabled={emailDisabled}
@@ -355,7 +340,7 @@ const SignUp = () => {
             id="name"
             name="name"
             placeholder="이름"
-            value={mockData.name}
+            value={inputData.name}
             onChange={handleChange}
             required
           />
@@ -367,7 +352,7 @@ const SignUp = () => {
             id="phone"
             name="phone"
             placeholder="전화번호"
-            value={mockData.phone}
+            value={inputData.phone}
             onChange={handleChange}
             onBlur={handleBlur}
             required
@@ -380,13 +365,12 @@ const SignUp = () => {
               id="business"
               name="business"
               placeholder="사업자등록번호"
-              value={mockData.business}
+              value={inputData.business}
               onChange={handleChange}
               onBlur={handleBlur}
               disabled={bussinessDisabled}
               required
             />
-            {/* {!isEmailVerified && ( */}
             <button
               type="button"
               className="verification-button"
@@ -395,7 +379,6 @@ const SignUp = () => {
             >
               인증하기
             </button>
-            {/* )} */}
           </div>
         </div>
         <div className="input-group address-group">
@@ -405,7 +388,7 @@ const SignUp = () => {
               id="addr"
               name="addr"
               placeholder="주소"
-              value={mockData.addr}
+              value={inputData.addr}
               onChange={handleChange}
               required
               readOnly
@@ -419,7 +402,7 @@ const SignUp = () => {
             id="detailAddr"
             name="detailAddr"
             placeholder="상세주소"
-            value={mockData.detailAddr}
+            value={inputData.detailAddr}
             onChange={handleChange}
             required
           />
@@ -431,15 +414,14 @@ const SignUp = () => {
         <button type="submit" className="signup-button">회원가입</button>
 
         <div className="links">
-          <Link to='/login'>이미 계정이 있으신가요? 로그인</Link>
+        이미 계정이 있으신가요? <Link to='/login'> 로그인 </Link>
         </div>
       </form>
 
-      {/* 이메일 인증 모달 */}
       {isVerificationModalOpen && (
         <div className='modal-overlay' onClick={closeVerificationModal}>
           <div className='modal-content' onClick={(e) => e.stopPropagation()}>
-            <p>{mockData.email}로 전송된 인증번호를 입력해주세요.</p>
+            <p>{inputData.email}로 전송된 인증번호를 입력해주세요.</p>
             <div className='input-group'>
               <input
                 type='text'

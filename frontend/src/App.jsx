@@ -41,7 +41,7 @@ function App() {
         <Route path='/cart' element={<PublicRoute><MemberCartPage /></PublicRoute>} />
         <Route path='/payment' element={<PublicRoute><MemberPaymentPage /></PublicRoute>} />
         <Route path="/login" element={<PublicRoute><Login /></PublicRoute>} />
-        <Route path="/signUp" element={<PublicRoute><MemberSignUp /></PublicRoute>} />
+        <Route path="/signup" element={<PublicRoute><MemberSignUp /></PublicRoute>} />
 
         {/* 어드민 라우트 */}
         <Route path="/admin/login" element={<PublicRoute><AdminLogin /></PublicRoute>} />

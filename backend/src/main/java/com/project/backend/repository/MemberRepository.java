@@ -22,6 +22,4 @@ public interface MemberRepository extends JpaRepository<Member, Integer> {
                         @Param("f") String f,
                         @Param("q") String q,
                         Pageable pageable);
-
-        Member findByProviderAndProviderId(String provider, String providerId);
 }

@@ -100,4 +100,8 @@ public class MemberService {
         member.setAddr(addr);
         return memberRepository.save(member);
     }
+
+    public boolean checkDuplicateId(String id) {
+        return memberRepository.findMemberById(id) != null;
+    }
 }

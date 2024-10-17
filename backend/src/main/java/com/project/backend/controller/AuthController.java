@@ -3,6 +3,7 @@ package com.project.backend.controller;
 import java.util.Map;
 import java.util.Random;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -66,6 +67,15 @@ public class AuthController {
         } catch (Exception e) {
             e.printStackTrace();
             return ResponseEntity.badRequest().body(null);
+        }
+    }
+
+    @PostMapping("/check-id")
+    public ResponseEntity<?> checkId(@RequestBody Map<String, String> request) {
+        if (memberService.checkDuplicateId(request.get("id"))) {
+            return ResponseEntity.status(HttpStatus.CONFLICT).build();
+        } else {
+            return ResponseEntity.ok().build();
         }
     }
 
