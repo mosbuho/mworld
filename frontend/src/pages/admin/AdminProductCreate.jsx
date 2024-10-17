@@ -34,39 +34,30 @@ const AdminProductCreate = () => {
             };
 
             img.onload = () => {
+                let newWidth = img.width;
+                let newHeight = img.height;
+
+                // 비율 유지하며 최대 크기를 넘지 않도록 조정
+                if (newWidth > maxWidth) {
+                    newHeight = (maxWidth / newWidth) * newHeight;
+                    newWidth = maxWidth;
+                }
+
+                if (newHeight > maxHeight) {
+                    newWidth = (maxHeight / newHeight) * newWidth;
+                    newHeight = maxHeight;
+                }
+
                 const canvas = document.createElement('canvas');
                 const ctx = canvas.getContext('2d');
 
-                // 캔버스의 크기를 고정
-                canvas.width = maxWidth;
-                canvas.height = maxHeight;
+                canvas.width = newWidth;
+                canvas.height = newHeight;
 
-                // 이미지의 비율을 계산
-                const imageAspectRatio = img.width / img.height;
-                const canvasAspectRatio = maxWidth / maxHeight;
+                // 이미지 그리기
+                ctx.drawImage(img, 0, 0, newWidth, newHeight);
 
-                let drawWidth = maxWidth;
-                let drawHeight = maxHeight;
-
-                // 이미지 비율에 맞게 크기를 조정
-                if (imageAspectRatio > canvasAspectRatio) {
-                    drawHeight = maxWidth / imageAspectRatio;
-                } else {
-                    drawWidth = maxHeight * imageAspectRatio;
-                }
-
-                // 캔버스의 가운데에 이미지를 그리기 위해 좌표 계산
-                const offsetX = (maxWidth - drawWidth) / 2;
-                const offsetY = (maxHeight - drawHeight) / 2;
-
-                // 배경을 흰색으로 채워서 패딩처럼 보이도록 설정
-                ctx.fillStyle = 'white';
-                ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-                // 리사이징된 이미지를 캔버스 중앙에 그리기
-                ctx.drawImage(img, offsetX, offsetY, drawWidth, drawHeight);
-
-                // 리사이징된 이미지를 Blob으로 변환
+                // 리사이징된 이미지를 Blob으로 변환하여 반환
                 canvas.toBlob((blob) => {
                     resolve(blob);
                 }, file.type);
@@ -75,6 +66,7 @@ const AdminProductCreate = () => {
             reader.readAsDataURL(file);
         });
     };
+
 
     // 대표 이미지 업로드 함수
     const handleTitleImageUpload = (e) => {
