@@ -106,7 +106,7 @@ const AdminMain = () => {
                 <div className="admin-state-area">
                     <div className="title-area">
                         <span>전체 주문통계</span>
-                        <button>주문전체보기</button>
+                        <button onClick={() => nav("/admin/payment")}>주문전체보기</button>
                     </div>
                     <div className="stats">
                         <div className="total-state">
@@ -153,7 +153,7 @@ const AdminMain = () => {
                 <div className="admin-order-list">
                     <div className="title-area">
                         <span>최근 주문내역</span>
-                        <button>주문전체보기</button>
+                        <button onClick={() => nav("/admin/payment")}>주문전체보기</button>
                     </div>
                     <AdminTable columns={paymentsColumns} data={formattedPayments}/>
                 </div>

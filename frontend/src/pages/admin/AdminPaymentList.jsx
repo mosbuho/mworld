@@ -6,6 +6,7 @@ import axios from "../../utils/axiosConfig.js";
 import AdminSearch from "../../components/admin/AdminSearch.jsx";
 import AdminTable from "../../components/admin/AdminTable.jsx";
 import AdminPagination from "../../components/admin/AdminPagination.jsx";
+import "/src/styles/pages/admin/AdminPaymentList.css"
 
 const AdminPaymentList = () => {
     const [paymentList, setPaymentList] = useState([]);
@@ -14,21 +15,22 @@ const AdminPaymentList = () => {
     const [pageDataCache, setPageDataCache] = useState({});
     const [f, setF] = useState('TRANSACTIONID');
     const [q, setQ] = useState('');
+    const [selectedStatus, setSelectedStatus] = useState(-1);
 
     dayjs.locale("ko");
 
     useEffect(() => {
-        fetchPaymentList(1);
+        fetchPaymentList(1, selectedStatus);
     }, [])
 
-    const fetchPaymentList = async (page) => {
-        if (pageDataCache[`${f}_${q}_${page}`]) {
-            setPaymentList(pageDataCache[`${f}_${q}_${page}`]);
+    const fetchPaymentList = async (page, status) => {
+        if (pageDataCache[`${f}_${q}_${status}_${page}`]) {
+            setPaymentList(pageDataCache[`${f}_${q}_${status}_${page}`]);
             return;
         }
         try {
             const res = await axios.get('/api/admin/payment', {
-                params: {page, size: 20, f, q}
+                params: {page, size: 20, f, q, status}
             });
             const {paymentList: fetchedPaymentList, totalCount, totalPages} = res.data;
             setPageDataCache(prevCache => ({
@@ -43,20 +45,31 @@ const AdminPaymentList = () => {
         }
     };
 
+    const handleStatusChange = (e) => {
+        const newStatus = parseInt(e.target.value, 10);
+        setSelectedStatus(newStatus);
+        setCurrentPage(0);
+        setPageDataCache({});
+        fetchPaymentList(1, newStatus);
+    };
+
     const handlePageClick = (selectedPage) => {
         const newPage = selectedPage.selected + 1;
         setCurrentPage(selectedPage.selected);
-        fetchPaymentList(newPage);
+        fetchPaymentList(newPage, selectedStatus);
     };
 
     const handleSearch = () => {
         setCurrentPage(0);
         setPageDataCache({});
-        fetchPaymentList(1);
+        fetchPaymentList(1, selectedStatus);
     };
-
     const handleRowClick = (payment, nav) => {
         nav(`/admin/payment/${payment.transactionId}`);
+    };
+
+    const getTotalPrice = () => {
+        return paymentList.reduce((total, payment) => total + payment.price, 0);
     };
 
     const columns = [
@@ -74,6 +87,16 @@ const AdminPaymentList = () => {
         {value: 'MEMBERNAME', label: '주문자명'},
         {value: 'MEMBERPHONE', label: '전화번호'},
     ]
+
+    const selectColumns = [
+        { header: '전체', accessor: -1 },
+        { header: '결제대기', accessor: 0 },
+        { header: '결제완료', accessor: 1 },
+        { header: '취소', accessor: 2 },
+        { header: '환불', accessor: 3 },
+        { header: '반품', accessor: 4 },
+        { header: '교환', accessor: 5 },
+    ];
 
     const formattedPaymentList = paymentList.map((payment) => ({
         ...payment,
@@ -94,8 +117,28 @@ const AdminPaymentList = () => {
                     onSearch={handleSearch}
                     options={options}
                 />
-                <AdminTable columns={columns} data={formattedPaymentList} onRowClick={handleRowClick}/>
-                <AdminPagination pageCount={pageCount} handlePageClick={handlePageClick} currentPage={currentPage}/>
+                <div className="admin-payment-list">
+                    <div className="status-select">
+                        <span>주문상태</span>
+                        {selectColumns.map((column) => (
+                            <label key={column.accessor}>
+                                <input
+                                    type="radio"
+                                    name="paymentStatus"
+                                    value={column.accessor}
+                                    checked={selectedStatus === column.accessor}
+                                    onChange={handleStatusChange}
+                                />
+                                {column.header}
+                            </label>
+                        ))}
+                    </div>
+                    <div className="admin-search-result"><span>주문목록</span>{paymentList.length}건 (총
+                        주문액 {getTotalPrice().toLocaleString()}원)
+                    </div>
+                    <AdminTable columns={columns} data={formattedPaymentList} onRowClick={handleRowClick}/>
+                    <AdminPagination pageCount={pageCount} handlePageClick={handlePageClick} currentPage={currentPage}/>
+                </div>
             </div>
         </div>
     );

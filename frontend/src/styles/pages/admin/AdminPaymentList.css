@@ -1,0 +1,23 @@
+div.admin-payment-list{
+    div.status-select{
+        padding: 10px;
+        display: flex;
+        gap: 10px;
+        span{
+            font-weight: 600;
+        }
+        label{
+            display: flex;
+            align-items: center;
+        }
+    }
+    div.admin-search-result{
+        padding: 20px 0 0 20px ;
+        background: #ffffff;
+        span{
+            font-weight: bold;
+            font-size: 1.1em;
+            margin-right: 10px;
+        }
+    }
+}

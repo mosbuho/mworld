@@ -1,0 +1,86 @@
+div.admin-payment-detail {
+    background-color: white;
+    width: 50%;
+    margin: 0 auto;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+div.admin-payment-detail {
+    div.admin-payment-title {
+        font-size: 1.3em;
+        font-weight: bold;
+    }
+
+    div.admin-payment-detail-header {
+        display: flex;
+        flex-direction: column;
+        gap: 5px;
+    }
+
+    div.payment-detail-title > span {
+        font-size: 1.1em;
+        font-weight: bold;
+        margin-right: 10px;
+    }
+
+    select {
+        padding: 2px 5px;
+    }
+
+    select:focus {
+        outline: none;
+    }
+
+    div.payment-detail-row-title {
+        font-size: 1.1em;
+        font-weight: bold;
+    }
+
+    div.payment-detail-row-title {
+        margin-bottom: 10px;
+    }
+
+    div.payment-detail-list {
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: center;
+        }
+
+        tr {
+            border: 1px solid #eeeeee;
+        }
+
+        th, td {
+            padding: 5px;
+        }
+
+        th {
+            background-color: #dcdcdc;
+        }
+
+    }
+
+    div.payment-detail-row {
+        margin-top: 5px;
+        display: flex;
+        justify-content: space-between;
+    }
+
+    button.update-btn {
+        background-color: dodgerblue;
+        color: white;
+    }
+
+    button:hover {
+        color: black;
+    }
+}
+
+div.admin-payment-detail > div:not(.admin-payment-title,.btn-area) {
+    padding: 10px;
+    border: 1px solid #eeeeee;
+}

@@ -34,32 +34,30 @@ const AdminProductCreate = () => {
             };
 
             img.onload = () => {
+                let newWidth = img.width;
+                let newHeight = img.height;
+
+                // 비율 유지하며 최대 크기를 넘지 않도록 조정
+                if (newWidth > maxWidth) {
+                    newHeight = (maxWidth / newWidth) * newHeight;
+                    newWidth = maxWidth;
+                }
+
+                if (newHeight > maxHeight) {
+                    newWidth = (maxHeight / newHeight) * newWidth;
+                    newHeight = maxHeight;
+                }
+
                 const canvas = document.createElement('canvas');
                 const ctx = canvas.getContext('2d');
 
-                let width = img.width;
-                let height = img.height;
+                canvas.width = newWidth;
+                canvas.height = newHeight;
 
-                // 이미지 비율을 유지하면서 리사이징
-                if (width > height) {
-                    if (width > maxWidth) {
-                        height = Math.floor((height * maxWidth) / width);
-                        width = maxWidth;
-                    }
-                } else {
-                    if (height > maxHeight) {
-                        width = Math.floor((width * maxHeight) / height);
-                        height = maxHeight;
-                    }
-                }
+                // 이미지 그리기
+                ctx.drawImage(img, 0, 0, newWidth, newHeight);
 
-                canvas.width = width;
-                canvas.height = height;
-
-                // 리사이징된 이미지를 캔버스에 그리기
-                ctx.drawImage(img, 0, 0, width, height);
-
-                // 리사이징된 이미지를 Blob으로 변환
+                // 리사이징된 이미지를 Blob으로 변환하여 반환
                 canvas.toBlob((blob) => {
                     resolve(blob);
                 }, file.type);
@@ -68,6 +66,7 @@ const AdminProductCreate = () => {
             reader.readAsDataURL(file);
         });
     };
+
 
     // 대표 이미지 업로드 함수
     const handleTitleImageUpload = (e) => {
@@ -102,7 +101,7 @@ const AdminProductCreate = () => {
 
     // 에디터에 삽입할 이미지 업로드 콜백 함수
     const uploadImageCallback = (file) => {
-        const maxWidth = 1000; // 최대 너비
+        const maxWidth = 1200; // 최대 너비
         const maxHeight = 2000; // 최대 높이
         const entityType = 'product'; // 에디터에 삽입할 이미지도 product에 속함
 
@@ -194,9 +193,9 @@ const AdminProductCreate = () => {
                                 id="titleImg"
                                 onChange={handleTitleImageUpload} // 대표 이미지 업로드 처리
                             />
-                            <div>
+                            <div className="title-img">
+                                <span>미리보기(580px, 580px)</span>
                                 <img src={formData.titleImg} alt=""/>
-                                <span>미리보기</span>
                             </div>
                         </div>
                         <div className="form-group">
