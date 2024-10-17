@@ -1,10 +1,12 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import DaumPost from '/src/components/DaumPost';
 import '/src/styles/pages/member/MemberSignUp.css';
 
 const SignUp = () => {
+  const navigate = useNavigate();
+
   const [inputData, setInputData] = useState({
     id: '',
     pw: '',
@@ -24,6 +26,7 @@ const SignUp = () => {
   const [isEmailVerified, setIsEmailVerified] = useState(false);
   const [emailDisabled, setEmailDisabled] = useState(false);
   const [bussinessDisabled, setBussinessDisabled] = useState(false);
+  const [isBussinessVerified, setBussinessVerified] = useState(false);
   const [isIdChecked, setIsIdChecked] = useState(false);
 
   useEffect(() => {
@@ -108,7 +111,7 @@ const SignUp = () => {
     }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
     const newError = {};
@@ -119,26 +122,26 @@ const SignUp = () => {
       }
     });
 
-    if (!isEmailVerified) {
-      newError['email'] = '이메일 인증이 완료되지 않았습니다.';
-    }
-
-    if (!isIdChecked) {
-      newError['id'] = '아이디 중복 검사가 완료되지 않았습니다.';
-    }
+    if (!isEmailVerified) newError['email'] = '이메일 인증이 완료되지 않았습니다.';
+    if (!isBussinessVerified) newError['business'] = '사업자 등록 번호 인증이 완료되지 않았습니다.';
+    if (!isIdChecked) newError['id'] = '아이디 중복 검사가 완료되지 않았습니다.';
 
     setError(newError);
 
     if (Object.keys(newError).length === 0) {
-      const fullAddress = `${inputData.addr} ${inputData.detailAddr}`;
+      try {
+        const response = await axios.post("http://localhost:8080/api/auth/signup", inputData);
 
-      console.log('회원가입 데이터', {
-        ...inputData,
-        fullAddress,
-      });
-      alert('회원가입이 완료되었습니다.');
+        if (response.status === 200) {
+          alert('회원가입이 완료되었습니다.');
+          navigate("/");
+        }
+      } catch (error) {
+        console.error(error);
+        alert('회원가입 중 오류가 발생했습니다. 다시 시도해주세요.');
+      }
     }
-  };
+  }
 
   const openVerificationModal = () => {
     if (!inputData.email) {
@@ -254,6 +257,7 @@ const SignUp = () => {
       );
       if (response.data.data[0].b_stt_cd == "01") {
         setBussinessDisabled(true);
+        setBussinessVerified(true);
         alert("인증되었습니다.");
       } else {
         alert("유효하지 않은 번호입니다.");
@@ -262,8 +266,6 @@ const SignUp = () => {
       alert("예기치 못한 오류가 발생했습니다. 다시 시도해주세요.");
     }
   };
-
-
 
   return (
     <div className="signup-container">
@@ -351,7 +353,7 @@ const SignUp = () => {
             type="text"
             id="phone"
             name="phone"
-            placeholder="전화번호"
+            placeholder="전화번호 (-를 제외한 숫자만 입력)"
             value={inputData.phone}
             onChange={handleChange}
             onBlur={handleBlur}
@@ -364,7 +366,7 @@ const SignUp = () => {
               type="text"
               id="business"
               name="business"
-              placeholder="사업자등록번호"
+              placeholder="사업자등록번호 (-를 제외한 숫자만 입력)"
               value={inputData.business}
               onChange={handleChange}
               onBlur={handleBlur}
@@ -387,11 +389,10 @@ const SignUp = () => {
               type="text"
               id="addr"
               name="addr"
-              placeholder="주소"
+              placeholder="(선택) 주소"
               value={inputData.addr}
               onChange={handleChange}
-              required
-              readOnly
+              disabled
             />
             <DaumPost setAddress={setAddress} />
           </div>
@@ -401,10 +402,9 @@ const SignUp = () => {
             type="text"
             id="detailAddr"
             name="detailAddr"
-            placeholder="상세주소"
+            placeholder="(선택) 상세주소"
             value={inputData.detailAddr}
             onChange={handleChange}
-            required
           />
         </div>
         {error.id && <p className="error-message">{error.id}</p>}
@@ -414,7 +414,7 @@ const SignUp = () => {
         <button type="submit" className="signup-button">회원가입</button>
 
         <div className="links">
-        이미 계정이 있으신가요? <Link to='/login'> 로그인 </Link>
+          이미 계정이 있으신가요? <Link to='/login'> 로그인 </Link>
         </div>
       </form>
 

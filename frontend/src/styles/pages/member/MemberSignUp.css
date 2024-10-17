@@ -147,13 +147,15 @@
   }
 
   .modal-content .input-group input {
-    border: 1px solid #ccc;
+    outline: none;
+    border: none;
   }
 
   .modal-content .timer {
     font-size: 14px;
     color: var(--main-bg-color);
     margin-bottom: 16px;
+    margin-top: 5px;
   }
 
   .modal-buttons {

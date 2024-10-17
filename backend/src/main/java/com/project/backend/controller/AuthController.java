@@ -62,8 +62,9 @@ public class AuthController {
     public ResponseEntity<?> registerMember(@RequestBody Member member) {
         try {
             memberService.registerMember(member.getId(), member.getPw(),
-                    member.getName(), member.getPhone(), member.getEmail(), member.getBusiness(), member.getAddr());
-            return ResponseEntity.ok(null);
+                    member.getName(), member.getPhone(), member.getEmail(), member.getBusiness(), member.getAddr(),
+                    member.getDetailAddr());
+            return ResponseEntity.ok().build();
         } catch (Exception e) {
             e.printStackTrace();
             return ResponseEntity.badRequest().body(null);

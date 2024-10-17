@@ -33,6 +33,25 @@ public class MemberService {
     @PersistenceContext
     private EntityManager entityManager;
 
+    @Transactional
+    public Member registerMember(String id, String pw, String name, String phone, String email,
+            String business, String addr, String detailAddr) {
+        Member member = new Member();
+        member.setId(id);
+        member.setPw(passwordEncoder.encode(pw));
+        member.setName(name);
+        member.setPhone(phone);
+        member.setEmail(email);
+        member.setBusiness(business);
+        member.setAddr(addr);
+        member.setDetailAddr(detailAddr);
+        return memberRepository.save(member);
+    }
+
+    public boolean checkDuplicateId(String id) {
+        return memberRepository.findMemberById(id) != null;
+    }
+
     @SuppressWarnings("unchecked")
     public List<Member> getMemberList(int page, int size) {
         int pageSize = size - page + 1;
@@ -51,15 +70,13 @@ public class MemberService {
             throw new IllegalArgumentException("Invalid member No: " + no);
         }
 
-        // 필요한 필드 업데이트
         member.setName(updatedMember.getName());
         member.setPhone(updatedMember.getPhone());
         member.setAddr(updatedMember.getAddr());
 
-        return memberRepository.save(member); // 수정 후 저장
+        return memberRepository.save(member);
     }
 
-    // 회원 삭제 로직
     public void deleteMember(int no) {
         Member member = memberRepository.findByNo(no);
         if (member == null) {
@@ -85,23 +102,5 @@ public class MemberService {
         response.put("totalPages", memberPage.getTotalPages());
 
         return response;
-    }
-
-    @Transactional
-    public Member registerMember(String id, String pw, String name, String phone, String email,
-            String business, String addr) {
-        Member member = new Member();
-        member.setId(id);
-        member.setPw(passwordEncoder.encode(pw));
-        member.setName(name);
-        member.setPhone(phone);
-        member.setEmail(email);
-        member.setBusiness(business);
-        member.setAddr(addr);
-        return memberRepository.save(member);
-    }
-
-    public boolean checkDuplicateId(String id) {
-        return memberRepository.findMemberById(id) != null;
     }
 }

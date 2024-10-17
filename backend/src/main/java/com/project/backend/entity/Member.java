@@ -41,6 +41,9 @@ public class Member {
     @Column(length = 50)
     private String addr;
 
+    @Column(name = "detail_addr", length = 50)
+    private String detailAddr;
+
     @Column(name = "reg_date", nullable = false, updatable = false, insertable = false, columnDefinition = "timestamp default systimestamp")
     private LocalDateTime regDate;
 }
