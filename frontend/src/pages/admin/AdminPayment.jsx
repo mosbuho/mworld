@@ -1,7 +1,7 @@
 import AdminHeader from "../../components/admin/AdminHeader.jsx";
 import AdminSidebar from "../../components/admin/AdminSidebar.jsx";
 import {useEffect, useState} from "react";
-import {useParams} from "react-router-dom";
+import {useNavigate, useParams} from "react-router-dom";
 import axios from "../../utils/axiosConfig.js";
 import dayjs from "dayjs";
 import "/src/styles/pages/admin/AdminPayment.css";
@@ -10,6 +10,7 @@ const AdminPayment = () => {
     const [paymentInfo, setPaymentInfo] = useState({});
     const [productList, setProductList] = useState([]);
     const {orderNo} = useParams();
+    const nav = useNavigate();
 
     dayjs.locale("ko");
 
@@ -27,13 +28,35 @@ const AdminPayment = () => {
         }
     };
 
+    const handleUpdate = async () => {
+        if (window.confirm("주문상태를 변경하시겠습니까?")) {
+            try {
+                const res = await axios.put(`/api/admin/payment/${paymentInfo.transactionId}`, null, {
+                    params: { status: paymentInfo.status },
+                });
+                alert(res.data);
+            } catch (err) {
+                console.error("Failed to update payment status", err);
+                alert("주문상태 변경에 실패했습니다.");
+            }
+        }
+    };
+
+    const handleStatusChange = (e) => {
+        const newStatus = Number(e.target.value);
+        setPaymentInfo((prev) => ({
+            ...prev,
+            status: newStatus,
+        }));
+    };
+
     const selectColumns = [
-        {header: '결제대기', accessor: 'UNPAYMENT'},
-        {header: '결제완료', accessor: 'PAYMENTED'},
-        {header: '취소', accessor: 'CANCELED'},
-        {header: '환불', accessor: 'REFUNDED'},
-        {header: '반품', accessor: 'RETURNED'},
-        {header: '교환', accessor: 'EXCHANGED'},
+        {header: '결제대기', accessor: 0},
+        {header: '결제완료', accessor: 1},
+        {header: '취소', accessor: 2},
+        {header: '환불', accessor: 3},
+        {header: '반품', accessor: 4},
+        {header: '교환', accessor: 5},
     ];
 
     const getTotalPrice = () => {
@@ -53,9 +76,15 @@ const AdminPayment = () => {
                             <span>주문일시</span>{dayjs(paymentInfo.regDate).format("YYYY-MM-DD HH:mm (ddd)")}</div>
                         <div className="payment-detail-title">
                             <span>주문상태</span>
-                            <select defaultValue={paymentInfo.status}>
+                            <select
+                                value={paymentInfo.status}
+                                onChange={handleStatusChange}
+                            >
                                 {selectColumns.map((column) => (
-                                    <option key={column.accessor} value={column.accessor}>
+                                    <option
+                                        key={column.accessor}
+                                        value={column.accessor}
+                                    >
                                         {column.header}
                                     </option>
                                 ))}
@@ -110,7 +139,7 @@ const AdminPayment = () => {
                         </div>
                     </div>
                     <div className="btn-area">
-                        <button type="button" className="update-btn" >저장</button>
+                        <button type="button" className="update-btn" onClick={handleUpdate}>저장</button>
                         <button type="button" onClick={() => nav(-1)}>뒤로</button>
                     </div>
                 </div>

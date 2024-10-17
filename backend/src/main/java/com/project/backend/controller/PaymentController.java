@@ -51,4 +51,16 @@ public class PaymentController {
         return paymentService.getPaymentDetails(transactionId);
 
     }
+
+    @PutMapping("/admin/payment/{transactionId}")
+    public ResponseEntity<String> updatePaymentStatus(
+            @PathVariable String transactionId,
+            @RequestParam int status) {
+        try {
+            paymentService.updatePaymentStatus(transactionId, status);
+            return ResponseEntity.ok("주문상태가 변경되었습니다.");
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
 }

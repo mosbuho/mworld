@@ -12,6 +12,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -178,5 +179,16 @@ public class PaymentService {
         response.put("productList", productList);
 
         return response;
+    }
+
+    @Transactional
+    public void updatePaymentStatus(String transactionId, int statusValue) {
+        PaymentStatus status = PaymentStatus.fromValue(statusValue);
+
+        int updatedCount = paymentRepository.updatePaymentStatus(transactionId, status);
+
+        if (updatedCount == 0) {
+            throw new IllegalArgumentException("No payment found for transactionId: " + transactionId);
+        }
     }
 }

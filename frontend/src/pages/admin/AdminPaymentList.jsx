@@ -15,7 +15,7 @@ const AdminPaymentList = () => {
     const [pageDataCache, setPageDataCache] = useState({});
     const [f, setF] = useState('TRANSACTIONID');
     const [q, setQ] = useState('');
-    const [selectedStatus, setSelectedStatus] = useState('ALL');
+    const [selectedStatus, setSelectedStatus] = useState(-1);
 
     dayjs.locale("ko");
 
@@ -46,7 +46,7 @@ const AdminPaymentList = () => {
     };
 
     const handleStatusChange = (e) => {
-        const newStatus = e.target.value;
+        const newStatus = parseInt(e.target.value, 10);
         setSelectedStatus(newStatus);
         setCurrentPage(0);
         setPageDataCache({});
@@ -89,13 +89,13 @@ const AdminPaymentList = () => {
     ]
 
     const selectColumns = [
-        {header: '전체', accessor: 'ALL'},
-        {header: '결제대기', accessor: 'UNPAYMENT'},
-        {header: '결제완료', accessor: 'PAYMENTED'},
-        {header: '취소', accessor: 'CANCELED'},
-        {header: '환불', accessor: 'REFUNDED'},
-        {header: '반품', accessor: 'RETURNED'},
-        {header: '교환', accessor: 'EXCHANGED'},
+        { header: '전체', accessor: -1 },
+        { header: '결제대기', accessor: 0 },
+        { header: '결제완료', accessor: 1 },
+        { header: '취소', accessor: 2 },
+        { header: '환불', accessor: 3 },
+        { header: '반품', accessor: 4 },
+        { header: '교환', accessor: 5 },
     ];
 
     const formattedPaymentList = paymentList.map((payment) => ({
