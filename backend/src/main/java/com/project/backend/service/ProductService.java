@@ -1,23 +1,22 @@
 package com.project.backend.service;
 
-import com.project.backend.entity.Product;
-import com.project.backend.repository.ProductRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import java.util.HashMap;
+import java.util.Map;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
-import java.util.HashMap;
-import java.util.Map;
+import com.project.backend.entity.Product;
+import com.project.backend.repository.ProductRepository;
 
 @Service
 public class ProductService {
 
     private final ProductRepository productRepository;
 
-    @Autowired
     public ProductService(ProductRepository productRepository) {
         this.productRepository = productRepository;
     }
@@ -46,7 +45,7 @@ public class ProductService {
 
     public Product updateProduct(int no, Product updateProduct) {
         Product product = productRepository.findByNo(no);
-        if(product == null){
+        if (product == null) {
             throw new IllegalArgumentException("Invalid product No: " + no);
         }
 
@@ -62,7 +61,7 @@ public class ProductService {
 
     public void deleteProduct(int no) {
         Product product = productRepository.findByNo(no);
-        if(product == null){
+        if (product == null) {
             throw new IllegalArgumentException("Invalid product No: " + no);
         }
         productRepository.delete(product);

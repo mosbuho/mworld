@@ -32,18 +32,15 @@ public class Member {
     @Column(nullable = false, length = 11)
     private String phone;
 
+    @Column(nullable = false, unique = true)
+    private String email;
+
+    @Column(nullable = false, length = 10)
+    private String business;
+
     @Column(length = 50)
     private String addr;
 
     @Column(name = "reg_date", nullable = false, updatable = false, insertable = false, columnDefinition = "timestamp default systimestamp")
     private LocalDateTime regDate;
-
-    @Column(name = "provider", nullable = true)
-    private String provider;
-
-    @Column(name = "provider_id", nullable = true)
-    private String providerId;
-
-    @Column(nullable = false, unique = true)
-    private String email;
 }

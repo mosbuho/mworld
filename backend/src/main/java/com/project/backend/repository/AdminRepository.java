@@ -6,5 +6,4 @@ import com.project.backend.entity.Admin;
 
 public interface AdminRepository extends JpaRepository<Admin, Integer> {
     Admin findAdminById(String id);
-
 }

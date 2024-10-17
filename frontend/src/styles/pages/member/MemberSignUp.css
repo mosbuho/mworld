@@ -83,7 +83,7 @@
   }
 
   .error-message {
-    color: var(--main-bg-color);
+    color: red;
     font-size: 12px;
     margin: 10px 0;
   }
