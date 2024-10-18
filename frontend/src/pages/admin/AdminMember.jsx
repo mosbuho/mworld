@@ -1,37 +1,60 @@
 import axios from "/src/utils/axiosConfig.js";
-import {useState} from "react";
+import {useEffect, useState} from "react";
 import {useLocation, useNavigate} from "react-router-dom";
 import AdminSidebar from "../../components/admin/AdminSidebar.jsx";
 import "/src/styles/pages/admin/AdminMember.css"
 import AdminHeader from "../../components/admin/AdminHeader.jsx";
+import DaumPost from "../../components/DaumPost.jsx";
 
 const AdminMember = () => {
     const location = useLocation();
     const nav = useNavigate();
     const {member} = location.state;
-
+    const [originalData, setOriginData] = useState({});
     const [formData, setFormData] = useState({
         no: member.no,
         id: member.id,
+        email: member.email,
         name: member.name,
         phone: member.phone,
         addr: member.addr,
+        detailAddr: member.detailAddr,
         regDate: member.regDate,
-    })
+    });
+
+    useEffect(() => {
+        setOriginData({...formData});
+    }, []);
+
 
     const handleChange = (e) => {
         const {id, value} = e.target;
         setFormData((prevData) => ({...prevData, [id]: value}));
     };
 
+    const setAddress = (address) => {
+        setFormData((prevData) => ({...prevData, addr: address}));
+    };
+
+    const getChangeData = () => {
+        const changeData = {};
+        Object.keys(formData).forEach((key) => {
+            if (formData[key] !== originalData[key]) {
+                changeData[key] = formData[key];
+            }
+        });
+        return changeData;
+    };
+
     const handleUpdate = async () => {
         if (window.confirm("회원정보를 수정하시겠습니까?")) {
+            const changedData = getChangeData();
+            if (Object.keys(changedData).length === 0) {
+                alert("변경된 내용이 없습니다.");
+                return;
+            }
             try {
-                await axios.put(`/api/admin/member/${formData.no}`, {
-                    name: formData.name,
-                    phone: formData.phone,
-                    addr: formData.addr,
-                });
+                await axios.put(`/api/admin/member/${formData.no}`, changedData);
                 alert("회원정보가 수정되었습니다.");
                 nav('/admin/member');
             } catch (err) {
@@ -81,6 +104,15 @@ const AdminMember = () => {
                             />
                         </div>
                         <div className="form-group">
+                            <label htmlFor="email">이메일</label>
+                            <input
+                                type="email"
+                                id="email"
+                                value={formData.email}
+                                readOnly={true}
+                            />
+                        </div>
+                        <div className="form-group">
                             <label htmlFor="name">이름</label>
                             <input
                                 type="text"
@@ -104,6 +136,14 @@ const AdminMember = () => {
                                 type="text"
                                 id="addr"
                                 value={formData.addr}
+                                onChange={handleChange}
+                            />
+                            <DaumPost setAddress={setAddress}/>
+                            <label htmlFor="detailAddr">상세주소</label>
+                            <input
+                                type="text"
+                                id="detailAddr"
+                                value={formData.detailAddr}
                                 onChange={handleChange}
                             />
                         </div>

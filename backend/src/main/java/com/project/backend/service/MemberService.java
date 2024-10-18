@@ -35,7 +35,7 @@ public class MemberService {
 
     @Transactional
     public Member registerMember(String id, String pw, String name, String phone, String email,
-            String business, String addr, String detailAddr) {
+                                 String business, String addr, String detailAddr) {
         Member member = new Member();
         member.setId(id);
         member.setPw(passwordEncoder.encode(pw));
@@ -64,17 +64,15 @@ public class MemberService {
         return query.getResultList();
     }
 
-    public Member updateMember(int no, Member updatedMember) {
-        Member member = memberRepository.findByNo(no);
-        if (member == null) {
-            throw new IllegalArgumentException("Invalid member No: " + no);
-        }
-
-        member.setName(updatedMember.getName());
-        member.setPhone(updatedMember.getPhone());
-        member.setAddr(updatedMember.getAddr());
-
-        return memberRepository.save(member);
+    @Transactional
+    public void updateMember(int no, Member updatedMember) {
+        memberRepository.updateMember(
+                no,
+                updatedMember.getName(),
+                updatedMember.getPhone(),
+                updatedMember.getAddr(),
+                updatedMember.getDetailAddr()
+        );
     }
 
     public void deleteMember(int no) {
