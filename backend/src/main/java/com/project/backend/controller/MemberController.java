@@ -1,6 +1,5 @@
 package com.project.backend.controller;
 
-import java.util.List;
 import java.util.Map;
 
 import org.springframework.http.ResponseEntity;
@@ -24,13 +23,6 @@ public class MemberController {
 
     public MemberController(MemberService memberService) {
         this.memberService = memberService;
-    }
-
-    @GetMapping("/admin/member-main")
-    public List<Member> getMember(
-            @RequestParam(defaultValue = "1") int page,
-            @RequestParam(defaultValue = "5") int size) {
-        return memberService.getMemberList(page, size);
     }
 
     @GetMapping("/admin/member")

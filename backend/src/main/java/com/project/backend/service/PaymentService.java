@@ -38,18 +38,16 @@ public class PaymentService {
         PaymentStatus paymentStatus = status == -1 ? null : PaymentStatus.fromValue(status);
 
         if (f == null || q == null || q.isEmpty()) {
-            if (paymentStatus == null) {
-                paymentPage = paymentRepository.findGroupedPayments(pageable);
-            } else {
-                paymentPage = paymentRepository.findGroupedPaymentsByStatus(paymentStatus, pageable);
-            }
+            paymentPage = (paymentStatus == null)
+                    ? paymentRepository.findGroupedPayments(pageable)
+                    : paymentRepository.findGroupedPaymentsByStatus(paymentStatus, pageable);
         } else {
             paymentPage = paymentRepository.findGroupedPaymentsByFieldAndStatus(f, q, paymentStatus, pageable);
         }
 
         List<PaymentResponse> paymentList = paymentPage.getContent().stream().map(objects -> new PaymentResponse(
                 (String) objects[0], // transactionId
-                (String) objects[1], // method
+                ((Number) objects[1]).intValue(), // method
                 ((Number) objects[2]).intValue(), // price
                 (LocalDateTime) objects[3], // regDate
                 ((PaymentStatus) objects[4]).getLabel(), // status
@@ -72,14 +70,14 @@ public class PaymentService {
                 PaymentStatus.RETURNED,
                 PaymentStatus.EXCHANGED);
 
-        Object[] result = stats.get(0);
+        Object[] result = stats.isEmpty() ? new Object[6] : stats.get(0);
 
-        int totalOrders = ((Number) result[0]).intValue();
-        long totalPrice = ((Number) result[1]).longValue();
-        int canceledCount = ((Number) result[2]).intValue();
-        int refundedCount = ((Number) result[3]).intValue();
-        int returnedCount = ((Number) result[4]).intValue();
-        int exchangedCount = ((Number) result[5]).intValue();
+        int totalOrders = result[0] != null ? ((Number) result[0]).intValue() : 0;
+        long totalPrice = result[1] != null ? ((Number) result[1]).longValue() : 0;
+        int canceledCount = result[2] != null ? ((Number) result[2]).intValue() : 0;
+        int refundedCount = result[3] != null ? ((Number) result[3]).intValue() : 0;
+        int returnedCount = result[4] != null ? ((Number) result[4]).intValue() : 0;
+        int exchangedCount = result[5] != null ? ((Number) result[5]).intValue() : 0;
 
         Map<String, Object> response = new HashMap<>();
         response.put("total", totalOrders);

@@ -29,7 +29,7 @@ public class PaymentController {
     @GetMapping("/admin/payment")
     public Map<String, Object> getAllPayment(
             @RequestParam(defaultValue = "1") int page,
-            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(defaultValue = "20") int size,
             @RequestParam(required = false) String f,
             @RequestParam(required = false) String q,
             @RequestParam(defaultValue = "-1") int status) {

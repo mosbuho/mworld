@@ -7,15 +7,17 @@ div.admin-main {
 
         div.form-group {
             display: flex;
-            flex-direction: column;
+            flex-wrap: wrap;
             gap: 5px;
             margin: 10px 0;
 
             label {
+                width: 100%;
                 font-weight: 600;
             }
 
             input {
+                flex:1;
                 padding: 10px 5px;
                 border: 1px solid #d0cfcf;
             }
@@ -30,10 +32,16 @@ div.admin-main {
             }
         }
 
+
         div.btn-area {
             margin-top: 20px;
             display: flex;
             gap: 10px;
+        }
+
+        button.addr-button{
+            background-color: dodgerblue;
+            color: white;
         }
 
         button.update-btn {

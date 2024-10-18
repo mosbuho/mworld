@@ -10,14 +10,29 @@ div.admin-product-detail{
         height: auto;
         max-height: 580px;
     }
-    div.form-group>div.draft-editor
+
+    div.form-group-editor{
+        margin: 10px 0;
+        label{
+            font-weight: 600;
+        }
+    }
+
+    div.form-group-editor>div.draft-editor
     {
         border: 1px solid #d0cfcf;
-        padding: 5px;
+        margin-top: 5px;
+        padding: 10px;
         div.rdw-editor-main{
             border: 1px solid #d0cfcf;
             padding: 5px;
             min-height: 400px;
+        }
+        img{
+            max-width: 100%;
+            height: auto;
+            max-height: 3000px;
+            object-fit: contain;
         }
     }
 }

@@ -10,7 +10,7 @@ import lombok.Setter;
 public class PaymentResponse {
 
     private String transactionId;
-    private String method;
+    private int method;
     private int price;
     private int quantity;
     private LocalDateTime regDate;
@@ -19,7 +19,7 @@ public class PaymentResponse {
     private String memberPhone;
     private String productTitle;
 
-    public PaymentResponse(String transactionId, String method, int price, LocalDateTime regDate, String status,
+    public PaymentResponse(String transactionId, int method, int price, LocalDateTime regDate, String status,
             String memberName, String memberPhone) {
         this.transactionId = transactionId;
         this.method = method;
@@ -28,12 +28,5 @@ public class PaymentResponse {
         this.status = status;
         this.memberName = memberName;
         this.memberPhone = memberPhone;
-    }
-
-    public PaymentResponse(String transactionId, String method, int price, LocalDateTime regDate, String status,
-            String memberName, String memberPhone, String productTitle, int quantity) {
-        this(transactionId, method, price, regDate, status, memberName, memberPhone);
-        this.productTitle = productTitle;
-        this.quantity = quantity;
     }
 }

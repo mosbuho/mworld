@@ -3,10 +3,12 @@ package com.project.backend.repository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import com.project.backend.entity.Member;
+import org.springframework.transaction.annotation.Transactional;
 
 public interface MemberRepository extends JpaRepository<Member, Integer> {
         Member findMemberById(String id);
@@ -22,4 +24,19 @@ public interface MemberRepository extends JpaRepository<Member, Integer> {
                         @Param("f") String f,
                         @Param("q") String q,
                         Pageable pageable);
+
+        @Modifying
+        @Transactional
+        @Query("UPDATE Member m SET " +
+                "m.name = COALESCE(:name, m.name), " +
+                "m.phone = COALESCE(:phone, m.phone), " +
+                "m.addr = COALESCE(:addr, m.addr), " +
+                "m.detailAddr = COALESCE(:detailAddr, m.detailAddr) " +
+                "WHERE m.no = :no")
+        int updateMember(
+                int no,
+                String name,
+                String phone,
+                String addr,
+                String detailAddr);
 }

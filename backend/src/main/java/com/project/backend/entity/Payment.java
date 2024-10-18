@@ -44,8 +44,8 @@ public class Payment {
     @Column(nullable = false, length = 50)
     private String addr;
 
-    @Column(nullable = false, length = 20)
-    private String method;
+    @Column(nullable = false)
+    private int method;
 
     @Enumerated(EnumType.ORDINAL)
     @Column(nullable = false)

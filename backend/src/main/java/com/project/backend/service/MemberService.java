@@ -1,7 +1,6 @@
 package com.project.backend.service;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import org.springframework.data.domain.Page;
@@ -15,10 +14,6 @@ import org.springframework.transaction.annotation.Transactional;
 import com.project.backend.entity.Member;
 import com.project.backend.repository.MemberRepository;
 
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.PersistenceContext;
-import jakarta.persistence.Query;
-
 @Service
 public class MemberService {
 
@@ -30,12 +25,9 @@ public class MemberService {
         this.passwordEncoder = passwordEncoder;
     }
 
-    @PersistenceContext
-    private EntityManager entityManager;
-
     @Transactional
     public Member registerMember(String id, String pw, String name, String phone, String email,
-            String business, String addr, String detailAddr) {
+                                 String business, String addr, String detailAddr) {
         Member member = new Member();
         member.setId(id);
         member.setPw(passwordEncoder.encode(pw));
@@ -52,29 +44,15 @@ public class MemberService {
         return memberRepository.findMemberById(id) != null;
     }
 
-    @SuppressWarnings("unchecked")
-    public List<Member> getMemberList(int page, int size) {
-        int pageSize = size - page + 1;
-
-        Query query = entityManager.createQuery("SELECT m FROM Member m ORDER BY m.regDate DESC", Member.class);
-
-        query.setFirstResult(page - 1);
-        query.setMaxResults(pageSize);
-
-        return query.getResultList();
-    }
-
-    public Member updateMember(int no, Member updatedMember) {
-        Member member = memberRepository.findByNo(no);
-        if (member == null) {
-            throw new IllegalArgumentException("Invalid member No: " + no);
-        }
-
-        member.setName(updatedMember.getName());
-        member.setPhone(updatedMember.getPhone());
-        member.setAddr(updatedMember.getAddr());
-
-        return memberRepository.save(member);
+    @Transactional
+    public void updateMember(int no, Member updatedMember) {
+        memberRepository.updateMember(
+                no,
+                updatedMember.getName(),
+                updatedMember.getPhone(),
+                updatedMember.getAddr(),
+                updatedMember.getDetailAddr()
+        );
     }
 
     public void deleteMember(int no) {
