@@ -4,6 +4,7 @@ import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.nio.file.Files;
+import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.UUID;
@@ -72,6 +73,17 @@ public class ImageService {
             writer.write(image);
         } finally {
             writer.dispose();
+        }
+    }
+
+    public void deleteImage(String entityType, String filename) throws IOException {
+        String directoryPath = getDirectoryPath(entityType);
+        Path imagePath = Paths.get(directoryPath).resolve(filename);
+
+        try {
+            Files.delete(imagePath);
+        } catch (NoSuchFileException e) {
+            e.printStackTrace();
         }
     }
 

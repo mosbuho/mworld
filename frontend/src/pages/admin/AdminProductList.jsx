@@ -25,8 +25,8 @@ const AdminProductList = () => {
     }, []);
 
     const fetchProducts = async (page) => {
-        if (pageDataCache[`${f}_${page}`]) {
-            setProducts(pageDataCache[`${f}_${page}`]);
+        if (pageDataCache[`${f}_${q}_${page}`]) {
+            setProducts(pageDataCache[`${f}_${q}_${page}`]);
             return;
         }
         try {
