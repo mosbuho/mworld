@@ -1,6 +1,7 @@
 import '/src/styles/components/member/MainProduct.css'
 import { useEffect, useState, useRef } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom'
+import axios from "/src/utils/axiosConfig.js";
 
 // 예시 상품 데이터
 const mockData = [
@@ -243,7 +244,6 @@ const MainProduct = () => {
   const [isFetching, setIsFetching] = useState(false);  // 데이터 로딩 상태
   const [hasMore, setHasMore] = useState(true);         // 더 불러올 데이터가 있는지 여부
   const [searchQuery, setSearchQuery] = useState('');   // 검색어 상태
-  const [filteredData, setFilteredData] = useState([]); // 필터링된 전체 데이터
   const pageSize = 10;                                  // 한 페이지에 표시할 상품 수
   const navigate = useNavigate();
 
@@ -262,44 +262,38 @@ const MainProduct = () => {
     const query = params.get('query') || '';
     setSearchQuery(query);
 
-    // 검색어에 따라 상품 필터링
-    const filtered = query
-      ? mockData.filter((product) =>
-        product.name.toLowerCase().includes(query.toLowerCase())
-      )
-      : mockData;
-
-    setFilteredData(filtered);
-  }, [location.search]);
-
-  // filteredData 변경 시 상품 목록과 페이지 번호 초기화, 로딩 시작
-  useEffect(() => {
+    // 새 검색어가 들어오면 초기화
     setProducts([]);
     setPage(1);
     setHasMore(true);
-    setIsFetching(true); // 로딩 시작
-  }, [filteredData]);
+    fetchProducts(1, query);
+  }, [location.search]);
 
   // isFetching이 true일 때 상품 로드
   useEffect(() => {
     if (!isFetching) return;
-    loadMoreProducts();
+    fetchProducts(page, searchQuery); // 최신 page와 searchQuery 전달
   }, [isFetching]);
 
-  const loadMoreProducts = () => {
-    console.log('loadMoreProducts called with page:', page);
-    const startIndex = (page - 1) * pageSize;
-    const endIndex = startIndex + pageSize;
 
-    const newProducts = filteredData.slice(startIndex, endIndex);
+  // 서버로부터 상품 데이터를 가져오는 함수
+  const fetchProducts = async (page, query = '') => {
+    console.log('Fetching products for page:', page);
+    try {
+      const response = await axios.get('/api/admin/product', {
+        params: { page, size: pageSize, f: 'title', q: query },
+      });
 
-    if (newProducts.length === 0) {
-      setHasMore(false);
-    } else {
-      setProducts((prev) => [...prev, ...newProducts]);
-      setPage((prevPage) => prevPage + 1);
+      const { products: newProducts, totalPages } = response.data;
+
+      setProducts((prevProducts) => [...prevProducts, ...newProducts]);
+      setPage(page + 1);
+      setHasMore(page < totalPages);
+      setIsFetching(false);
+    } catch (error) {
+      console.error('Failed to fetch products:', error);
+      setIsFetching(false);
     }
-    setIsFetching(false);
   };
 
   // 스크롤 이벤트 핸들러
@@ -330,18 +324,16 @@ const MainProduct = () => {
       {products.length > 0 ? (
         <div className="product-list">
           {products.map((product) => (
-            <div key={product.id} className="product-card" onClick={() => navigate(`/product/${product.id}`)}>
-              <img src={product.imgSrc} alt={product.name} className="product-image" />
+            <div key={product.no} className="product-card" onClick={() => navigate(`/product/${product.no}`)}>
+              <img src={product.titleImg} alt={product.name} className="product-image" />
               <div className="product-info">
-                <span className="product-label">{product.label}</span>
-                <h3 className="product-name">{product.name}</h3>
+                <span className="product-label">파격특가</span>
+                <h3 className="product-name">{product.title}</h3>
                 <p className="product-price">
                   <span className="price">{product.price}</span>
                 </p>
                 <div className="product-tags">
-                  {product.tags.map((tag, index) => (
-                    <span key={index} className="tag">{tag}</span>
-                  ))}
+                  소스 1위
                 </div>
               </div>
               <button className="cart-button">🛒</button>
@@ -349,7 +341,7 @@ const MainProduct = () => {
           ))}
         </div>
       ) : (
-        <p className="no-results">상품이 존재하지 않습니다.</p>
+          <p className="no-results">상품이 존재하지 않습니다.</p>
       )}
     </div>
   );
