@@ -26,13 +26,6 @@ public class MemberController {
         this.memberService = memberService;
     }
 
-    @GetMapping("/admin/member-main")
-    public List<Member> getMember(
-            @RequestParam(defaultValue = "1") int page,
-            @RequestParam(defaultValue = "5") int size) {
-        return memberService.getMemberList(page, size);
-    }
-
     @GetMapping("/admin/member")
     public Map<String, Object> getAllMember(
             @RequestParam(defaultValue = "1") int page,

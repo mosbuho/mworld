@@ -28,7 +28,7 @@ const AdminMemberList = () => {
         }
         try {
             const res = await axios.get('/api/admin/member', {
-                params: {page, size: 20, f, q} // 기간 추가
+                params: {page, size: 20, f, q}
             });
 
             const {members: fetchedMembers, totalCount, totalPages} = res.data;

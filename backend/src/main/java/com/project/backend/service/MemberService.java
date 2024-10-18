@@ -52,18 +52,6 @@ public class MemberService {
         return memberRepository.findMemberById(id) != null;
     }
 
-    @SuppressWarnings("unchecked")
-    public List<Member> getMemberList(int page, int size) {
-        int pageSize = size - page + 1;
-
-        Query query = entityManager.createQuery("SELECT m FROM Member m ORDER BY m.regDate DESC", Member.class);
-
-        query.setFirstResult(page - 1);
-        query.setMaxResults(pageSize);
-
-        return query.getResultList();
-    }
-
     @Transactional
     public void updateMember(int no, Member updatedMember) {
         memberRepository.updateMember(

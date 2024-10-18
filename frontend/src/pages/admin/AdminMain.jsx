@@ -41,8 +41,10 @@ const AdminMain = () => {
 
     const fetchMembers = async () => {
         try {
-            const res = await axios.get('/api/admin/member-main');
-            setMembers(res.data);
+            const res = await axios.get('/api/admin/member',{
+                params:{size:5}
+            });
+            setMembers(res.data.members);
         } catch (err) {
             console.error("failed to fetch member", err);
         }
