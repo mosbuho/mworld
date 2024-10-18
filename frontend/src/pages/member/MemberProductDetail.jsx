@@ -1,9 +1,13 @@
 import '/src/styles/pages/member/ProductDetail.css'
 import { useParams, useNavigate } from 'react-router-dom'
 import { useState, useEffect } from 'react'
+import axios from "/src/utils/axiosConfig.js";
+import { EditorState, convertFromRaw } from 'draft-js';
+import { Editor } from 'react-draft-wysiwyg';
+import 'react-draft-wysiwyg/dist/react-draft-wysiwyg.css';
 
 const ProductDetail = () => {
-  const { id } = useParams();
+  const { no } = useParams();
   const navigate = useNavigate();
   const [product, setProduct] = useState();
   const [loading, setLoading] = useState(true);
@@ -13,309 +17,35 @@ const ProductDetail = () => {
 
 
   useEffect(() => {
-    const fetchProduct = async () => {
-      try {
-
-        const mockData = [
-          {
-            id: 1,
-            name: '아이러브밀크 멸균우유 (0.035) 1L/PK',
-            price: '1,540원',
-            originalPrice: '1,690원',
-            discount: '8%',
-            imgSrc: 'https://via.placeholder.com/150', // 상품 이미지 경로
-            tags: ['유우 1위'],
-            label: '유우 1위',
-            content: '이 제품은 신선한 우유를 멸균 처리하여 안전하게 제공됩니다. 매일 아침 신선하게 받아보세요!',
-            minimumOrder: 5,
-          },
-          {
-            id: 2,
-            name: 'CJ 크레잇 냉동 육질탄탄베이컨 1kg/EA',
-            price: '17,990원',
-            originalPrice: '21,990원',
-            discount: '18%',
-            imgSrc: 'https://via.placeholder.com/150', // 상품 이미지 경로
-            tags: ['햄-소시지-베이컨 2위'],
-            label: '회원전용특별가',
-            content: '이 제품은 신선한 우유를 멸균 처리하여 안전하게 제공됩니다. 매일 아침 신선하게 받아보세요!',
-            minimumOrder: 5,
-          },
-          {
-            id: 3,
-            name: '모짜렐라 피자치즈 2.5kg/EA',
-            price: '17,990원',
-            originalPrice: '21,990원',
-            discount: '18%',
-            imgSrc: 'https://via.placeholder.com/150', // 상품 이미지 경로
-            tags: ['모짜렐라 1위'],
-            label: '파격특가',
-            content: '이 제품은 신선한 우유를 멸균 처리하여 안전하게 제공됩니다. 매일 아침 신선하게 받아보세요!',
-            minimumOrder: 5,
-          },
-          {
-            id: 4,
-            name: '밀락골드 무가당 휘핑크림 1L/EA',
-            price: '5,290원',
-            originalPrice: '5,640원',
-            discount: '6%',
-            imgSrc: 'https://via.placeholder.com/150', // 상품 이미지 경로
-            tags: ['쿠킹크림 1위'],
-            label: '회원전용특별가',
-            content: '이 제품은 신선한 우유를 멸균 처리하여 안전하게 제공됩니다. 매일 아침 신선하게 받아보세요!',
-            minimumOrder: 5,
-          },
-          {
-            id: 5,
-            name: '디벨라 파스타 스파게티니 500g/EA',
-            price: '1,650원',
-            originalPrice: '1,760원',
-            discount: '6%',
-            imgSrc: 'https://via.placeholder.com/150', // 상품 이미지 경로
-            tags: ['파스타 1위'],
-            label: '회원전용특별가',
-            content: '이 제품은 신선한 우유를 멸균 처리하여 안전하게 제공됩니다. 매일 아침 신선하게 받아보세요!',
-            minimumOrder: 5,
-          },
-          {
-            id: 6,
-            name: '디벨라 파스타 스파게티니 500g/EA',
-            price: '1,650원',
-            originalPrice: '1,760원',
-            discount: '6%',
-            imgSrc: 'https://via.placeholder.com/150', // 상품 이미지 경로
-            tags: ['파스타 1위'],
-            label: '회원전용특별가',
-            content: '이 제품은 신선한 우유를 멸균 처리하여 안전하게 제공됩니다. 매일 아침 신선하게 받아보세요!',
-            minimumOrder: 5,
-          },
-          {
-            id: 7,
-            name: '디벨라 파스타 스파게티니 500g/EA',
-            price: '1,650원',
-            originalPrice: '1,760원',
-            discount: '6%',
-            imgSrc: 'https://via.placeholder.com/150', // 상품 이미지 경로
-            tags: ['파스타 1위'],
-            label: '회원전용특별가',
-            content: '이 제품은 신선한 우유를 멸균 처리하여 안전하게 제공됩니다. 매일 아침 신선하게 받아보세요!',
-            minimumOrder: 5,
-          },
-          {
-            id: 8,
-            name: '디벨라 파스타 스파게티니 500g/EA',
-            price: '1,650원',
-            originalPrice: '1,760원',
-            discount: '6%',
-            imgSrc: 'https://via.placeholder.com/150', // 상품 이미지 경로
-            tags: ['파스타 1위'],
-            label: '회원전용특별가',
-            content: '이 제품은 신선한 우유를 멸균 처리하여 안전하게 제공됩니다. 매일 아침 신선하게 받아보세요!',
-            minimumOrder: 5,
-          },
-          {
-            id: 9,
-            name: '디벨라 파스타 스파게티니 500g/EA',
-            price: '1,650원',
-            originalPrice: '1,760원',
-            discount: '6%',
-            imgSrc: 'https://via.placeholder.com/150', // 상품 이미지 경로
-            tags: ['파스타 1위'],
-            label: '회원전용특별가',
-            content: '이 제품은 신선한 우유를 멸균 처리하여 안전하게 제공됩니다. 매일 아침 신선하게 받아보세요!',
-            minimumOrder: 5,
-          },
-          {
-            id: 10,
-            name: '디벨라 파스타 스파게티니 500g/EA',
-            price: '1,650원',
-            originalPrice: '1,760원',
-            discount: '6%',
-            imgSrc: 'https://via.placeholder.com/150', // 상품 이미지 경로
-            tags: ['파스타 1위'],
-            label: '회원전용특별가',
-            content: '이 제품은 신선한 우유를 멸균 처리하여 안전하게 제공됩니다. 매일 아침 신선하게 받아보세요!',
-            minimumOrder: 5,
-          },
-          {
-            id: 11,
-            name: '디벨라 파스타 스파게티니 500g/EA',
-            price: '1,650원',
-            originalPrice: '1,760원',
-            discount: '6%',
-            imgSrc: 'https://via.placeholder.com/150', // 상품 이미지 경로
-            tags: ['파스타 1위'],
-            label: '회원전용특별가',
-            content: '이 제품은 신선한 우유를 멸균 처리하여 안전하게 제공됩니다. 매일 아침 신선하게 받아보세요!',
-            minimumOrder: 5,
-          },
-          {
-            id: 12,
-            name: '디벨라 파스타 스파게티니 500g/EA',
-            price: '1,650원',
-            originalPrice: '1,760원',
-            discount: '6%',
-            imgSrc: 'https://via.placeholder.com/150', // 상품 이미지 경로
-            tags: ['파스타 1위'],
-            label: '회원전용특별가',
-            content: '이 제품은 신선한 우유를 멸균 처리하여 안전하게 제공됩니다. 매일 아침 신선하게 받아보세요!',
-            minimumOrder: 5,
-          },
-          {
-            id: 13,
-            name: '디벨라 파스타 스파게티니 500g/EA',
-            price: '1,650원',
-            originalPrice: '1,760원',
-            discount: '6%',
-            imgSrc: 'https://via.placeholder.com/150', // 상품 이미지 경로
-            tags: ['파스타 1위'],
-            label: '회원전용특별가',
-            content: '이 제품은 신선한 우유를 멸균 처리하여 안전하게 제공됩니다. 매일 아침 신선하게 받아보세요!',
-            minimumOrder: 5,
-          },
-          {
-            id: 14,
-            name: '디벨라 파스타 스파게티니 500g/EA',
-            price: '1,650원',
-            originalPrice: '1,760원',
-            discount: '6%',
-            imgSrc: 'https://via.placeholder.com/150', // 상품 이미지 경로
-            tags: ['파스타 1위'],
-            label: '회원전용특별가',
-            content: '이 제품은 신선한 우유를 멸균 처리하여 안전하게 제공됩니다. 매일 아침 신선하게 받아보세요!',
-            minimumOrder: 5,
-          },
-          {
-            id: 15,
-            name: '디벨라 파스타 스파게티니 500g/EA',
-            price: '1,650원',
-            originalPrice: '1,760원',
-            discount: '6%',
-            imgSrc: 'https://via.placeholder.com/150', // 상품 이미지 경로
-            tags: ['파스타 1위'],
-            label: '회원전용특별가',
-            content: '이 제품은 신선한 우유를 멸균 처리하여 안전하게 제공됩니다. 매일 아침 신선하게 받아보세요!',
-            minimumOrder: 5,
-          },
-          {
-            id: 16,
-            name: '디벨라 파스타 스파게티니 500g/EA',
-            price: '1,650원',
-            originalPrice: '1,760원',
-            discount: '6%',
-            imgSrc: 'https://via.placeholder.com/150', // 상품 이미지 경로
-            tags: ['파스타 1위'],
-            label: '회원전용특별가',
-            content: '이 제품은 신선한 우유를 멸균 처리하여 안전하게 제공됩니다. 매일 아침 신선하게 받아보세요!',
-            minimumOrder: 5,
-          },
-          {
-            id: 17,
-            name: '디벨라 파스타 스파게티니 500g/EA',
-            price: '1,650원',
-            originalPrice: '1,760원',
-            discount: '6%',
-            imgSrc: 'https://via.placeholder.com/150', // 상품 이미지 경로
-            tags: ['파스타 1위'],
-            label: '회원전용특별가',
-            content: '이 제품은 신선한 우유를 멸균 처리하여 안전하게 제공됩니다. 매일 아침 신선하게 받아보세요!',
-            minimumOrder: 5,
-          },
-          {
-            id: 18,
-            name: '디벨라 파스타 스파게티니 500g/EA',
-            price: '1,650원',
-            originalPrice: '1,760원',
-            discount: '6%',
-            imgSrc: 'https://via.placeholder.com/150', // 상품 이미지 경로
-            tags: ['파스타 1위'],
-            label: '회원전용특별가',
-            content: '이 제품은 신선한 우유를 멸균 처리하여 안전하게 제공됩니다. 매일 아침 신선하게 받아보세요!',
-            minimumOrder: 5,
-          },
-          {
-            id: 19,
-            name: '디벨라 파스타 스파게티니 500g/EA',
-            price: '1,650원',
-            originalPrice: '1,760원',
-            discount: '6%',
-            imgSrc: 'https://via.placeholder.com/150', // 상품 이미지 경로
-            tags: ['파스타 1위'],
-            label: '회원전용특별가',
-            content: '이 제품은 신선한 우유를 멸균 처리하여 안전하게 제공됩니다. 매일 아침 신선하게 받아보세요!',
-            minimumOrder: 5,
-          },
-          {
-            id: 20,
-            name: '디벨라 파스타 스파게티니 500g/EA',
-            price: '1,650원',
-            originalPrice: '1,760원',
-            discount: '6%',
-            imgSrc: 'https://via.placeholder.com/150', // 상품 이미지 경로
-            tags: ['파스타 1위'],
-            label: '회원전용특별가',
-            content: '이 제품은 신선한 우유를 멸균 처리하여 안전하게 제공됩니다. 매일 아침 신선하게 받아보세요!',
-            minimumOrder: 5,
-          },
-          {
-            id: 21,
-            name: '디벨라 파스타 스파게티니 500g/EA',
-            price: '1,650원',
-            originalPrice: '1,760원',
-            discount: '6%',
-            imgSrc: 'https://via.placeholder.com/150', // 상품 이미지 경로
-            tags: ['파스타 1위'],
-            label: '회원전용특별가',
-            content: '이 제품은 신선한 우유를 멸균 처리하여 안전하게 제공됩니다. 매일 아침 신선하게 받아보세요!',
-            minimumOrder: 5,
-          },
-          {
-            id: 22,
-            name: '디벨라 파스타 스파게티니 500g/EA',
-            price: '1,650원',
-            originalPrice: '1,760원',
-            discount: '6%',
-            imgSrc: 'https://via.placeholder.com/150', // 상품 이미지 경로
-            tags: ['파스타 1위'],
-            label: '회원전용특별가',
-            content: '이 제품은 신선한 우유를 멸균 처리하여 안전하게 제공됩니다. 매일 아침 신선하게 받아보세요!',
-            minimumOrder: 5,
-          },
-          {
-            id: 23,
-            name: '디벨라 파스타 스파게티니 500g/EA',
-            price: '1,650원',
-            originalPrice: '1,760원',
-            discount: '6%',
-            imgSrc: 'https://via.placeholder.com/150', // 상품 이미지 경로
-            tags: ['파스타 1위'],
-            label: '회원전용특별가',
-            content: '이 제품은 신선한 우유를 멸균 처리하여 안전하게 제공됩니다. 매일 아침 신선하게 받아보세요!',
-            minimumOrder: 5,
-          },
-        ];
-
-        const productId = parseInt(id);
-        const foundProduct = mockData.find((item) => item.id === productId);
-
-        if (foundProduct) {
-          setProduct(foundProduct);
-          setQuantity(foundProduct.minimumOrder);
-        } else {
-          setError('상품을 찾을 수 없습니다.');
-        }
-      } catch (error) {
-        setError('상품을 불러오는 중 오류가 발생했습니다.');
-      } finally {
-        setLoading(false);
-      }
-    }
     fetchProduct();
-  }, [id]);
+  }, [no]);
+
+  const fetchProduct = async () => {
+    try {
+      const response = await axios.get(`/api/member/product/${no}`);
+      const foundProduct = response.data;
+
+      if (foundProduct) {
+        setProduct(foundProduct);
+      } else {
+        setError('상품을 찾을 수 없습니다.');
+      }
+    } catch (error) {
+      console.error('Error fetching product:', error);
+      setError('상품을 불러오는 중 오류가 발생했습니다.');
+    } finally {
+      setLoading(false);
+    }
+  };
 
   if (loading) {
     return <div>상품 정보를 불러오는 중입니다...</div>
   }
+
+  const getEditorStateFromRaw = (rawContent) => {
+    const contentState = convertFromRaw(JSON.parse(rawContent));
+    return EditorState.createWithContent(contentState);
+  };
 
   // 수량 증가 함수
   const increaseQuantity = () => {
@@ -325,11 +55,8 @@ const ProductDetail = () => {
 
   // 수량 감소 함수
   const decreaseQuantity = () => {
-    if (quantity > product.minimumOrder) {
+    if (quantity > 1) {
       setQuantity(prev => prev - 1);
-      setIsBelowMin(false);
-    } else {
-      setIsBelowMin(true);
     }
   }
 
@@ -347,15 +74,10 @@ const ProductDetail = () => {
   }
 
   const formatPrice = (price) => {
-    return price.toLocaleString('ko-KR') + '원';
+    return price.toLocaleString() + '원';
   }
 
-  const getPriceNumber = (priceStr) => {
-    return parseInt(priceStr.replace(/[^0-9]/g, ''), 10);
-  }
-
-  const priceNumber = getPriceNumber(product.price);
-  const totalPrice = priceNumber * quantity;
+  const totalPrice = product.price * quantity;
 
   const handleQuickPurchase = () => {
     navigate('/checkout');
@@ -365,19 +87,13 @@ const ProductDetail = () => {
     <div>
       <div className="product-detail-container">
         <div className="product-image-section">
-          <img src={product.imgSrc} alt={product.name} className="detail-image" />
+          <img src={product.titleImg} alt={product.title} className="detail-image" />
         </div>
         <div className="product-info-section">
-          <h1 className="product-name">{product.name}</h1>
-          <p className="product-label">{product.label}</p>
+          <h1 className="product-name">{product.title}</h1>
           <p className="product-price">
-            <span className="price">{product.price}</span>
+            <span className="price">{product.price.toLocaleString()}원</span>
           </p>
-          <div className="product-tags">
-            {product.tags.map((tag, index) => (
-              <span key={index} className="tag">{tag}</span>
-            ))}
-          </div>
           <div className="quantity-selector">
             <button onClick={decreaseQuantity} className="quantity-button" disabled={quantity <= product.minimumOrder}>-</button>
             <span className="quantity">{quantity}</span>
@@ -387,13 +103,13 @@ const ProductDetail = () => {
 
           {isBelowMin && (
             <p className="min-order-warning">
-              최소 주문 수량은 {product.minimumOrder}개입니다.
+              최소 주문 수량은 1개입니다.
             </p>
           )}
 
           <div className='button-group'>
-            <button className="detail-cart-button" disabled={quantity < product.minimumOrder}>장바구니에 담기</button>
-            <button className='quick-purchase-button' onClick={handleQuickPurchase} disabled={quantity < product.minimumOrder}>바로결제</button>
+            <button className="detail-cart-button" >장바구니에 담기</button>
+            <button className='quick-purchase-button' onClick={handleQuickPurchase} disabled={totalPrice < 100000}>바로결제</button>
           </div>
 
           <div className='shipping-info'>
@@ -402,7 +118,7 @@ const ProductDetail = () => {
               <li><strong>배송방법</strong> <span>자체배송</span></li>
               <li><strong>배송비</strong> <span>무료</span></li>
               <li><strong>배송기간</strong> <span>1~2일</span></li>
-              <li><strong>최소주문수량</strong> <span>10개</span></li>
+              <li><strong>최소주문금액</strong> <span>100,000원</span></li>
             </ul>
           </div>
         </div>
@@ -410,7 +126,13 @@ const ProductDetail = () => {
 
       <div className='product-content'>
         <h2>상품 내용</h2>
-        <p>{product.content}</p>
+        <div className="product-content">
+          <Editor
+              editorState={getEditorStateFromRaw(product.content)}
+              readOnly={true}
+              toolbarHidden={true}
+          />
+        </div>
       </div>
 
       <div className="product-information-notice">

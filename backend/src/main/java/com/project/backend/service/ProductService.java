@@ -67,7 +67,7 @@ public class ProductService {
 
         return isAdmin
                 ? new ProductResponse(product.getNo(), product.getTitle(), product.getCategory(), product.getTitleImg(), product.getPrice(), product.getQuantity(), product.getContent())
-                : new ProductResponse(product.getNo(), product.getTitle(), product.getTitleImg(), product.getPrice());
+                : new ProductResponse(product.getNo(), product.getTitle(), product.getTitleImg(), product.getPrice(), product.getQuantity(), product.getContent());
     }
 
 
