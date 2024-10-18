@@ -36,7 +36,7 @@ const AdminProductList = () => {
             const {products: fetchedProducts, totalCount} = res.data;
             setPageDataCache(prevCache => ({
                 ...prevCache,
-                [`${f}_${page}`]: fetchedProducts,
+                [`${f}_${q}_${page}`]: fetchedProducts,
             }));
 
             setProducts(fetchedProducts);

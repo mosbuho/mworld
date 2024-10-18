@@ -35,7 +35,7 @@ const AdminPaymentList = () => {
             const {paymentList: fetchedPaymentList, totalCount, totalPages} = res.data;
             setPageDataCache(prevCache => ({
                 ...prevCache,
-                [`${f}_${q}_${page}`]: fetchedPaymentList,
+                [`${f}_${q}_${status}_${page}`]: fetchedPaymentList,
             }))
             setPaymentList(fetchedPaymentList);
             setPageCount(totalPages);
@@ -98,10 +98,22 @@ const AdminPaymentList = () => {
         { header: '교환', accessor: 5 },
     ];
 
+    const methodFormatter = (method) => {
+        switch (method) {
+            case 0:
+                return "계좌이체";
+            case 1:
+                return "카드결제";
+            default:
+                return "기타";
+        }
+    };
+
     const formattedPaymentList = paymentList.map((payment) => ({
         ...payment,
         price: payment.price.toLocaleString(),
         regDate: dayjs(payment.regDate).format("YYYY-MM-DD HH:mm (ddd)"),
+        method: methodFormatter(payment.method),
     }));
 
     return (

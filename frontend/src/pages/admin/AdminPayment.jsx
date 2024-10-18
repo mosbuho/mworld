@@ -59,6 +59,17 @@ const AdminPayment = () => {
         {header: '교환', accessor: 5},
     ];
 
+    const methodFormatter = (method) => {
+        switch (method) {
+            case 0:
+                return "계좌이체";
+            case 1:
+                return "카드결제";
+            default:
+                return "기타";
+        }
+    };
+
     const getTotalPrice = () => {
         return productList.reduce((total, product) => total + product.price, 0);
     };
@@ -120,7 +131,7 @@ const AdminPayment = () => {
                         </div>
                         <div className="payment-detail-row">
                             <div>결제방법</div>
-                            <div>{paymentInfo.method}</div>
+                            <div>{methodFormatter(paymentInfo.method)}</div>
                         </div>
                     </div>
                     <div className="payment-detail-addr">
