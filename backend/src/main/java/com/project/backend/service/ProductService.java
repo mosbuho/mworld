@@ -61,6 +61,16 @@ public class ProductService {
         return response;
     }
 
+    public ProductResponse getProduct(int no, boolean isAdmin) {
+        Product product = productRepository.findById(no)
+                .orElseThrow(() -> new IllegalArgumentException("Product not found"));
+
+        return isAdmin
+                ? new ProductResponse(product.getNo(), product.getTitle(), product.getCategory(), product.getTitleImg(), product.getPrice(), product.getQuantity(), product.getContent())
+                : new ProductResponse(product.getNo(), product.getTitle(), product.getTitleImg(), product.getPrice());
+    }
+
+
     public Product updateProduct(int no, Product updateProduct) {
         Product product = productRepository.findByNo(no);
         if (product == null) {

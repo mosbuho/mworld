@@ -59,7 +59,7 @@ const AdminProductList = () => {
     };
 
     const handleRowClick = (product, nav) => {
-        nav(`/admin/product/${product.no}`, {state: {product}});
+        nav(`/admin/product/${product.no}`);
     };
 
     const columns = [
