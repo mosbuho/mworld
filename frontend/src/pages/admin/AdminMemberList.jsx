@@ -58,7 +58,7 @@ const AdminMemberList = () => {
     };
 
     const handleRowClick = (member, nav) => {
-        nav(`/admin/member/${member.no}`, {state: {member}});
+        nav(`/admin/member/${member.no}`);
     };
 
     const columns = [

@@ -1,8 +1,10 @@
 package com.project.backend.service;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
+import com.project.backend.dto.MemberResponse;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -74,11 +76,40 @@ public class MemberService {
             memberPage = memberRepository.findAll(pageable);
         }
 
+        List<MemberResponse> memberResponse = memberPage.getContent()
+                .stream()
+                .map(member -> new MemberResponse(
+                        member.getNo(),
+                        member.getId(),
+                        member.getName(),
+                        member.getPhone(),
+                        member.getAddr(),
+                        member.getRegDate()
+                ))
+                .toList();
+
         Map<String, Object> response = new HashMap<>();
-        response.put("members", memberPage.getContent());
+        response.put("members", memberResponse);
         response.put("totalCount", memberPage.getTotalElements());
         response.put("totalPages", memberPage.getTotalPages());
 
         return response;
+    }
+
+    public MemberResponse getMember(int no) {
+        Member member = memberRepository.findByNo(no);
+        if (member == null) {
+            throw new IllegalArgumentException("Invalid member No: " + no);
+        }
+        return new MemberResponse(
+                member.getNo(),
+                member.getId(),
+                member.getName(),
+                member.getPhone(),
+                member.getEmail(),
+                member.getBusiness(),
+                member.getAddr(),
+                member.getDetailAddr(),
+                member.getRegDate());
     }
 }

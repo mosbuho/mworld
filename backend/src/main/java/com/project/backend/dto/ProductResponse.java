@@ -1,10 +1,8 @@
 package com.project.backend.dto;
 
 import lombok.Getter;
-import lombok.Setter;
 
 @Getter
-@Setter
 public class ProductResponse {
     private int no;
     private String title;
