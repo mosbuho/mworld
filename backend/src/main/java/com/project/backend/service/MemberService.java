@@ -1,7 +1,6 @@
 package com.project.backend.service;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import org.springframework.data.domain.Page;
@@ -15,10 +14,6 @@ import org.springframework.transaction.annotation.Transactional;
 import com.project.backend.entity.Member;
 import com.project.backend.repository.MemberRepository;
 
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.PersistenceContext;
-import jakarta.persistence.Query;
-
 @Service
 public class MemberService {
 
@@ -29,9 +24,6 @@ public class MemberService {
         this.memberRepository = memberRepository;
         this.passwordEncoder = passwordEncoder;
     }
-
-    @PersistenceContext
-    private EntityManager entityManager;
 
     @Transactional
     public Member registerMember(String id, String pw, String name, String phone, String email,
