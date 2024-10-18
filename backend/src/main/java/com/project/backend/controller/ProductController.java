@@ -37,12 +37,21 @@ public class ProductController {
     }
 
     @GetMapping("/admin/product")
+    public Map<String, Object> getAllProductsForAdmin(
+            @RequestParam(defaultValue = "1") int page,
+            @RequestParam(defaultValue = "20") int size,
+            @RequestParam String f,
+            @RequestParam String q) {
+        return productService.getProductWithPagination(page, size, f, q, true);
+    }
+
+    @GetMapping("/member/product")
     public Map<String, Object> getAllProducts(
             @RequestParam(defaultValue = "1") int page,
             @RequestParam(defaultValue = "20") int size,
             @RequestParam String f,
             @RequestParam String q) {
-        return productService.getProductWithPagination(page, size, f, q);
+        return productService.getProductWithPagination(page, size, f, q, false); // 멤버 호출
     }
 
     @PutMapping("/admin/product/{no}")
