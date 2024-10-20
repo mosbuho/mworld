@@ -2,6 +2,7 @@ package com.project.backend.controller;
 
 import java.util.Map;
 
+import com.project.backend.dto.ProductResponse;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -37,12 +38,41 @@ public class ProductController {
     }
 
     @GetMapping("/admin/product")
+    public Map<String, Object> getAllProductsForAdmin(
+            @RequestParam(defaultValue = "1") int page,
+            @RequestParam(defaultValue = "20") int size,
+            @RequestParam String f,
+            @RequestParam String q) {
+        return productService.getProductWithPagination(page, size, f, q, true);
+    }
+
+    @GetMapping("/member/product")
     public Map<String, Object> getAllProducts(
             @RequestParam(defaultValue = "1") int page,
             @RequestParam(defaultValue = "20") int size,
             @RequestParam String f,
             @RequestParam String q) {
-        return productService.getProductWithPagination(page, size, f, q);
+        return productService.getProductWithPagination(page, size, f, q, false); // 멤버 호출
+    }
+
+    @GetMapping("/admin/product/{no}")
+    public ResponseEntity<ProductResponse> getProductForAdmin(@PathVariable int no) {
+        try {
+            ProductResponse product = productService.getProduct(no, true);
+            return ResponseEntity.ok(product);
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().build();
+        }
+    }
+
+    @GetMapping("/member/product/{no}")
+    public ResponseEntity<ProductResponse> getProductForMember(@PathVariable int no) {
+        try {
+            ProductResponse product = productService.getProduct(no, false);
+            return ResponseEntity.ok(product);
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().build();
+        }
     }
 
     @PutMapping("/admin/product/{no}")

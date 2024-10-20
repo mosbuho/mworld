@@ -36,7 +36,7 @@ function App() {
         <Route path='/' element={<PublicRoute><MemberMain /></PublicRoute>} >
           <Route index element={<MemberMainProduct />} />
           <Route path='search' element={<MemberMainProduct />} />
-          <Route path='product/:id' element={<MemberProductDetail />} />
+          <Route path='product/:no' element={<MemberProductDetail />} />
         </Route>
         <Route path='/mypage' element={<PublicRoute><MemberMyPage /></PublicRoute>} />
         <Route path='/cart' element={<PublicRoute><MemberCartPage /></PublicRoute>} />

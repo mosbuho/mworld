@@ -1,5 +1,5 @@
 import AdminSidebar from "../../components/admin/AdminSidebar.jsx";
-import {useLocation, useNavigate} from "react-router-dom";
+import {useLocation, useNavigate, useParams} from "react-router-dom";
 import {useEffect, useState} from "react";
 import axios from "../../utils/axiosConfig.js";
 import {EditorState, convertFromRaw, convertToRaw} from 'draft-js';
@@ -11,24 +11,27 @@ import AdminHeader from "../../components/admin/AdminHeader.jsx";
 const AdminProduct = () => {
     const location = useLocation();
     const nav = useNavigate();
-    const {product} = location.state;
+    const {no} = useParams();
     const [editorState, setEditorState] = useState(EditorState.createEmpty());
-
+    const [formData, setFormData] = useState({});
     const ENTITY_TYPE = 'product';
 
-    const [formData, setFormData] = useState({
-        no: product.no,
-        titleImg: product.titleImg,
-        title: product.title,
-        category: product.category,
-        quantity: product.quantity,
-        price: product.price,
-        content: product.content,
-    });
+    useEffect(()=>{
+        fetchProduct();
+    },[no]);
 
-    useEffect(() => {
-        setEditorState(EditorState.createWithContent(convertFromRaw(JSON.parse(product.content))));
-    }, [product.content]);
+    const fetchProduct = async () => {
+        try {
+            const response = await axios.get(`/api/admin/product/${no}`);
+            const product = response.data;
+
+            setFormData(product);
+
+            setEditorState(EditorState.createWithContent(convertFromRaw(JSON.parse(product.content))));
+        } catch (error) {
+            console.error("Failed to fetch product", error);
+        }
+    };
 
     const handleChange = (e) => {
         const {id, value} = e.target;

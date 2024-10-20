@@ -1,30 +1,33 @@
 import axios from "/src/utils/axiosConfig.js";
 import {useEffect, useState} from "react";
-import {useLocation, useNavigate} from "react-router-dom";
+import {useNavigate, useParams} from "react-router-dom";
 import AdminSidebar from "../../components/admin/AdminSidebar.jsx";
 import "/src/styles/pages/admin/AdminMember.css"
 import AdminHeader from "../../components/admin/AdminHeader.jsx";
 import DaumPost from "../../components/DaumPost.jsx";
 
 const AdminMember = () => {
-    const location = useLocation();
+    const { no } = useParams();
     const nav = useNavigate();
-    const {member} = location.state;
     const [originalData, setOriginData] = useState({});
-    const [formData, setFormData] = useState({
-        no: member.no,
-        id: member.id,
-        email: member.email,
-        name: member.name,
-        phone: member.phone,
-        addr: member.addr,
-        detailAddr: member.detailAddr,
-        regDate: member.regDate,
-    });
+    const [formData, setFormData] = useState({});
 
     useEffect(() => {
-        setOriginData({...formData});
-    }, []);
+        fetchMember();
+    }, [no, nav]);
+
+    const fetchMember = async () => {
+        try {
+            const res = await axios.get(`/api/admin/member/${no}`);
+            const member = res.data;
+            setFormData({ ...member });
+            setOriginData({ ...member });
+        } catch (err) {
+            console.error("Failed to fetch member details", err);
+            alert("회원 정보를 불러오는 데 실패했습니다.");
+            nav(-1);
+        }
+    };
 
 
     const handleChange = (e) => {
@@ -128,6 +131,16 @@ const AdminMember = () => {
                                 id="phone"
                                 value={formData.phone}
                                 onChange={handleChange}
+                            />
+                        </div>
+                        <div className="form-group">
+                            <label htmlFor="business">사업자등록번호</label>
+                            <input
+                                type="text"
+                                id="business"
+                                value={formData.business}
+                                onChange={handleChange}
+                                readOnly={true}
                             />
                         </div>
                         <div className="form-group">
