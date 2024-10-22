@@ -17,12 +17,15 @@ public class NoticeController {
         this.noticeService = noticeService;
     }
 
-    // 공지사항 생성
     @PostMapping("/notice/create")
     public ResponseEntity<String> createNotice(@RequestBody Notice notice) {
-        // 공지 생성 로직
-        noticeService.createNotice(notice);
-        return ResponseEntity.ok("공지사항이 성공적으로 생성되었습니다.");
+        try{
+            Notice savedNotice = noticeService.createNotice(notice);
+            return ResponseEntity.ok(savedNotice.toString());
+        }catch (Exception e){
+            e.printStackTrace();
+            return ResponseEntity.badRequest().build();
+        }
     }
 
     @GetMapping("/notice")

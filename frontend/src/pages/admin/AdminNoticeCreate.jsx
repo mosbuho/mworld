@@ -4,6 +4,8 @@ import {EditorState, convertToRaw} from 'draft-js';
 import {Editor} from 'react-draft-wysiwyg';
 import 'react-draft-wysiwyg/dist/react-draft-wysiwyg.css';
 import axios from "axios";
+import AdminHeader from "../../components/admin/AdminHeader.jsx";
+import AdminSidebar from "../../components/admin/AdminSidebar.jsx";
 
 const AdminNoticeCreate = () => {
     const navigate = useNavigate();
@@ -25,31 +27,37 @@ const AdminNoticeCreate = () => {
     };
 
     return (
-        <div>
-            <div>
-                <form>
-                    <div>
-                        <input
-                            type="text"
-                            id="title"
-                            value={title}
-                            onChange={(e) => setTitle(e.target.value)}
-                        />
-                    </div>
-                    <div>
-                        <div>
-                            <Editor
-                                editorState={editorState}
-                                onEditorStateChange={handleEditorChange}
+        <div className="admin-main">
+            <AdminHeader/>
+            <AdminSidebar/>
+            <div className="main">
+                <div className="admin-notice-detail">
+                    <form onSubmit={handleCreate}>
+                        <div className="form-group">
+                            <label htmlFor="title">제목</label>
+                            <input
+                                type="text"
+                                id="title"
+                                value={title}
+                                onChange={(e) => setTitle(e.target.value)}
                             />
                         </div>
-                    </div>
-                    <button type="button" onClick={handleCreate}>생성</button>
-                    <button type="button" onClick={() => {
-                        navigate(-1)
-                    }}>취소
-                    </button>
-                </form>
+                        <div className="form-group-editor">
+                            <label htmlFor="content">공지내용</label>
+                            <div className="draft-editor">
+                                <Editor
+                                    editorState={editorState}
+                                    onEditorStateChange={handleEditorChange}
+                                />
+                            </div>
+                        </div>
+                        <button className="save-btn" type="button" onClick={handleCreate}>생성</button>
+                        <button type="button" onClick={() => {
+                            navigate(-1)
+                        }}>취소
+                        </button>
+                    </form>
+                </div>
             </div>
         </div>
     );
