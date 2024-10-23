@@ -19,4 +19,5 @@ public interface NoticeRepository extends JpaRepository<Notice, Integer> {
                         @Param("q") String q,
                         Pageable pageable);
 
+
 }

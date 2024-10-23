@@ -25,8 +25,13 @@ public class NoticeController {
 
     @PostMapping("/notice/create")
     public ResponseEntity<String> createNotice(@RequestBody Notice notice) {
-        noticeService.createNotice(notice);
-        return ResponseEntity.ok("공지사항이 성공적으로 생성되었습니다.");
+        try{
+            Notice savedNotice = noticeService.createNotice(notice);
+            return ResponseEntity.ok(savedNotice.toString());
+        }catch (Exception e){
+            e.printStackTrace();
+            return ResponseEntity.badRequest().build();
+        }
     }
 
     @GetMapping("/notice")

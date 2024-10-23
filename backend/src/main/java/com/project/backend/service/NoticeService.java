@@ -1,17 +1,16 @@
 package com.project.backend.service;
 
-import java.time.LocalDateTime;
-import java.util.HashMap;
-import java.util.Map;
-
+import com.project.backend.entity.Notice;
+import com.project.backend.repository.NoticeRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
-import com.project.backend.entity.Notice;
-import com.project.backend.repository.NoticeRepository;
+import java.util.HashMap;
+import java.util.Map;
+
 
 @Service
 public class NoticeService {
@@ -22,9 +21,9 @@ public class NoticeService {
         this.noticeRepository = noticeRepository;
     }
 
-    public void createNotice(Notice notice) {
-        notice.setRegDate(LocalDateTime.now());
-        noticeRepository.save(notice);
+    public Notice createNotice(Notice notice) {
+
+        return noticeRepository.save(notice);
     }
 
     public Map<String, Object> getNoticeWithPagination(int page, int size, String f, String q) {
@@ -40,7 +39,7 @@ public class NoticeService {
         Map<String, Object> response = new HashMap<>();
         response.put("notices", noticePage.getContent());
         response.put("totalCount", noticePage.getTotalElements());
-        response.put("totalpages", noticePage.getTotalPages());
+        response.put("totalPages", noticePage.getTotalPages());
         return response;
     }
 }
