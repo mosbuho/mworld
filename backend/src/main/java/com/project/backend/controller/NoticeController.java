@@ -1,11 +1,17 @@
 package com.project.backend.controller;
 
+import java.util.Map;
+
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+
 import com.project.backend.entity.Notice;
 import com.project.backend.service.NoticeService;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
-
-import java.util.Map;
 
 @RestController
 @RequestMapping("/api")
@@ -33,7 +39,7 @@ public class NoticeController {
             @RequestParam(defaultValue = "1") int page,
             @RequestParam(defaultValue = "20") int size,
             @RequestParam(required = false) String f,
-            @RequestParam(required = false) String q){
+            @RequestParam(required = false) String q) {
         return noticeService.getNoticeWithPagination(page, size, f, q);
     }
 }

@@ -32,7 +32,9 @@ const AdminMain = () => {
 
     const fetchPayments = async () => {
         try {
-            const res = await axios.get('/api/admin/payment');
+            const res = await axios.get('/api/admin/payment',{
+                params:{size:5}
+            });
             setPayments(res.data.paymentList);
         } catch (err) {
             console.error("failed to fetch payment", err);
@@ -41,8 +43,10 @@ const AdminMain = () => {
 
     const fetchMembers = async () => {
         try {
-            const res = await axios.get('/api/admin/member-main');
-            setMembers(res.data);
+            const res = await axios.get('/api/admin/member',{
+                params:{size:5}
+            });
+            setMembers(res.data.members);
         } catch (err) {
             console.error("failed to fetch member", err);
         }
@@ -51,7 +55,6 @@ const AdminMain = () => {
     const fetchPaymentStats = async () => {
         try {
             const res = await axios.get('/api/admin/payment-stats');
-            console.log(res);
             setPaymentStats(res.data);
         } catch (err) {
             console.error("Failed to fetch payment statistics", err)
@@ -77,10 +80,22 @@ const AdminMain = () => {
         {header: '주문일시', accessor: 'regDate'},
     ];
 
+    const methodFormatter = (method) => {
+        switch (method) {
+            case 0:
+                return "계좌이체";
+            case 1:
+                return "카드결제";
+            default:
+                return "기타";
+        }
+    };
+
     const formattedPayments = payments.map((payment) => ({
         ...payment,
         price: payment.price.toLocaleString(),
         regDate: dayjs(payment.regDate).format("YYYY-MM-DD HH:mm (ddd)"),
+        method: methodFormatter(payment.method),
     }));
 
     const formattedMembers = members.map((member) => ({
@@ -106,7 +121,7 @@ const AdminMain = () => {
                 <div className="admin-state-area">
                     <div className="title-area">
                         <span>전체 주문통계</span>
-                        <button>주문전체보기</button>
+                        <button onClick={() => nav("/admin/payment")}>주문전체보기</button>
                     </div>
                     <div className="stats">
                         <div className="total-state">
@@ -153,9 +168,11 @@ const AdminMain = () => {
                 <div className="admin-order-list">
                     <div className="title-area">
                         <span>최근 주문내역</span>
-                        <button>주문전체보기</button>
+                        <button onClick={() => nav("/admin/payment")}>주문전체보기</button>
                     </div>
-                    <AdminTable columns={paymentsColumns} data={formattedPayments}/>
+                    <AdminTable columns={paymentsColumns} data={formattedPayments} onRowClick={(payment, nav)=>{
+                        nav(`/admin/payment/${payment.transactionId}`);
+                    }}/>
                 </div>
                 <div className="admin-member-list">
                     <div className="title-area">

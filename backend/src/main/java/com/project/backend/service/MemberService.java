@@ -1,12 +1,10 @@
 package com.project.backend.service;
 
-import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.springframework.dao.DataIntegrityViolationException;
+import com.project.backend.dto.MemberResponse;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -17,10 +15,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.project.backend.entity.Member;
 import com.project.backend.repository.MemberRepository;
-
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.PersistenceContext;
-import jakarta.persistence.Query;
 
 @Service
 public class MemberService {
@@ -33,35 +27,36 @@ public class MemberService {
         this.passwordEncoder = passwordEncoder;
     }
 
-    @PersistenceContext
-    private EntityManager entityManager;
-
-    public List<Member> getMemberList(int page, int size) {
-        int pageSize = size - page + 1;
-
-        Query query = entityManager.createQuery("SELECT m FROM Member m ORDER BY m.regDate DESC", Member.class);
-
-        query.setFirstResult(page - 1);
-        query.setMaxResults(pageSize);
-
-        return query.getResultList();
+    @Transactional
+    public Member registerMember(String id, String pw, String name, String phone, String email,
+                                 String business, String addr, String detailAddr) {
+        Member member = new Member();
+        member.setId(id);
+        member.setPw(passwordEncoder.encode(pw));
+        member.setName(name);
+        member.setPhone(phone);
+        member.setEmail(email);
+        member.setBusiness(business);
+        member.setAddr(addr);
+        member.setDetailAddr(detailAddr);
+        return memberRepository.save(member);
     }
 
-    public Member updateMember(int no, Member updatedMember) {
-        Member member = memberRepository.findByNo(no);
-        if (member == null) {
-            throw new IllegalArgumentException("Invalid member No: " + no);
-        }
-
-        // 필요한 필드 업데이트
-        member.setName(updatedMember.getName());
-        member.setPhone(updatedMember.getPhone());
-        member.setAddr(updatedMember.getAddr());
-
-        return memberRepository.save(member); // 수정 후 저장
+    public boolean checkDuplicateId(String id) {
+        return memberRepository.findMemberById(id) != null;
     }
 
-    // 회원 삭제 로직
+    @Transactional
+    public void updateMember(int no, Member updatedMember) {
+        memberRepository.updateMember(
+                no,
+                updatedMember.getName(),
+                updatedMember.getPhone(),
+                updatedMember.getAddr(),
+                updatedMember.getDetailAddr()
+        );
+    }
+
     public void deleteMember(int no) {
         Member member = memberRepository.findByNo(no);
         if (member == null) {
@@ -81,27 +76,40 @@ public class MemberService {
             memberPage = memberRepository.findAll(pageable);
         }
 
+        List<MemberResponse> memberResponse = memberPage.getContent()
+                .stream()
+                .map(member -> new MemberResponse(
+                        member.getNo(),
+                        member.getId(),
+                        member.getName(),
+                        member.getPhone(),
+                        member.getAddr(),
+                        member.getRegDate()
+                ))
+                .toList();
+
         Map<String, Object> response = new HashMap<>();
-        response.put("members", memberPage.getContent());
+        response.put("members", memberResponse);
         response.put("totalCount", memberPage.getTotalElements());
         response.put("totalPages", memberPage.getTotalPages());
 
         return response;
     }
 
-    @Transactional
-    public Member registerMember(String id, String pw, String name, String phone, String addr) {
-        try {
-            Member member = new Member();
-            member.setId(id);
-            member.setPw(passwordEncoder.encode(pw));
-            member.setName(name);
-            member.setPhone(phone);
-            member.setAddr(addr);
-
-            return memberRepository.save(member);
-        } catch (DataIntegrityViolationException e) {
-            throw new RuntimeException("이미 존재하는 ID 또는 이메일입니다.", e);
+    public MemberResponse getMember(int no) {
+        Member member = memberRepository.findByNo(no);
+        if (member == null) {
+            throw new IllegalArgumentException("Invalid member No: " + no);
         }
+        return new MemberResponse(
+                member.getNo(),
+                member.getId(),
+                member.getName(),
+                member.getPhone(),
+                member.getEmail(),
+                member.getBusiness(),
+                member.getAddr(),
+                member.getDetailAddr(),
+                member.getRegDate());
     }
 }

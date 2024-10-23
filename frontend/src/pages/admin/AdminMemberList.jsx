@@ -28,7 +28,7 @@ const AdminMemberList = () => {
         }
         try {
             const res = await axios.get('/api/admin/member', {
-                params: {page, size: 20, f, q} // 기간 추가
+                params: {page, size: 20, f, q}
             });
 
             const {members: fetchedMembers, totalCount, totalPages} = res.data;
@@ -58,7 +58,7 @@ const AdminMemberList = () => {
     };
 
     const handleRowClick = (member, nav) => {
-        nav(`/admin/member/${member.no}`, {state: {member}});
+        nav(`/admin/member/${member.no}`);
     };
 
     const columns = [
@@ -74,6 +74,7 @@ const AdminMemberList = () => {
         {value: 'NAME', label: '이름'},
         {value: 'PHONE', label: '전화번호'},
     ];
+
 
     const formattedMembers = members.map((member) => ({
         ...member,

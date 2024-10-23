@@ -1,23 +1,25 @@
 package com.project.backend.service;
 
-import com.project.backend.entity.Product;
-import com.project.backend.repository.ProductRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+
+import com.project.backend.dto.ProductResponse;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
-import java.util.HashMap;
-import java.util.Map;
+import com.project.backend.entity.Product;
+import com.project.backend.repository.ProductRepository;
 
 @Service
 public class ProductService {
 
     private final ProductRepository productRepository;
 
-    @Autowired
     public ProductService(ProductRepository productRepository) {
         this.productRepository = productRepository;
     }
@@ -26,7 +28,7 @@ public class ProductService {
         return productRepository.save(product);
     }
 
-    public Map<String, Object> getProductWithPagination(int page, int size, String f, String q) {
+    public Map<String, Object> getProductWithPagination(int page, int size, String f, String q, boolean isAdmin) {
         Pageable pageable = PageRequest.of(page - 1, size, Sort.by(Sort.Direction.DESC, "regDate"));
         Page<Product> productPage;
 
@@ -36,17 +38,42 @@ public class ProductService {
             productPage = productRepository.findAll(pageable);
         }
 
+        List<ProductResponse> products = productPage.getContent().stream()
+                .map(product -> isAdmin
+                        ? new ProductResponse(
+                        product.getNo(),
+                        product.getTitle(),
+                        product.getCategory(),
+                        product.getQuantity(),
+                        product.getPrice())
+                        : new ProductResponse(
+                        product.getNo(),
+                        product.getTitle(),
+                        product.getTitleImg(),
+                        product.getPrice()))
+                .collect(Collectors.toList());
+
         Map<String, Object> response = new HashMap<>();
-        response.put("products", productPage.getContent());
+        response.put("products", products);
         response.put("totalCount", productPage.getTotalElements());
         response.put("totalPages", productPage.getTotalPages());
 
         return response;
     }
 
+    public ProductResponse getProduct(int no, boolean isAdmin) {
+        Product product = productRepository.findById(no)
+                .orElseThrow(() -> new IllegalArgumentException("Product not found"));
+
+        return isAdmin
+                ? new ProductResponse(product.getNo(), product.getTitle(), product.getCategory(), product.getTitleImg(), product.getPrice(), product.getQuantity(), product.getContent())
+                : new ProductResponse(product.getNo(), product.getTitle(), product.getTitleImg(), product.getPrice(), product.getQuantity(), product.getContent());
+    }
+
+
     public Product updateProduct(int no, Product updateProduct) {
         Product product = productRepository.findByNo(no);
-        if(product == null){
+        if (product == null) {
             throw new IllegalArgumentException("Invalid product No: " + no);
         }
 
@@ -62,7 +89,7 @@ public class ProductService {
 
     public void deleteProduct(int no) {
         Product product = productRepository.findByNo(no);
-        if(product == null){
+        if (product == null) {
             throw new IllegalArgumentException("Invalid product No: " + no);
         }
         productRepository.delete(product);

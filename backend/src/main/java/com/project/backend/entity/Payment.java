@@ -4,6 +4,8 @@ import java.time.LocalDateTime;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -42,11 +44,12 @@ public class Payment {
     @Column(nullable = false, length = 50)
     private String addr;
 
-    @Column(nullable = false, length = 20)
-    private String method;
+    @Column(nullable = false)
+    private int method;
 
-    @Column(nullable = false, length = 20)
-    private String status;
+    @Enumerated(EnumType.ORDINAL)
+    @Column(nullable = false)
+    private PaymentStatus status;
 
     @Column(name = "reg_date", columnDefinition = "TIMESTAMP DEFAULT SYSTIMESTAMP")
     private LocalDateTime regDate;

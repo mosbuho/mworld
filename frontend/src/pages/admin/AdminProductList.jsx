@@ -25,8 +25,8 @@ const AdminProductList = () => {
     }, []);
 
     const fetchProducts = async (page) => {
-        if (pageDataCache[`${f}_${page}`]) {
-            setProducts(pageDataCache[`${f}_${page}`]);
+        if (pageDataCache[`${f}_${q}_${page}`]) {
+            setProducts(pageDataCache[`${f}_${q}_${page}`]);
             return;
         }
         try {
@@ -36,7 +36,7 @@ const AdminProductList = () => {
             const {products: fetchedProducts, totalCount} = res.data;
             setPageDataCache(prevCache => ({
                 ...prevCache,
-                [`${f}_${page}`]: fetchedProducts,
+                [`${f}_${q}_${page}`]: fetchedProducts,
             }));
 
             setProducts(fetchedProducts);
@@ -59,7 +59,7 @@ const AdminProductList = () => {
     };
 
     const handleRowClick = (product, nav) => {
-        nav(`/admin/product/${product.no}`, {state: {product}});
+        nav(`/admin/product/${product.no}`);
     };
 
     const columns = [

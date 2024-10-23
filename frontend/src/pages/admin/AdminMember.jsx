@@ -1,37 +1,63 @@
 import axios from "/src/utils/axiosConfig.js";
-import {useState} from "react";
-import {useLocation, useNavigate} from "react-router-dom";
+import {useEffect, useState} from "react";
+import {useNavigate, useParams} from "react-router-dom";
 import AdminSidebar from "../../components/admin/AdminSidebar.jsx";
 import "/src/styles/pages/admin/AdminMember.css"
 import AdminHeader from "../../components/admin/AdminHeader.jsx";
+import DaumPost from "../../components/DaumPost.jsx";
 
 const AdminMember = () => {
-    const location = useLocation();
+    const { no } = useParams();
     const nav = useNavigate();
-    const {member} = location.state;
+    const [originalData, setOriginData] = useState({});
+    const [formData, setFormData] = useState({});
 
-    const [formData, setFormData] = useState({
-        no: member.no,
-        id: member.id,
-        name: member.name,
-        phone: member.phone,
-        addr: member.addr,
-        regDate: member.regDate,
-    })
+    useEffect(() => {
+        fetchMember();
+    }, [no, nav]);
+
+    const fetchMember = async () => {
+        try {
+            const res = await axios.get(`/api/admin/member/${no}`);
+            const member = res.data;
+            setFormData({ ...member });
+            setOriginData({ ...member });
+        } catch (err) {
+            console.error("Failed to fetch member details", err);
+            alert("회원 정보를 불러오는 데 실패했습니다.");
+            nav(-1);
+        }
+    };
+
 
     const handleChange = (e) => {
         const {id, value} = e.target;
         setFormData((prevData) => ({...prevData, [id]: value}));
     };
 
+    const setAddress = (address) => {
+        setFormData((prevData) => ({...prevData, addr: address}));
+    };
+
+    const getChangeData = () => {
+        const changeData = {};
+        Object.keys(formData).forEach((key) => {
+            if (formData[key] !== originalData[key]) {
+                changeData[key] = formData[key];
+            }
+        });
+        return changeData;
+    };
+
     const handleUpdate = async () => {
         if (window.confirm("회원정보를 수정하시겠습니까?")) {
+            const changedData = getChangeData();
+            if (Object.keys(changedData).length === 0) {
+                alert("변경된 내용이 없습니다.");
+                return;
+            }
             try {
-                await axios.put(`/api/admin/member/${formData.no}`, {
-                    name: formData.name,
-                    phone: formData.phone,
-                    addr: formData.addr,
-                });
+                await axios.put(`/api/admin/member/${formData.no}`, changedData);
                 alert("회원정보가 수정되었습니다.");
                 nav('/admin/member');
             } catch (err) {
@@ -81,6 +107,15 @@ const AdminMember = () => {
                             />
                         </div>
                         <div className="form-group">
+                            <label htmlFor="email">이메일</label>
+                            <input
+                                type="email"
+                                id="email"
+                                value={formData.email}
+                                readOnly={true}
+                            />
+                        </div>
+                        <div className="form-group">
                             <label htmlFor="name">이름</label>
                             <input
                                 type="text"
@@ -99,11 +134,29 @@ const AdminMember = () => {
                             />
                         </div>
                         <div className="form-group">
+                            <label htmlFor="business">사업자등록번호</label>
+                            <input
+                                type="text"
+                                id="business"
+                                value={formData.business}
+                                onChange={handleChange}
+                                readOnly={true}
+                            />
+                        </div>
+                        <div className="form-group">
                             <label htmlFor="addr">주소</label>
                             <input
                                 type="text"
                                 id="addr"
                                 value={formData.addr}
+                                onChange={handleChange}
+                            />
+                            <DaumPost setAddress={setAddress}/>
+                            <label htmlFor="detailAddr">상세주소</label>
+                            <input
+                                type="text"
+                                id="detailAddr"
+                                value={formData.detailAddr}
                                 onChange={handleChange}
                             />
                         </div>

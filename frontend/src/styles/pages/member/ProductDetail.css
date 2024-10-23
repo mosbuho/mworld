@@ -1,4 +1,4 @@
-.product-detail-container {
+/* .product-detail-container {
   display: flex;
   flex-wrap: wrap;
   max-width: 1200px;
@@ -129,7 +129,7 @@
 }
 
 .product-detail-container .quick-purchase-button {
-  background-color: #4CAF50; /* 녹색 배경 */
+  background-color: #4CAF50; 
   color: #ffffff;
   border: none;
   padding: 12px 24px;
@@ -344,7 +344,7 @@
   }
 
   .shipping-info li strong {
-    flex: 0 0 80px; /* 모바일에서 강제 너비를 줄임 */
+    flex: 0 0 80px; 
     margin-right: 8px;
   }
 
@@ -388,5 +388,4 @@
   .product-content p {
     font-size: 14px;
   }
-
-}
+} */

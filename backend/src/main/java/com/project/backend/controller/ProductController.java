@@ -1,22 +1,27 @@
 package com.project.backend.controller;
 
+import java.util.Map;
+
+import com.project.backend.dto.ProductResponse;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+
 import com.project.backend.entity.Product;
 import com.project.backend.service.ProductService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
-
-import java.util.Map;
 
 @RestController
 @RequestMapping("/api")
 public class ProductController {
-    private static final Logger log = LoggerFactory.getLogger(ProductController.class);
     private final ProductService productService;
 
-    @Autowired
     public ProductController(ProductService productService) {
         this.productService = productService;
     }
@@ -33,12 +38,41 @@ public class ProductController {
     }
 
     @GetMapping("/admin/product")
+    public Map<String, Object> getAllProductsForAdmin(
+            @RequestParam(defaultValue = "1") int page,
+            @RequestParam(defaultValue = "20") int size,
+            @RequestParam String f,
+            @RequestParam String q) {
+        return productService.getProductWithPagination(page, size, f, q, true);
+    }
+
+    @GetMapping("/member/product")
     public Map<String, Object> getAllProducts(
             @RequestParam(defaultValue = "1") int page,
             @RequestParam(defaultValue = "20") int size,
             @RequestParam String f,
             @RequestParam String q) {
-        return productService.getProductWithPagination(page, size, f, q);
+        return productService.getProductWithPagination(page, size, f, q, false); // 멤버 호출
+    }
+
+    @GetMapping("/admin/product/{no}")
+    public ResponseEntity<ProductResponse> getProductForAdmin(@PathVariable int no) {
+        try {
+            ProductResponse product = productService.getProduct(no, true);
+            return ResponseEntity.ok(product);
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().build();
+        }
+    }
+
+    @GetMapping("/member/product/{no}")
+    public ResponseEntity<ProductResponse> getProductForMember(@PathVariable int no) {
+        try {
+            ProductResponse product = productService.getProduct(no, false);
+            return ResponseEntity.ok(product);
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().build();
+        }
     }
 
     @PutMapping("/admin/product/{no}")
@@ -46,7 +80,6 @@ public class ProductController {
             @PathVariable int no,
             @RequestBody Product updateProduct) {
         try {
-            log.info("updateProduct : " + updateProduct);
             productService.updateProduct(no, updateProduct);
             return ResponseEntity.ok(null);
         } catch (Exception e) {

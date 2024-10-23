@@ -1,5 +1,5 @@
 import AdminSidebar from "../../components/admin/AdminSidebar.jsx";
-import {useLocation, useNavigate} from "react-router-dom";
+import {useLocation, useNavigate, useParams} from "react-router-dom";
 import {useEffect, useState} from "react";
 import axios from "../../utils/axiosConfig.js";
 import {EditorState, convertFromRaw, convertToRaw} from 'draft-js';
@@ -11,29 +11,79 @@ import AdminHeader from "../../components/admin/AdminHeader.jsx";
 const AdminProduct = () => {
     const location = useLocation();
     const nav = useNavigate();
-    const {product} = location.state;
+    const {no} = useParams();
+    const [editorState, setEditorState] = useState(EditorState.createEmpty());
+    const [formData, setFormData] = useState({});
+    const ENTITY_TYPE = 'product';
 
-    const [editorState, setEditorState] = useState(() =>
-        EditorState.createEmpty()
-    );
+    useEffect(()=>{
+        fetchProduct();
+    },[no]);
 
-    const [formData, setFormData] = useState({
-        no: product.no,
-        titleImg: product.titleImg,
-        title: product.title,
-        category: product.category,
-        quantity: product.quantity,
-        price: product.price,
-        content: product.content,
-    });
+    const fetchProduct = async () => {
+        try {
+            const response = await axios.get(`/api/admin/product/${no}`);
+            const product = response.data;
 
-    useEffect(() => {
-        setEditorState(EditorState.createWithContent(convertFromRaw(JSON.parse(product.content))));
-    }, [product.content]);
+            setFormData(product);
 
-    const handleEditorChange = (editorState) => {
-        setEditorState(editorState);
+            setEditorState(EditorState.createWithContent(convertFromRaw(JSON.parse(product.content))));
+        } catch (error) {
+            console.error("Failed to fetch product", error);
+        }
     };
+
+    const handleChange = (e) => {
+        const {id, value} = e.target;
+        setFormData((prevData) => ({...prevData, [id]: value}));
+    };
+
+    const handleEditorChange = (newEditorState) => {
+        const oldContent = editorState.getCurrentContent();
+        const newContent = newEditorState.getCurrentContent();
+
+        const oldImages = extractImageUrls(oldContent);
+        const newImages = extractImageUrls(newContent);
+
+        // 이전 상태의 이미지가 새 상태에 없으면 삭제 처리
+        oldImages.forEach((url) => {
+            if (!newImages.includes(url)) {
+                deleteImage(ENTITY_TYPE, url)
+                    .then(() => {
+                        setFormData((prevData) => ({ ...prevData, titleImg: "" }));
+                    })
+                    .catch((error) => console.error('Image delete failed:', error));
+            }
+        });
+
+        setEditorState(newEditorState);
+    };
+
+    const extractImageUrls = (contentState) => {
+        const urls = [];
+        const blocks = contentState.getBlocksAsArray();
+
+        blocks.forEach((block) => {
+            block.findEntityRanges(
+                (character) => {
+                    const entityKey = character.getEntity();
+                    if (entityKey) {
+                        const entity = contentState.getEntity(entityKey);
+                        return entity.getType() === 'IMAGE';
+                    }
+                    return false;
+                },
+                (start, end) => {
+                    const entity = contentState.getEntity(block.getEntityAt(start));
+                    const { src } = entity.getData();
+                    urls.push(src); // 이미지 URL 수집
+                }
+            );
+        });
+
+        return urls;
+    };
+
     // 이미지 리사이징 함수 (대표 이미지 및 에디터 이미지에서 재사용)
     const resizeImage = (file, maxWidth, maxHeight) => {
         return new Promise((resolve, reject) => {
@@ -49,32 +99,30 @@ const AdminProduct = () => {
             };
 
             img.onload = () => {
-                const canvas = document.createElement('canvas');
-                const ctx = canvas.getContext('2d');
+                let newWidth = img.width;
+                let newHeight = img.height;
 
-                let width = img.width;
-                let height = img.height;
+                // 비율 유지하며 최대 크기를 넘지 않도록 조정
+                const aspectRatio = img.width / img.height;
 
-                // 이미지 비율을 유지하면서 리사이징
-                if (width > height) {
-                    if (width > maxWidth) {
-                        height = Math.floor((height * maxWidth) / width);
-                        width = maxWidth;
-                    }
-                } else {
-                    if (height > maxHeight) {
-                        width = Math.floor((width * maxHeight) / height);
-                        height = maxHeight;
-                    }
+                if (newWidth > maxWidth) {
+                    newWidth = maxWidth;
+                    newHeight = maxWidth / aspectRatio;
                 }
 
-                canvas.width = width;
-                canvas.height = height;
+                if (newHeight > maxHeight) {
+                    newHeight = maxHeight;
+                    newWidth = maxHeight * aspectRatio;
+                }
 
-                // 리사이징된 이미지를 캔버스에 그리기
-                ctx.drawImage(img, 0, 0, width, height);
+                const canvas = document.createElement('canvas');
+                canvas.width = newWidth;
+                canvas.height = newHeight;
 
-                // 리사이징된 이미지를 Blob으로 변환
+                const ctx = canvas.getContext('2d');
+                ctx.drawImage(img, 0, 0, newWidth, newHeight);
+
+                // 리사이징된 이미지를 Blob으로 변환하여 반환
                 canvas.toBlob((blob) => {
                     resolve(blob);
                 }, file.type);
@@ -84,18 +132,27 @@ const AdminProduct = () => {
         });
     };
 
+
     // 대표 이미지 업로드 함수
     const handleTitleImageUpload = (e) => {
         const file = e.target.files[0];
-        const maxWidth = 800; // 최대 너비
-        const maxHeight = 800; // 최대 높이
-        const entityType = 'product'; // 엔티티 타입
+
+        if (formData.titleImg) {
+            deleteImage(ENTITY_TYPE, formData.titleImg)
+                .then(() => {
+                    setFormData((prevData) => ({ ...prevData, titleImg: "" }));
+                })
+                .catch((error) => console.error('Image delete failed:', error));
+        }
+
+        const maxWidth = 580; // 최대 너비
+        const maxHeight = 580; // 최대 높이
 
         resizeImage(file, maxWidth, maxHeight)
             .then((resizedBlob) => {
                 const formData = new FormData();
                 formData.append('file', resizedBlob, file.name);
-                formData.append('entityType', entityType);
+                formData.append('entityType', ENTITY_TYPE);
 
                 axios.post('/api/img', formData, {
                     headers: {
@@ -117,16 +174,15 @@ const AdminProduct = () => {
 
     // 에디터에 삽입할 이미지 업로드 콜백 함수
     const uploadImageCallback = (file) => {
-        const maxWidth = 1000; // 최대 너비
-        const maxHeight = 2000; // 최대 높이
-        const entityType = 'product'; // 에디터에 삽입할 이미지도 product에 속함
+        const maxWidth = 1200; // 최대 너비
+        const maxHeight = 3000; // 최대 높이
 
         return new Promise((resolve, reject) => {
             resizeImage(file, maxWidth, maxHeight)
                 .then((resizedBlob) => {
                     const formData = new FormData();
                     formData.append('file', resizedBlob, file.name);
-                    formData.append('entityType', entityType);
+                    formData.append('entityType', ENTITY_TYPE);
 
                     axios.post('/api/img', formData, {
                         headers: {
@@ -148,9 +204,14 @@ const AdminProduct = () => {
         });
     };
 
-    const handleChange = (e) => {
-        const {id, value} = e.target;
-        setFormData((prevData) => ({...prevData, [id]: value}));
+    const deleteImage = async (entityType, imageUrl) => {
+        try {
+            const fileName = imageUrl.split('/').pop();
+            await axios.delete(`/api/img/${entityType}/${fileName}`);
+        } catch (error) {
+            console.error('Image delete failed:', error);
+            throw error;
+        }
     };
 
     const handleUpdate = async () => {
@@ -171,20 +232,33 @@ const AdminProduct = () => {
                 nav('/admin/product');
             } catch (err) {
                 console.error("failed to update product", err);
-                alert('회원정보 수정에 실패했습니다. 다시 시도해 주세요.');
+                alert('상품정보 수정에 실패했습니다. 다시 시도해 주세요.');
             }
         }
     };
 
     const handleDelete = async () => {
-        if (window.confirm("회원을 삭제하시겠습니까?")) {
+        if (window.confirm("상품을 삭제하시겠습니까?")) {
             try {
+                const contentState = editorState.getCurrentContent();
+                const editorImages = extractImageUrls(contentState); // 에디터 이미지 추출
+                const imagesToDelete = [formData.titleImg, ...editorImages]; // 모든 이미지 배열
+
+                await Promise.all(
+                    imagesToDelete.map((imageUrl) => {
+                        if (imageUrl) {
+                            return deleteImage(ENTITY_TYPE, imageUrl);
+                        }
+                        return Promise.resolve();
+                    })
+                );
+
                 await axios.delete(`/api/admin/product/${formData.no}`);
                 alert("상품이 삭제되었습니다.");
                 nav('/admin/product');
             } catch (err) {
                 console.error("failed to delete product", err);
-                alert('회원삭제에 실패했습니다. 다시 시도해 주세요.');
+                alert('상품삭제에 실패했습니다. 다시 시도해 주세요.');
             }
         }
     };
@@ -229,10 +303,10 @@ const AdminProduct = () => {
                                 id="titleImg"
                                 onChange={handleTitleImageUpload} // 대표 이미지 업로드 처리
                             />
-                            <div className="title-img">
-                                <span>미리보기(580px, 580px)</span>
-                                <img src={formData.titleImg} alt=""/>
-                            </div>
+                        </div>
+                        <div className="title-img">
+                            <span>미리보기(580px, 580px)</span>
+                            <img src={formData.titleImg} alt=""/>
                         </div>
                         <div className="form-group">
                             <label htmlFor="price">상품가격</label>
@@ -252,7 +326,7 @@ const AdminProduct = () => {
                                 onChange={handleChange}
                             />
                         </div>
-                        <div className="form-group">
+                        <div className="form-group-editor">
                             <label htmlFor="content">상품설명</label>
                             <div className="draft-editor">
                                 <Editor

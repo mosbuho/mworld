@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap');
+/* @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap');
 
 .payment-page {
   font-family: 'Noto Sans KR', sans-serif;
@@ -70,7 +70,7 @@
   flex-direction: column;
 }
 
-.payment-left > div {
+.payment-left>div {
   background-color: #ffffff;
   padding: 20px;
   margin-bottom: 20px;
@@ -145,10 +145,6 @@
   font-size: 16px;
 }
 
-.input-group {
-  margin-bottom: 16px;
-}
-
 .input-group label {
   display: block;
   font-size: 16px;
@@ -166,11 +162,7 @@
   font-size: 16px;
 }
 
-.input-group input:focus {
-  border-color: #FF7F8A;
-  outline: none;
-  box-shadow: 0 0 5px rgba(255, 127, 138, 0.5);
-}
+
 
 .address-search {
   display: flex;
@@ -192,7 +184,7 @@
   font-size: 14px;
 }
 
-input#customerAddressDetail{
+input#customerAddressDetail {
   margin-top: 5px;
 }
 
@@ -311,7 +303,7 @@ input#customerAddressDetail{
     width: 100%;
   }
 
-  .payment-left > div,
+  .payment-left>div,
   .payment-info {
     margin-bottom: 20px;
   }
@@ -341,4 +333,4 @@ input#customerAddressDetail{
     font-size: 14px;
     padding: 10px 16px;
   }
-}
+} */

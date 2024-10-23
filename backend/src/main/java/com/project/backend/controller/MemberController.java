@@ -1,12 +1,8 @@
 package com.project.backend.controller;
 
-import java.time.LocalDate;
-import java.util.List;
 import java.util.Map;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.format.annotation.DateTimeFormat;
+import com.project.backend.dto.MemberResponse;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -24,18 +20,10 @@ import com.project.backend.service.MemberService;
 @RequestMapping("/api")
 public class MemberController {
 
-    private static final Logger log = LoggerFactory.getLogger(MemberController.class);
     private final MemberService memberService;
 
     public MemberController(MemberService memberService) {
         this.memberService = memberService;
-    }
-
-    @GetMapping("/admin/member-main")
-    public List<Member> getMember(
-            @RequestParam(defaultValue = "1") int page,
-            @RequestParam(defaultValue = "5") int size) {
-        return memberService.getMemberList(page, size);
     }
 
     @GetMapping("/admin/member")
@@ -45,6 +33,16 @@ public class MemberController {
             @RequestParam(required = false) String f,
             @RequestParam(required = false) String q) {
         return memberService.getMemberWithPagination(page, size, f, q);
+    }
+
+    @GetMapping("/admin/member/{no}")
+    public ResponseEntity<MemberResponse> getMemberForAdmin(@PathVariable int no) {
+        try{
+            MemberResponse member = memberService.getMember(no);
+            return ResponseEntity.ok(member);
+        }catch (Exception e){
+            return ResponseEntity.status(500).build();
+        }
     }
 
     @PutMapping("/admin/member/{no}")
