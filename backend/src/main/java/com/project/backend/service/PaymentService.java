@@ -33,27 +33,29 @@ public class PaymentService {
 
     public Map<String, Object> getPaymentList(int page, int size, String f, String q, int status) {
         Pageable pageable = PageRequest.of(page - 1, size);
-        Page<Object[]> paymentPage;
+        Page<Payment> paymentPage;
 
         PaymentStatus paymentStatus = status == -1 ? null : PaymentStatus.fromValue(status);
 
         if (f == null || q == null || q.isEmpty()) {
             paymentPage = (paymentStatus == null)
-                    ? paymentRepository.findGroupedPayments(pageable)
-                    : paymentRepository.findGroupedPaymentsByStatus(paymentStatus, pageable);
+                    ? paymentRepository.findAll(pageable) // 모든 결제 조회
+                    : paymentRepository.findByStatus(paymentStatus, pageable); // 상태별 조회
         } else {
-            paymentPage = paymentRepository.findGroupedPaymentsByFieldAndStatus(f, q, paymentStatus, pageable);
+            paymentPage = paymentRepository.findByFieldAndStatus(f, q, paymentStatus, pageable); // 필드와 상태 검색
         }
 
-        List<PaymentResponse> paymentList = paymentPage.getContent().stream().map(objects -> new PaymentResponse(
-                (String) objects[0], // transactionId
-                ((Number) objects[1]).intValue(), // method
-                ((Number) objects[2]).intValue(), // price
-                (LocalDateTime) objects[3], // regDate
-                ((PaymentStatus) objects[4]).getLabel(), // status
-                (String) objects[5], // memberName
-                (String) objects[6] // memberPhone
-        )).collect(Collectors.toList());
+        List<PaymentResponse> paymentList = paymentPage.getContent().stream().map(payment ->
+                new PaymentResponse(
+                        payment.getTransactionId(),
+                        payment.getMethod(),
+                        payment.getPrice(),
+                        payment.getRegDate(),
+                        payment.getStatus().getLabel(),
+                        payment.getMember().getName(),
+                        payment.getMember().getPhone()
+                )
+        ).collect(Collectors.toList());
 
         Map<String, Object> response = new HashMap<>();
         response.put("paymentList", paymentList);
@@ -105,8 +107,6 @@ public class PaymentService {
                 payment.setTransactionId(orderNo);
                 Product product = new Product();
                 product.setNo(request.getProductNo());
-                payment.setProduct(product);
-                payment.setQuantity(request.getQuantity());
                 payment.setPrice(request.getPrice());
                 payment.setMethod(request.getMethod());
                 payment.setStatus(PaymentStatus.PAYMENTED);
@@ -142,44 +142,42 @@ public class PaymentService {
         return formattedDateTime + randomString.toString();
     }
 
-    public Map<String, Object> getPaymentDetails(String transactionId) {
-        List<Payment> payments = paymentRepository.findByTransactionId(transactionId);
-
-        Payment firstPayment = payments.get(0);
-
-        int statusValue = firstPayment.getStatus().getValue();
-
-        Map<String, Object> orderInfo = Map.of(
-                "transactionId", firstPayment.getTransactionId(),
-                "addr", firstPayment.getAddr(),
-                "method", firstPayment.getMethod(),
-                "status", statusValue,
-                "regDate", firstPayment.getRegDate(),
-                "memberName", firstPayment.getMember().getName(),
-                "memberPhone", firstPayment.getMember().getPhone());
-
-        List<Map<String, Object>> productList = payments.stream()
-                .<Map<String, Object>>map(payment -> Map.of(
-                        "productTitle", payment.getProduct().getTitle(),
-                        "quantity", payment.getQuantity(),
-                        "price", payment.getPrice()))
-                .collect(Collectors.toList());
-
-        Map<String, Object> response = new HashMap<>();
-        response.put("paymentInfo", orderInfo);
-        response.put("productList", productList);
-
-        return response;
-    }
-
-    @Transactional
-    public void updatePaymentStatus(String transactionId, int statusValue) {
-        PaymentStatus status = PaymentStatus.fromValue(statusValue);
-
-        int updatedCount = paymentRepository.updatePaymentStatus(transactionId, status);
-
-        if (updatedCount == 0) {
-            throw new IllegalArgumentException("No payment found for transactionId: " + transactionId);
-        }
-    }
+//    public Map<String, Object> getPaymentDetails(String transactionId) {
+//        List<Payment> payments = paymentRepository.findByTransactionId(transactionId);
+//
+//        Payment firstPayment = payments.get(0);
+//
+//        int statusValue = firstPayment.getStatus().getValue();
+//
+//        Map<String, Object> orderInfo = Map.of(
+//                "transactionId", firstPayment.getTransactionId(),
+//                "addr", firstPayment.getAddr(),
+//                "method", firstPayment.getMethod(),
+//                "status", statusValue,
+//                "regDate", firstPayment.getRegDate(),
+//                "memberName", firstPayment.getMember().getName(),
+//                "memberPhone", firstPayment.getMember().getPhone());
+//
+//        List<Map<String, Object>> productList = payments.stream()
+//                .<Map<String, Object>>map(payment -> Map.of(
+//                        "price", payment.getPrice()))
+//                .collect(Collectors.toList());
+//
+//        Map<String, Object> response = new HashMap<>();
+//        response.put("paymentInfo", orderInfo);
+//        response.put("productList", productList);
+//
+//        return response;
+//    }
+//
+//    @Transactional
+//    public void updatePaymentStatus(String transactionId, int statusValue) {
+//        PaymentStatus status = PaymentStatus.fromValue(statusValue);
+//
+//        int updatedCount = paymentRepository.updatePaymentStatus(transactionId, status);
+//
+//        if (updatedCount == 0) {
+//            throw new IllegalArgumentException("No payment found for transactionId: " + transactionId);
+//        }
+//    }
 }
