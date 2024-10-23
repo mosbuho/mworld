@@ -17,8 +17,7 @@ import lombok.Data;
 @Data
 public class Product {
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "product_seq_generator")
-    @SequenceGenerator(name = "product_seq_generator", sequenceName = "product_seq", allocationSize = 1)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int no;
 
     @Column(name = "title_img", nullable = false, length = 255)
@@ -42,7 +41,7 @@ public class Product {
     @Column(nullable = false)
     private int minimum;
 
-    @Column(name = "reg_date", columnDefinition = "TIMESTAMP DEFAULT SYSTIMESTAMP")
+    @Column(name = "reg_date", columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
     private LocalDateTime regDate;
 
     @PrePersist
