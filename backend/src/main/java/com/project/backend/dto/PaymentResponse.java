@@ -11,6 +11,7 @@ public class PaymentResponse {
     private String transactionId;
     private int method;
     private int price;
+    private int usePoint;
     private LocalDateTime regDate;
     private int status;
     private String memberName;
@@ -31,11 +32,12 @@ public class PaymentResponse {
         this.memberPhone = memberPhone;
     }
 
-    public PaymentResponse(int no, String transactionId, int method, int price, LocalDateTime regDate, int status, String memberName, String memberPhone, String addr, String detailAddr) {
+    public PaymentResponse(int no, String transactionId, int method, int price, int usePoint, LocalDateTime regDate, int status, String memberName, String memberPhone, String addr, String detailAddr) {
         this.no = no;
         this.transactionId = transactionId;
         this.method = method;
         this.price = price;
+        this.usePoint = usePoint;
         this.regDate = regDate;
         this.status = status;
         this.memberName = memberName;

@@ -145,6 +145,10 @@ const AdminPayment = () => {
                             <div>{ProductTotalPrice.toLocaleString()}원</div>
                         </div>
                         <div className="payment-detail-row">
+                            <div>적립금</div>
+                            <div>{formattedPayment.usePoint}원</div>
+                        </div>
+                        <div className="payment-detail-row payment-price">
                             <div>결제 금액</div>
                             <div>{formattedPayment.price}원</div>
                         </div>

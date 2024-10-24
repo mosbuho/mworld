@@ -147,6 +147,7 @@ public class PaymentService {
                 payment.getTransactionId(),
                 payment.getMethod(),
                 payment.getPrice(),
+                payment.getUsePoint(),
                 payment.getRegDate(),
                 payment.getStatus().getValue(),
                 payment.getMember().getName(),
@@ -166,15 +167,15 @@ public class PaymentService {
 
         return response;
     }
-//
-//    @Transactional
-//    public void updatePaymentStatus(String transactionId, int statusValue) {
-//        PaymentStatus status = PaymentStatus.fromValue(statusValue);
-//
-//        int updatedCount = paymentRepository.updatePaymentStatus(transactionId, status);
-//
-//        if (updatedCount == 0) {
-//            throw new IllegalArgumentException("No payment found for transactionId: " + transactionId);
-//        }
-//    }
+
+    @Transactional
+    public void updatePaymentStatus(int no, int statusValue) {
+        PaymentStatus status = PaymentStatus.fromValue(statusValue);
+
+        int updatedCount = paymentRepository.updatePaymentStatus(no, status);
+
+        if (updatedCount == 0) {
+            throw new IllegalArgumentException("No payment found for transactionId: " + no);
+        }
+    }
 }

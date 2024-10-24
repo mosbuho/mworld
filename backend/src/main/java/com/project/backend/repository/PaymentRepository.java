@@ -5,11 +5,13 @@ import java.util.List;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import com.project.backend.entity.Payment;
 import com.project.backend.entity.PaymentStatus;
+import org.springframework.transaction.annotation.Transactional;
 
 public interface PaymentRepository extends JpaRepository<Payment, Integer> {
 
@@ -45,4 +47,9 @@ public interface PaymentRepository extends JpaRepository<Payment, Integer> {
             "LEFT JOIN PaymentDetail pd ON p.no = pd.payment.no " +
             "WHERE p.no = :paymentNo")
     List<Object[]> findPaymentWithDetails(@Param("paymentNo") int paymentNo);
+
+    @Modifying
+    @Transactional
+    @Query("UPDATE Payment p SET p.status = :status WHERE p.no = :no")
+    int updatePaymentStatus(@Param("no") int no, @Param("status") PaymentStatus status);
 }

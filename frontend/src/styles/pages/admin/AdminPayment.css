@@ -61,6 +61,11 @@ div.admin-payment-detail {
         th {
             background-color: #dcdcdc;
         }
+        tfoot{
+            tr{
+                font-weight: bold;
+            }
+        }
 
     }
 
@@ -68,6 +73,10 @@ div.admin-payment-detail {
         margin-top: 5px;
         display: flex;
         justify-content: space-between;
+    }
+    div.payment-price{
+        font-weight: bold;
+        font-size: 1.1em;
     }
 
     button.update-btn {
