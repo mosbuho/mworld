@@ -1,5 +1,8 @@
 package com.project.backend.entity;
 
+import lombok.Getter;
+
+@Getter
 public enum PaymentStatus {
     UNPAYMENT(0, "결제대기"),
     PAYMENTED(1, "결제완료"),
@@ -14,14 +17,6 @@ public enum PaymentStatus {
     private PaymentStatus(int value, String label) {
         this.value = value;
         this.label = label;
-    }
-
-    public int getValue() {
-        return value;
-    }
-
-    public String getLabel() {
-        return label;
     }
 
     public static PaymentStatus fromValue(int value) {

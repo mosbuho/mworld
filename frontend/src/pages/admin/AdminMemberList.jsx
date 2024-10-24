@@ -41,7 +41,6 @@ const AdminMemberList = () => {
             setPageCount(totalPages);
 
         } catch (err) {
-            console.error("failed to fetch member-list ", err);
         }
     };
 

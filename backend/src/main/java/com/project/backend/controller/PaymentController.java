@@ -54,18 +54,18 @@ public class PaymentController {
         }
     }
 
-    @GetMapping("/admin/payment/{transactionId}")
-    public Map<String, Object> getPayment(@PathVariable String transactionId) {
-        return paymentService.getPaymentDetails(transactionId);
+    @GetMapping("/admin/payment/{no}")
+    public Map<String, Object> getPayment(@PathVariable int no) {
+        return paymentService.getPaymentWithDetails(no);
 
     }
 
-    @PutMapping("/admin/payment/{transactionId}")
+    @PutMapping("/admin/payment/{no}")
     public ResponseEntity<String> updatePaymentStatus(
-            @PathVariable String transactionId,
+            @PathVariable int no,
             @RequestParam int status) {
         try {
-            paymentService.updatePaymentStatus(transactionId, status);
+            paymentService.updatePaymentStatus(no, status);
             return ResponseEntity.ok("주문상태가 변경되었습니다.");
         } catch (IllegalArgumentException e) {
             return ResponseEntity.badRequest().body(e.getMessage());

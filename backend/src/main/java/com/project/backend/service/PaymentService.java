@@ -2,12 +2,10 @@ package com.project.backend.service;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Random;
+import java.util.*;
 import java.util.stream.Collectors;
 
+import com.project.backend.entity.*;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -16,10 +14,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.project.backend.dto.PaymentRequest;
 import com.project.backend.dto.PaymentResponse;
-import com.project.backend.entity.Member;
-import com.project.backend.entity.Payment;
-import com.project.backend.entity.PaymentStatus;
-import com.project.backend.entity.Product;
 import com.project.backend.repository.PaymentRepository;
 
 @Service
@@ -33,27 +27,30 @@ public class PaymentService {
 
     public Map<String, Object> getPaymentList(int page, int size, String f, String q, int status) {
         Pageable pageable = PageRequest.of(page - 1, size);
-        Page<Object[]> paymentPage;
+        Page<Payment> paymentPage;
 
         PaymentStatus paymentStatus = status == -1 ? null : PaymentStatus.fromValue(status);
 
         if (f == null || q == null || q.isEmpty()) {
             paymentPage = (paymentStatus == null)
-                    ? paymentRepository.findGroupedPayments(pageable)
-                    : paymentRepository.findGroupedPaymentsByStatus(paymentStatus, pageable);
+                    ? paymentRepository.findAll(pageable) // 모든 결제 조회
+                    : paymentRepository.findByStatus(paymentStatus, pageable); // 상태별 조회
         } else {
-            paymentPage = paymentRepository.findGroupedPaymentsByFieldAndStatus(f, q, paymentStatus, pageable);
+            paymentPage = paymentRepository.findByFieldAndStatus(f, q, paymentStatus, pageable); // 필드와 상태 검색
         }
 
-        List<PaymentResponse> paymentList = paymentPage.getContent().stream().map(objects -> new PaymentResponse(
-                (String) objects[0], // transactionId
-                ((Number) objects[1]).intValue(), // method
-                ((Number) objects[2]).intValue(), // price
-                (LocalDateTime) objects[3], // regDate
-                ((PaymentStatus) objects[4]).getLabel(), // status
-                (String) objects[5], // memberName
-                (String) objects[6] // memberPhone
-        )).collect(Collectors.toList());
+        List<PaymentResponse> paymentList = paymentPage.getContent().stream().map(payment ->
+                new PaymentResponse(
+                        payment.getNo(),
+                        payment.getTransactionId(),
+                        payment.getMethod(),
+                        payment.getPrice(),
+                        payment.getRegDate(),
+                        payment.getStatus().getValue(),
+                        payment.getMember().getName(),
+                        payment.getMember().getPhone()
+                )
+        ).collect(Collectors.toList());
 
         Map<String, Object> response = new HashMap<>();
         response.put("paymentList", paymentList);
@@ -105,8 +102,6 @@ public class PaymentService {
                 payment.setTransactionId(orderNo);
                 Product product = new Product();
                 product.setNo(request.getProductNo());
-                payment.setProduct(product);
-                payment.setQuantity(request.getQuantity());
                 payment.setPrice(request.getPrice());
                 payment.setMethod(request.getMethod());
                 payment.setStatus(PaymentStatus.PAYMENTED);
@@ -142,44 +137,45 @@ public class PaymentService {
         return formattedDateTime + randomString.toString();
     }
 
-    public Map<String, Object> getPaymentDetails(String transactionId) {
-        List<Payment> payments = paymentRepository.findByTransactionId(transactionId);
+    public Map<String, Object> getPaymentWithDetails(int paymentNo) {
+        List<Object[]> results = paymentRepository.findPaymentWithDetails(paymentNo);
 
-        Payment firstPayment = payments.get(0);
+        Payment payment = (Payment) results.get(0)[0];
 
-        int statusValue = firstPayment.getStatus().getValue();
-
-        Map<String, Object> orderInfo = Map.of(
-                "transactionId", firstPayment.getTransactionId(),
-                "addr", firstPayment.getAddr(),
-                "method", firstPayment.getMethod(),
-                "status", statusValue,
-                "regDate", firstPayment.getRegDate(),
-                "memberName", firstPayment.getMember().getName(),
-                "memberPhone", firstPayment.getMember().getPhone());
-
-        List<Map<String, Object>> productList = payments.stream()
-                .<Map<String, Object>>map(payment -> Map.of(
-                        "productTitle", payment.getProduct().getTitle(),
-                        "quantity", payment.getQuantity(),
-                        "price", payment.getPrice()))
+        PaymentResponse paymentInfo = new PaymentResponse(
+                payment.getNo(),
+                payment.getTransactionId(),
+                payment.getMethod(),
+                payment.getPrice(),
+                payment.getUsePoint(),
+                payment.getRegDate(),
+                payment.getStatus().getValue(),
+                payment.getMember().getName(),
+                payment.getMember().getPhone(),
+                payment.getAddr(),
+                payment.getDetailAddr()
+        );
+        List<PaymentDetail> productList = results.stream()
+                .map(row -> (PaymentDetail) row[1])
+                .filter(Objects::nonNull)
                 .collect(Collectors.toList());
 
+
         Map<String, Object> response = new HashMap<>();
-        response.put("paymentInfo", orderInfo);
+        response.put("paymentInfo", paymentInfo);
         response.put("productList", productList);
 
         return response;
     }
 
     @Transactional
-    public void updatePaymentStatus(String transactionId, int statusValue) {
+    public void updatePaymentStatus(int no, int statusValue) {
         PaymentStatus status = PaymentStatus.fromValue(statusValue);
 
-        int updatedCount = paymentRepository.updatePaymentStatus(transactionId, status);
+        int updatedCount = paymentRepository.updatePaymentStatus(no, status);
 
         if (updatedCount == 0) {
-            throw new IllegalArgumentException("No payment found for transactionId: " + transactionId);
+            throw new IllegalArgumentException("No payment found for transactionId: " + no);
         }
     }
 }

@@ -31,7 +31,6 @@ const ProductDetail = () => {
         setError('상품을 찾을 수 없습니다.');
       }
     } catch (error) {
-      console.error('Error fetching product:', error);
       setError('상품을 불러오는 중 오류가 발생했습니다.');
     } finally {
       setLoading(false);

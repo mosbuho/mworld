@@ -23,7 +23,6 @@ const AdminMember = () => {
             setFormData({ ...member });
             setOriginData({ ...member });
         } catch (err) {
-            console.error("Failed to fetch member details", err);
             alert("회원 정보를 불러오는 데 실패했습니다.");
             nav(-1);
         }
@@ -61,7 +60,6 @@ const AdminMember = () => {
                 alert("회원정보가 수정되었습니다.");
                 nav('/admin/member');
             } catch (err) {
-                console.error("failed to update member", err);
                 alert('회원정보 수정에 실패했습니다. 다시 시도해 주세요.');
             }
         }
@@ -74,7 +72,6 @@ const AdminMember = () => {
                 alert("회원이 삭제되었습니다.");
                 nav('/admin/member');
             } catch (err) {
-                console.error("failed to delete member", err);
                 alert('회원삭제에 실패했습니다. 다시 시도해 주세요.');
             }
         }

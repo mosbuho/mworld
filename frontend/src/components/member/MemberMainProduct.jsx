@@ -52,7 +52,6 @@ const MainProduct = () => {
       setHasMore(page < totalPages);
       setIsFetching(false);
     } catch (error) {
-      console.error('Failed to fetch products:', error);
       setIsFetching(false);
     }
   };

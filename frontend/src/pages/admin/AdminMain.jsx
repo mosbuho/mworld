@@ -37,7 +37,6 @@ const AdminMain = () => {
             });
             setPayments(res.data.paymentList);
         } catch (err) {
-            console.error("failed to fetch payment", err);
         }
     };
 
@@ -48,7 +47,6 @@ const AdminMain = () => {
             });
             setMembers(res.data.members);
         } catch (err) {
-            console.error("failed to fetch member", err);
         }
     };
 
@@ -57,7 +55,6 @@ const AdminMain = () => {
             const res = await axios.get('/api/admin/payment-stats');
             setPaymentStats(res.data);
         } catch (err) {
-            console.error("Failed to fetch payment statistics", err)
         }
     };
 
@@ -171,7 +168,7 @@ const AdminMain = () => {
                         <button onClick={() => nav("/admin/payment")}>주문전체보기</button>
                     </div>
                     <AdminTable columns={paymentsColumns} data={formattedPayments} onRowClick={(payment, nav)=>{
-                        nav(`/admin/payment/${payment.transactionId}`);
+                        nav(`/admin/payment/${payment.no}`);
                     }}/>
                 </div>
                 <div className="admin-member-list">
