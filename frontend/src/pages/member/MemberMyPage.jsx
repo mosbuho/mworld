@@ -1,9 +1,9 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import '../../styles/pages/member/MyPage.css';
+import '../../styles/pages/member/MemberMyPage.css';
 import MemberFooter from '../../components/member/MemberFooter';
 import MemberHeader from '../../components/member/MemberHeader';
-import DaumPost from '../../components/DaumPost';
+import DaumPost from "../../components/common/DaumPost.jsx";
 
 const MyPage = () => {
   const navigate = useNavigate();
