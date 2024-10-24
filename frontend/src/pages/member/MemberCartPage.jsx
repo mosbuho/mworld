@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import MemberHeader from '../../components/member/MemberHeader';
 import MemberFooter from '../../components/member/MemberFooter';
-import '/src/styles/pages/member/CartPage.css';
+import '/src/styles/pages/member/MemberCartPage.css';
 
 const CartPage = () => {
   // 임시 장바구니 데이터

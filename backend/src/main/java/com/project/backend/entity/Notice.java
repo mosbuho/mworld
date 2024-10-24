@@ -7,6 +7,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.PrePersist;
 import jakarta.persistence.SequenceGenerator;
 import jakarta.persistence.Table;
 import lombok.Data;
@@ -26,6 +27,11 @@ public class Notice {
     @Column(nullable = false, length = 4000)
     private String content;
 
-    @Column(name = "reg_date", nullable = false, updatable = false, columnDefinition = "timestamp default systimestamp")
+    @Column(name = "reg_date", columnDefinition = "timestamp default systimestamp")
     private LocalDateTime regDate;
+
+    @PrePersist
+    public void prePersist() {
+        this.regDate = this.regDate != null ? this.regDate : LocalDateTime.now();
+    }
 }

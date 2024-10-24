@@ -1,10 +1,10 @@
 import axios from "/src/utils/axiosConfig.js";
-import {useEffect, useState} from "react";
-import {useNavigate, useParams} from "react-router-dom";
+import { useEffect, useState } from "react";
+import { useNavigate, useParams } from "react-router-dom";
 import AdminSidebar from "../../components/admin/AdminSidebar.jsx";
 import "/src/styles/pages/admin/AdminMember.css"
 import AdminHeader from "../../components/admin/AdminHeader.jsx";
-import DaumPost from "../../components/DaumPost.jsx";
+import DaumPost from "../../components/common/DaumPost.jsx";
 
 const AdminMember = () => {
     const { no } = useParams();
@@ -30,12 +30,12 @@ const AdminMember = () => {
 
 
     const handleChange = (e) => {
-        const {id, value} = e.target;
-        setFormData((prevData) => ({...prevData, [id]: value}));
+        const { id, value } = e.target;
+        setFormData((prevData) => ({ ...prevData, [id]: value }));
     };
 
     const setAddress = (address) => {
-        setFormData((prevData) => ({...prevData, addr: address}));
+        setFormData((prevData) => ({ ...prevData, addr: address }));
     };
 
     const getChangeData = () => {
@@ -80,8 +80,8 @@ const AdminMember = () => {
 
     return (
         <div className="admin-main">
-            <AdminHeader/>
-            <AdminSidebar/>
+            <AdminHeader />
+            <AdminSidebar />
             <div className="main">
                 <div className="admin-member-detail">
                     <form>
@@ -148,7 +148,7 @@ const AdminMember = () => {
                                 value={formData.addr}
                                 onChange={handleChange}
                             />
-                            <DaumPost setAddress={setAddress}/>
+                            <DaumPost setAddress={setAddress} />
                             <label htmlFor="detailAddr">상세주소</label>
                             <input
                                 type="text"

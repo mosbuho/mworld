@@ -5,15 +5,14 @@ import axios from "/src/utils/axiosConfig.js";
 
 const MainProduct = () => {
   const location = useLocation();
-  const [products, setProducts] = useState([]);         // 표시할 상품 목록
-  const [page, setPage] = useState(1);                  // 페이지 번호 상태
-  const [isFetching, setIsFetching] = useState(false);  // 데이터 로딩 상태
-  const [hasMore, setHasMore] = useState(true);         // 더 불러올 데이터가 있는지 여부
-  const [searchQuery, setSearchQuery] = useState('');   // 검색어 상태
-  const pageSize = 10;                                  // 한 페이지에 표시할 상품 수
+  const [products, setProducts] = useState([]);
+  const [page, setPage] = useState(1);
+  const [isFetching, setIsFetching] = useState(false);
+  const [hasMore, setHasMore] = useState(true);
+  const [searchQuery, setSearchQuery] = useState('');
+  const pageSize = 10;
   const navigate = useNavigate();
 
-  // 최신 상태 값을 유지하기 위한 useRef 훅
   const hasMoreRef = useRef(hasMore);
   const isFetchingRef = useRef(isFetching);
 
@@ -22,27 +21,23 @@ const MainProduct = () => {
     isFetchingRef.current = isFetching;
   }, [hasMore, isFetching]);
 
-  // 검색어 변경 시 필터링된 데이터 업데이트
   useEffect(() => {
     const params = new URLSearchParams(location.search);
     const query = params.get('query') || '';
     setSearchQuery(query);
 
-    // 새 검색어가 들어오면 초기화
     setProducts([]);
     setPage(1);
     setHasMore(true);
     fetchProducts(1, query);
   }, [location.search]);
 
-  // isFetching이 true일 때 상품 로드
   useEffect(() => {
     if (!isFetching) return;
-    fetchProducts(page, searchQuery); // 최신 page와 searchQuery 전달
+    fetchProducts(page, searchQuery);
   }, [isFetching]);
 
 
-  // 서버로부터 상품 데이터를 가져오는 함수
   const fetchProducts = async (page, query = '') => {
     console.log('Fetching products for page:', page);
     try {
@@ -61,7 +56,6 @@ const MainProduct = () => {
     }
   };
 
-  // 스크롤 이벤트 핸들러
   const handleScroll = () => {
     if (
       !hasMoreRef.current ||
@@ -73,7 +67,6 @@ const MainProduct = () => {
     setIsFetching(true);
   };
 
-  // 스크롤 이벤트 리스너 등록 (한 번만 실행)
   useEffect(() => {
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
@@ -102,7 +95,7 @@ const MainProduct = () => {
           ))}
         </div>
       ) : (
-          <p className="no-results">상품이 존재하지 않습니다.</p>
+        <p className="no-results">상품이 존재하지 않습니다.</p>
       )}
     </div>
   );
