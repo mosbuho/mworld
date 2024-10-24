@@ -5,13 +5,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import com.project.backend.dto.ProductResponse;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import com.project.backend.dto.ProductResponse;
 import com.project.backend.entity.Product;
 import com.project.backend.repository.ProductRepository;
 
@@ -41,16 +41,16 @@ public class ProductService {
         List<ProductResponse> products = productPage.getContent().stream()
                 .map(product -> isAdmin
                         ? new ProductResponse(
-                        product.getNo(),
-                        product.getTitle(),
-                        product.getCategory(),
-                        product.getQuantity(),
-                        product.getPrice())
+                                product.getNo(),
+                                product.getTitle(),
+                                product.getCategory(),
+                                product.getQuantity(),
+                                product.getPrice())
                         : new ProductResponse(
-                        product.getNo(),
-                        product.getTitle(),
-                        product.getTitleImg(),
-                        product.getPrice()))
+                                product.getNo(),
+                                product.getTitle(),
+                                product.getTitleImg(),
+                                product.getPrice()))
                 .collect(Collectors.toList());
 
         Map<String, Object> response = new HashMap<>();
@@ -66,10 +66,11 @@ public class ProductService {
                 .orElseThrow(() -> new IllegalArgumentException("Product not found"));
 
         return isAdmin
-                ? new ProductResponse(product.getNo(), product.getTitle(), product.getCategory(), product.getTitleImg(), product.getPrice(), product.getQuantity(), product.getContent())
-                : new ProductResponse(product.getNo(), product.getTitle(), product.getTitleImg(), product.getPrice(), product.getQuantity(), product.getContent());
+                ? new ProductResponse(product.getNo(), product.getTitle(), product.getCategory(), product.getTitleImg(),
+                        product.getPrice(), product.getQuantity(), product.getContent())
+                : new ProductResponse(product.getNo(), product.getTitle(), product.getTitleImg(), product.getPrice(),
+                        product.getQuantity(), product.getContent());
     }
-
 
     public Product updateProduct(int no, Product updateProduct) {
         Product product = productRepository.findByNo(no);

@@ -25,10 +25,10 @@ public class NoticeController {
 
     @PostMapping("/notice/create")
     public ResponseEntity<String> createNotice(@RequestBody Notice notice) {
-        try{
+        try {
             Notice savedNotice = noticeService.createNotice(notice);
             return ResponseEntity.ok(savedNotice.toString());
-        }catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
             return ResponseEntity.badRequest().build();
         }

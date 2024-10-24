@@ -2,7 +2,6 @@ package com.project.backend.controller;
 
 import java.util.Map;
 
-import com.project.backend.dto.MemberResponse;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -13,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.project.backend.dto.MemberResponse;
 import com.project.backend.entity.Member;
 import com.project.backend.service.MemberService;
 
@@ -37,10 +37,10 @@ public class MemberController {
 
     @GetMapping("/admin/member/{no}")
     public ResponseEntity<MemberResponse> getMemberForAdmin(@PathVariable int no) {
-        try{
+        try {
             MemberResponse member = memberService.getMember(no);
             return ResponseEntity.ok(member);
-        }catch (Exception e){
+        } catch (Exception e) {
             return ResponseEntity.status(500).build();
         }
     }

@@ -6,9 +6,9 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.project.backend.entity.Member;
-import org.springframework.transaction.annotation.Transactional;
 
 public interface MemberRepository extends JpaRepository<Member, Integer> {
         Member findMemberById(String id);
@@ -28,15 +28,15 @@ public interface MemberRepository extends JpaRepository<Member, Integer> {
         @Modifying
         @Transactional
         @Query("UPDATE Member m SET " +
-                "m.name = COALESCE(:name, m.name), " +
-                "m.phone = COALESCE(:phone, m.phone), " +
-                "m.addr = COALESCE(:addr, m.addr), " +
-                "m.detailAddr = COALESCE(:detailAddr, m.detailAddr) " +
-                "WHERE m.no = :no")
+                        "m.name = COALESCE(:name, m.name), " +
+                        "m.phone = COALESCE(:phone, m.phone), " +
+                        "m.addr = COALESCE(:addr, m.addr), " +
+                        "m.detailAddr = COALESCE(:detailAddr, m.detailAddr) " +
+                        "WHERE m.no = :no")
         int updateMember(
-                int no,
-                String name,
-                String phone,
-                String addr,
-                String detailAddr);
+                        int no,
+                        String name,
+                        String phone,
+                        String addr,
+                        String detailAddr);
 }

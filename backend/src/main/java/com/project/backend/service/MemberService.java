@@ -4,7 +4,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.project.backend.dto.MemberResponse;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -13,6 +12,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.project.backend.dto.MemberResponse;
 import com.project.backend.entity.Member;
 import com.project.backend.repository.MemberRepository;
 
@@ -29,7 +29,7 @@ public class MemberService {
 
     @Transactional
     public Member registerMember(String id, String pw, String name, String phone, String email,
-                                 String business, String addr, String detailAddr) {
+            String business, String addr, String detailAddr) {
         Member member = new Member();
         member.setId(id);
         member.setPw(passwordEncoder.encode(pw));
@@ -53,8 +53,7 @@ public class MemberService {
                 updatedMember.getName(),
                 updatedMember.getPhone(),
                 updatedMember.getAddr(),
-                updatedMember.getDetailAddr()
-        );
+                updatedMember.getDetailAddr());
     }
 
     public void deleteMember(int no) {
@@ -84,8 +83,7 @@ public class MemberService {
                         member.getName(),
                         member.getPhone(),
                         member.getAddr(),
-                        member.getRegDate()
-                ))
+                        member.getRegDate()))
                 .toList();
 
         Map<String, Object> response = new HashMap<>();

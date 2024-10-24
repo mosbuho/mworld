@@ -2,10 +2,13 @@ package com.project.backend.service;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.*;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Random;
 import java.util.stream.Collectors;
 
-import com.project.backend.entity.*;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -14,6 +17,11 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.project.backend.dto.PaymentRequest;
 import com.project.backend.dto.PaymentResponse;
+import com.project.backend.entity.Member;
+import com.project.backend.entity.Payment;
+import com.project.backend.entity.PaymentDetail;
+import com.project.backend.entity.PaymentStatus;
+import com.project.backend.entity.Product;
 import com.project.backend.repository.PaymentRepository;
 
 @Service
@@ -39,18 +47,15 @@ public class PaymentService {
             paymentPage = paymentRepository.findByFieldAndStatus(f, q, paymentStatus, pageable); // 필드와 상태 검색
         }
 
-        List<PaymentResponse> paymentList = paymentPage.getContent().stream().map(payment ->
-                new PaymentResponse(
-                        payment.getNo(),
-                        payment.getTransactionId(),
-                        payment.getMethod(),
-                        payment.getPrice(),
-                        payment.getRegDate(),
-                        payment.getStatus().getValue(),
-                        payment.getMember().getName(),
-                        payment.getMember().getPhone()
-                )
-        ).collect(Collectors.toList());
+        List<PaymentResponse> paymentList = paymentPage.getContent().stream().map(payment -> new PaymentResponse(
+                payment.getNo(),
+                payment.getTransactionId(),
+                payment.getMethod(),
+                payment.getPrice(),
+                payment.getRegDate(),
+                payment.getStatus().getValue(),
+                payment.getMember().getName(),
+                payment.getMember().getPhone())).collect(Collectors.toList());
 
         Map<String, Object> response = new HashMap<>();
         response.put("paymentList", paymentList);
@@ -153,13 +158,11 @@ public class PaymentService {
                 payment.getMember().getName(),
                 payment.getMember().getPhone(),
                 payment.getAddr(),
-                payment.getDetailAddr()
-        );
+                payment.getDetailAddr());
         List<PaymentDetail> productList = results.stream()
                 .map(row -> (PaymentDetail) row[1])
                 .filter(Objects::nonNull)
                 .collect(Collectors.toList());
-
 
         Map<String, Object> response = new HashMap<>();
         response.put("paymentInfo", paymentInfo);
