@@ -1,7 +1,7 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import DaumPost from '/src/components/DaumPost';
+import DaumPost from "../../components/common/DaumPost.jsx";
 import '/src/styles/pages/member/MemberSignUp.css';
 
 const SignUp = () => {

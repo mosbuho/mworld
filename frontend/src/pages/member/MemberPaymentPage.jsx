@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 import MemberHeader from '../../components/member/MemberHeader';
 import MemberFooter from '../../components/member/MemberFooter';
-import DaumPost from '../../components/DaumPost';
+import DaumPost from "../../components/common/DaumPost.jsx";
 import '/src/styles/pages/member/PaymentPage.css';
 
 const PaymentPage = () => {
