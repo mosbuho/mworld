@@ -42,7 +42,6 @@ const AdminProductList = () => {
             setProducts(fetchedProducts);
             setPageCount(Math.ceil(totalCount / 20));
         } catch (err) {
-            console.error("failed to load product-list", err);
         }
     };
 

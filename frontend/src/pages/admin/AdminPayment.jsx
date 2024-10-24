@@ -24,7 +24,6 @@ const AdminPayment = () => {
             setPaymentInfo(res.data.paymentInfo);
             setProductList(res.data.productList);
         } catch (err) {
-            console.error("failed to fetch payment", err);
         }
     };
 
@@ -36,7 +35,6 @@ const AdminPayment = () => {
                 });
                 alert(res.data);
             } catch (err) {
-                console.error("Failed to update payment status", err);
                 alert("주문상태 변경에 실패했습니다.");
             }
         }

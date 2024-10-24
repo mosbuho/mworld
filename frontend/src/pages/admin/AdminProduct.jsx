@@ -9,7 +9,6 @@ import "/src/styles/pages/admin/AdminProduct.css"
 import AdminHeader from "../../components/admin/AdminHeader.jsx";
 
 const AdminProduct = () => {
-    const location = useLocation();
     const nav = useNavigate();
     const {no} = useParams();
     const [editorState, setEditorState] = useState(EditorState.createEmpty());
@@ -29,7 +28,6 @@ const AdminProduct = () => {
 
             setEditorState(EditorState.createWithContent(convertFromRaw(JSON.parse(product.content))));
         } catch (error) {
-            console.error("Failed to fetch product", error);
         }
     };
 
@@ -52,7 +50,7 @@ const AdminProduct = () => {
                     .then(() => {
                         setFormData((prevData) => ({ ...prevData, titleImg: "" }));
                     })
-                    .catch((error) => console.error('Image delete failed:', error));
+                    .catch((error) => {});
             }
         });
 
@@ -142,7 +140,7 @@ const AdminProduct = () => {
                 .then(() => {
                     setFormData((prevData) => ({ ...prevData, titleImg: "" }));
                 })
-                .catch((error) => console.error('Image delete failed:', error));
+                .catch((error) => {});
         }
 
         const maxWidth = 580; // 최대 너비
@@ -164,11 +162,9 @@ const AdminProduct = () => {
                         setFormData((prevData) => ({...prevData, titleImg: imageUrl}));
                     })
                     .catch((error) => {
-                        console.error('Image upload failed:', error);
                     });
             })
             .catch((error) => {
-                console.error('Image resize failed:', error);
             });
     };
 
@@ -231,7 +227,6 @@ const AdminProduct = () => {
                 alert("상품정보가 수정되었습니다.");
                 nav('/admin/product');
             } catch (err) {
-                console.error("failed to update product", err);
                 alert('상품정보 수정에 실패했습니다. 다시 시도해 주세요.');
             }
         }
@@ -257,7 +252,6 @@ const AdminProduct = () => {
                 alert("상품이 삭제되었습니다.");
                 nav('/admin/product');
             } catch (err) {
-                console.error("failed to delete product", err);
                 alert('상품삭제에 실패했습니다. 다시 시도해 주세요.');
             }
         }

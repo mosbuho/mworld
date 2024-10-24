@@ -41,7 +41,6 @@ const AdminPaymentList = () => {
             setPageCount(totalPages);
 
         } catch (err) {
-            console.error("failed to fetch payment", err);
         }
     };
 

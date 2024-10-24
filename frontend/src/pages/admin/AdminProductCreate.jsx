@@ -33,7 +33,7 @@ const AdminProductCreate = () => {
                     .then(() => {
                         setFormData((prevData) => ({ ...prevData, titleImg: "" }));
                     })
-                    .catch((error) => console.error('Image delete failed:', error));
+                    .catch((error) => {});
             }
         });
 
@@ -123,7 +123,7 @@ const AdminProductCreate = () => {
                 .then(() => {
                     setFormData((prevData) => ({ ...prevData, titleImg: "" }));
                 })
-                .catch((error) => console.error('Image delete failed:', error));
+                .catch((error) => {});
         }
 
         const maxWidth = 580; // 최대 너비
@@ -145,11 +145,9 @@ const AdminProductCreate = () => {
                         setFormData((prevData) => ({...prevData, titleImg: imageUrl}));
                     })
                     .catch((error) => {
-                        console.error('Image upload failed:', error);
                     });
             })
             .catch((error) => {
-                console.error('Image resize failed:', error);
             });
     };
 
@@ -175,7 +173,6 @@ const AdminProductCreate = () => {
                             resolve({data: {link: imageUrl}}); // 에디터에 삽입할 URL 반환
                         })
                         .catch((error) => {
-                            console.error('Image upload failed:', error);
                             reject(error);
                         });
                 })
@@ -190,7 +187,6 @@ const AdminProductCreate = () => {
             const fileName = imageUrl.split('/').pop();
             await axios.delete(`/api/img/${entityType}/${fileName}`);
         } catch (error) {
-            console.error('Image delete failed:', error);
             throw error;
         }
     };
@@ -219,7 +215,6 @@ const AdminProductCreate = () => {
             alert('상품등록이 완료되었습니다.')
             nav('/admin/product');
         } catch (error) {
-            console.error('failed to create product', error)
             alert('상품등록에 실패했습니다. 다시 시도해 주세요.');
         }
     };
