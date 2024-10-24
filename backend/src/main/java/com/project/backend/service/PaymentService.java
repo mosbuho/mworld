@@ -2,12 +2,10 @@ package com.project.backend.service;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Random;
+import java.util.*;
 import java.util.stream.Collectors;
 
+import com.project.backend.entity.*;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -16,10 +14,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.project.backend.dto.PaymentRequest;
 import com.project.backend.dto.PaymentResponse;
-import com.project.backend.entity.Member;
-import com.project.backend.entity.Payment;
-import com.project.backend.entity.PaymentStatus;
-import com.project.backend.entity.Product;
 import com.project.backend.repository.PaymentRepository;
 
 @Service
@@ -47,11 +41,12 @@ public class PaymentService {
 
         List<PaymentResponse> paymentList = paymentPage.getContent().stream().map(payment ->
                 new PaymentResponse(
+                        payment.getNo(),
                         payment.getTransactionId(),
                         payment.getMethod(),
                         payment.getPrice(),
                         payment.getRegDate(),
-                        payment.getStatus().getLabel(),
+                        payment.getStatus().getValue(),
                         payment.getMember().getName(),
                         payment.getMember().getPhone()
                 )
@@ -142,33 +137,35 @@ public class PaymentService {
         return formattedDateTime + randomString.toString();
     }
 
-//    public Map<String, Object> getPaymentDetails(String transactionId) {
-//        List<Payment> payments = paymentRepository.findByTransactionId(transactionId);
-//
-//        Payment firstPayment = payments.get(0);
-//
-//        int statusValue = firstPayment.getStatus().getValue();
-//
-//        Map<String, Object> orderInfo = Map.of(
-//                "transactionId", firstPayment.getTransactionId(),
-//                "addr", firstPayment.getAddr(),
-//                "method", firstPayment.getMethod(),
-//                "status", statusValue,
-//                "regDate", firstPayment.getRegDate(),
-//                "memberName", firstPayment.getMember().getName(),
-//                "memberPhone", firstPayment.getMember().getPhone());
-//
-//        List<Map<String, Object>> productList = payments.stream()
-//                .<Map<String, Object>>map(payment -> Map.of(
-//                        "price", payment.getPrice()))
-//                .collect(Collectors.toList());
-//
-//        Map<String, Object> response = new HashMap<>();
-//        response.put("paymentInfo", orderInfo);
-//        response.put("productList", productList);
-//
-//        return response;
-//    }
+    public Map<String, Object> getPaymentWithDetails(int paymentNo) {
+        List<Object[]> results = paymentRepository.findPaymentWithDetails(paymentNo);
+
+        Payment payment = (Payment) results.get(0)[0];
+
+        PaymentResponse paymentInfo = new PaymentResponse(
+                payment.getNo(),
+                payment.getTransactionId(),
+                payment.getMethod(),
+                payment.getPrice(),
+                payment.getRegDate(),
+                payment.getStatus().getValue(),
+                payment.getMember().getName(),
+                payment.getMember().getPhone(),
+                payment.getAddr(),
+                payment.getDetailAddr()
+        );
+        List<PaymentDetail> productList = results.stream()
+                .map(row -> (PaymentDetail) row[1])
+                .filter(Objects::nonNull)
+                .collect(Collectors.toList());
+
+
+        Map<String, Object> response = new HashMap<>();
+        response.put("paymentInfo", paymentInfo);
+        response.put("productList", productList);
+
+        return response;
+    }
 //
 //    @Transactional
 //    public void updatePaymentStatus(String transactionId, int statusValue) {

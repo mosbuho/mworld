@@ -9,7 +9,7 @@ import "/src/styles/pages/admin/AdminPayment.css";
 const AdminPayment = () => {
     const [paymentInfo, setPaymentInfo] = useState({});
     const [productList, setProductList] = useState([]);
-    const {orderNo} = useParams();
+    const {no} = useParams();
     const nav = useNavigate();
 
     dayjs.locale("ko");
@@ -20,7 +20,7 @@ const AdminPayment = () => {
 
     const fetchPayments = async () => {
         try {
-            const res = await axios.get(`/api/admin/payment/${orderNo}`);
+            const res = await axios.get(`/api/admin/payment/${no}`);
             setPaymentInfo(res.data.paymentInfo);
             setProductList(res.data.productList);
         } catch (err) {
@@ -31,8 +31,8 @@ const AdminPayment = () => {
     const handleUpdate = async () => {
         if (window.confirm("주문상태를 변경하시겠습니까?")) {
             try {
-                const res = await axios.put(`/api/admin/payment/${paymentInfo.transactionId}`, null, {
-                    params: { status: paymentInfo.status },
+                const res = await axios.put(`/api/admin/payment/${paymentInfo.no}`, null, {
+                    params: {status: paymentInfo.status},
                 });
                 alert(res.data);
             } catch (err) {
@@ -70,10 +70,18 @@ const AdminPayment = () => {
         }
     };
 
-    const getTotalPrice = () => {
-        return productList.reduce((total, product) => total + product.price, 0);
+    const formattedPayment = {
+        ...paymentInfo,
+        price: paymentInfo.price ? paymentInfo.price.toLocaleString() : '0',
+        regDate: paymentInfo.regDate ? dayjs(paymentInfo.regDate).format("YYYY-MM-DD HH:mm (ddd)") : '',
     };
 
+    const totalQuantity = productList.reduce((acc, product) => acc + product.quantity, 0);
+    const ProductTotalPrice = productList.reduce((acc, product) => acc + product.productPrice * product.quantity, 0);
+
+    if (!paymentInfo || !productList) {
+        return <div>Loading...</div>; // 로딩 중 표시
+    }
     return (
         <div className="admin-main">
             <AdminHeader/>
@@ -82,13 +90,13 @@ const AdminPayment = () => {
                 <div className="admin-payment-detail">
                     <div className="admin-payment-title">주문 상세내역</div>
                     <div className="admin-payment-detail-header">
-                        <div className="payment-detail-title"><span>주문번호</span>{paymentInfo.transactionId}</div>
+                        <div className="payment-detail-title"><span>주문번호</span>{formattedPayment.transactionId}</div>
                         <div className="payment-detail-title">
-                            <span>주문일시</span>{dayjs(paymentInfo.regDate).format("YYYY-MM-DD HH:mm (ddd)")}</div>
+                            <span>주문일시</span>{formattedPayment.regDate}</div>
                         <div className="payment-detail-title">
                             <span>주문상태</span>
                             <select
-                                value={paymentInfo.status}
+                                value={formattedPayment.status}
                                 onChange={handleStatusChange}
                             >
                                 {selectColumns.map((column) => (
@@ -117,36 +125,51 @@ const AdminPayment = () => {
                                 <tr key={rowIndex}>
                                     <td>{row.productTitle}</td>
                                     <td>{row.quantity}</td>
-                                    <td>{row.price}</td>
+                                    <td>{row.quantity * row.productPrice}</td>
                                 </tr>
                             ))}
                             </tbody>
+                            <tfoot>
+                                <tr>
+                                    <td>합계</td>
+                                    <td>{totalQuantity}</td>
+                                    <td>{ProductTotalPrice}</td>
+                                </tr>
+                            </tfoot>
                         </table>
                     </div>
                     <div className="payment-detail-info">
                         <div className="payment-detail-row-title">결제정보</div>
                         <div className="payment-detail-row">
-                            <div>결제금액</div>
-                            <div>{getTotalPrice().toLocaleString()}원</div>
+                            <div>상품 금액</div>
+                            <div>{ProductTotalPrice.toLocaleString()}원</div>
                         </div>
                         <div className="payment-detail-row">
-                            <div>결제방법</div>
-                            <div>{methodFormatter(paymentInfo.method)}</div>
+                            <div>결제 금액</div>
+                            <div>{formattedPayment.price}원</div>
+                        </div>
+                        <div className="payment-detail-row">
+                            <div>결제 방법</div>
+                            <div>{methodFormatter(formattedPayment.method)}</div>
                         </div>
                     </div>
                     <div className="payment-detail-addr">
                         <div className="payment-detail-row-title">배송정보</div>
                         <div className="payment-detail-row">
                             <div>이름</div>
-                            <div>{paymentInfo.memberName}</div>
+                            <div>{formattedPayment.memberName}</div>
                         </div>
                         <div className="payment-detail-row">
                             <div>전화번호</div>
-                            <div>{paymentInfo.memberPhone}</div>
+                            <div>{formattedPayment.memberPhone}</div>
                         </div>
                         <div className="payment-detail-row">
                             <div>주소</div>
-                            <div>{paymentInfo.addr}</div>
+                            <div>{formattedPayment.addr}</div>
+                        </div>
+                        <div className="payment-detail-row">
+                            <div>상세주소</div>
+                            <div>{formattedPayment.detailAddr}</div>
                         </div>
                     </div>
                     <div className="btn-area">

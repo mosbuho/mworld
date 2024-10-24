@@ -14,7 +14,7 @@ const AdminProductList = () => {
     const [pageCount, setPageCount] = useState(1);
     const [currentPage, setCurrentPage] = useState(0);
     const [pageDataCache, setPageDataCache] = useState({});
-    const [f, setF] = useState('title');
+    const [f, setF] = useState('TITLE');
     const [q, setQ] = useState('');
     const nav = useNavigate();
 

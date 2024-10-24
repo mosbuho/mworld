@@ -65,12 +65,13 @@ const AdminPaymentList = () => {
         fetchPaymentList(1, selectedStatus);
     };
     const handleRowClick = (payment, nav) => {
-        nav(`/admin/payment/${payment.transactionId}`);
+        nav(`/admin/payment/${payment.no}`);
     };
 
     const getTotalPrice = () => {
         return paymentList.reduce((total, payment) => total + payment.price, 0);
     };
+
 
     const columns = [
         {header: '주문번호', accessor: 'transactionId'},
@@ -108,12 +109,29 @@ const AdminPaymentList = () => {
                 return "기타";
         }
     };
+    const statusFormatter =(status)=>{
+        switch (status){
+            case 0:
+                return "결제대기"
+            case 1:
+                return "결제완료"
+            case 2:
+                return "취소"
+            case 3:
+                return "환불"
+            case 4:
+                return "반품"
+            case 5:
+                return "교환"
+        }
+    };
 
     const formattedPaymentList = paymentList.map((payment) => ({
         ...payment,
         price: payment.price.toLocaleString(),
         regDate: dayjs(payment.regDate).format("YYYY-MM-DD HH:mm (ddd)"),
         method: methodFormatter(payment.method),
+        status: statusFormatter(payment.status),
     }));
 
     return (

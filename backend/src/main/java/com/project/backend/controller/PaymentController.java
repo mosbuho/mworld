@@ -54,11 +54,11 @@ public class PaymentController {
         }
     }
 
-//    @GetMapping("/admin/payment/{transactionId}")
-//    public Map<String, Object> getPayment(@PathVariable String transactionId) {
-//        return paymentService.getPaymentDetails(transactionId);
-//
-//    }
+    @GetMapping("/admin/payment/{no}")
+    public Map<String, Object> getPayment(@PathVariable int no) {
+        return paymentService.getPaymentWithDetails(no);
+
+    }
 
 //    @PutMapping("/admin/payment/{transactionId}")
 //    public ResponseEntity<String> updatePaymentStatus(

@@ -40,5 +40,9 @@ public interface PaymentRepository extends JpaRepository<Payment, Integer> {
             @Param("returned") PaymentStatus returned,
             @Param("exchanged") PaymentStatus exchanged);
 
-
+    @Query(" SELECT p, pd " +
+            "FROM Payment p " +
+            "LEFT JOIN PaymentDetail pd ON p.no = pd.payment.no " +
+            "WHERE p.no = :paymentNo")
+    List<Object[]> findPaymentWithDetails(@Param("paymentNo") int paymentNo);
 }
